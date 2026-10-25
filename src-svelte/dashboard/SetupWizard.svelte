@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Segmented, Select, Switch, ThemeCustomizer, Wizard } from '@wpeasy/ab-ui';
+  import { Alert, Checkbox, Segmented, Select, Switch, ThemeCustomizer, Wizard } from '@wpeasy/ab-ui';
   import type { WizardStep } from '@wpeasy/ab-ui';
   import { Sun, Moon } from '@wpeasy/ab-ui/icons';
   import Modal from '../lib/Modal.svelte';
@@ -21,8 +21,8 @@
     syncing?: boolean;
     onSetDiscoveryMode: (mode: DiscoveryMode) => void;
     onSetFabEnabled: (enabled: boolean) => void;
-    /** Runs Process. The wizard closes once this resolves (parent owns `open`). */
-    onFinish: () => Promise<void> | void;
+    /** Closes the wizard; runs Process when `process` is true (parent owns `open`). */
+    onFinish: (process: boolean) => void;
   } = $props();
 
   // Same accent list + handlers as the Style section in SettingsDrawer.svelte —
@@ -52,22 +52,21 @@
   });
 
   let wizardStep = $state(0);
-  let busy = $state(false);
+  // Finish runs a full Process only when the person says so on the last step,
+  // which explains what that does (tester report: it ran without warning).
+  let processNow = $state(true);
 
-  async function handleComplete(): Promise<void> {
-    if (busy) return;
-    busy = true;
-    try {
-      await onFinish();
-    } finally {
-      busy = false;
-    }
+  function handleComplete(): void {
+    onFinish(processNow);
   }
 
   // Reset to step 0 each time the wizard is (re)opened, so a manual re-run from
   // Settings doesn't resume wherever the first run left off.
   $effect(() => {
-    if (open) wizardStep = 0;
+    if (open) {
+      wizardStep = 0;
+      processNow = true;
+    }
   });
 </script>
 
@@ -134,6 +133,14 @@
   </div>
 {/snippet}
 
+{#snippet processStep()}
+  <div class="bs-wiz-step bs-stack bs-stack--sm">
+    <p>{__('wizardProcessHelp')}</p>
+    <Alert tone="info" description={__('wizardProcessTime')} />
+    <Checkbox label={__('wizardProcessNow')} checked={processNow ? 1 : 0} onchange={(c) => (processNow = c === 1)} />
+  </div>
+{/snippet}
+
 <Modal bind:open title={__('wizardTitle')} size="lg">
   <div class="bs-wiz">
     <p class="bs-wiz__intro">{__('wizardIntro')}</p>
@@ -141,13 +148,14 @@
       steps={[
         { label: __('styleGroup'), content: themeStep },
         { label: __('pagesToInclude'), content: pagesStep },
-        { label: __('enableSyncButton'), content: syncStep, nextDisabled: busy },
+        { label: __('enableSyncButton'), content: syncStep },
+        { label: __('wizardProcessStep'), content: processStep },
       ] as WizardStep[]}
       bind:current={wizardStep}
       orientation="vertical"
       backLabel={__('wizardBack')}
       nextLabel={__('wizardNext')}
-      finishLabel={busy ? __('wizardFinishing') : __('wizardFinish')}
+      finishLabel={processNow ? __('wizardFinish') : __('wizardFinishOnly')}
       oncomplete={handleComplete}
     />
   </div>

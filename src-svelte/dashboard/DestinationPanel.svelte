@@ -297,6 +297,11 @@
   let zipHelpOpen = $state(false);
   let cfHelpOpen = $state(!d.cfApiToken.hasValue);
   let ghHelpOpen = $state(!d.ghToken.hasValue);
+  // Opens by itself when a Test finds the connector behind nginx.
+  let nginxHelpOpen = $state(false);
+  $effect(() => {
+    if (method === 'connector' && /nginx/i.test(message)) nginxHelpOpen = true;
+  });
   // Branch + folder are rarely changed: collapsed unless already non-default.
   let ghAdvancedOpen = $state((d.ghBranch.value || 'gh-pages') !== 'gh-pages' || d.ghFolder.value === '/docs');
 </script>
@@ -424,6 +429,17 @@
         </ol>
         <!-- eslint-enable svelte/no-at-html-tags -->
         <p class="bs-lead">{__('connectorReq')}</p>
+        <Collapsible title={__('connectorNginx')} bind:open={nginxHelpOpen}>
+          <p class="bs-lead">{__('connectorNginxLead')}</p>
+          <!-- eslint-disable svelte/no-at-html-tags -- trusted PHP dictionary -->
+          <ul class="bs-steps">
+            <li>{@html __('connectorNginx1')}</li>
+            <li>{@html __('connectorNginx2')}</li>
+            <li>{@html __('connectorNginx3')}</li>
+            <li>{@html __('connectorNginx4')}</li>
+          </ul>
+          <!-- eslint-enable svelte/no-at-html-tags -->
+        </Collapsible>
 
         <div class="bs-connector bs-stack bs-stack--xs">
           {#if d.connectorId.fromConstant}

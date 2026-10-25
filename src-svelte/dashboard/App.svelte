@@ -233,12 +233,13 @@
     }
   }
 
-  // Setup wizard: Finish runs the exact same Process used elsewhere, then closes
-  // the modal. Opening it (auto on first run, or manually from Settings) is
-  // handled separately — this only covers the Finish action.
-  async function finishWizard(): Promise<void> {
-    await processPages();
+  // Setup wizard: Finish closes the modal at once and, if the last step's
+  // "Process now" is ticked, starts the same Process used elsewhere — its
+  // progress shows in the dashboard's progress panel, not behind the modal.
+  // Opening it (auto on first run, or manually from Settings) is separate.
+  function finishWizard(process: boolean): void {
     wizardOpen = false;
+    if (process) void processPages();
   }
 
   // Manual re-run from the Settings drawer: close the drawer, open the wizard.

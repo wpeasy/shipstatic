@@ -35,14 +35,21 @@ defined('ABSPATH') || exit;
 final class ConnectorClient {
 
     /**
-     * Fallback chunk size when the receiver doesn't report an upload limit.
-     */
-    public const DEFAULT_CHUNK = 2 * 1024 * 1024;
-
-    /**
      * Never send chunks larger than this even if the host allows it.
      */
     public const MAX_CHUNK = 4 * 1024 * 1024;
+
+    /**
+     * Default chunk ceiling: under nginx's default 1 MB request limit
+     * (client_max_body_size), which PHP can't see or report.
+     */
+    public const SAFE_CHUNK = 900 * 1024;
+
+    /** Smallest chunk upload() shrinks to after HTTP 413s. */
+    public const MIN_CHUNK = 64 * 1024;
+
+    /** The chunk size the last upload() finished with (after any shrinking). */
+    private int $last_chunk = 0;
 
     private string $url;
     private string $id;
@@ -177,11 +184,12 @@ final class ConnectorClient {
         $size   = (int) ($stat['size'] ?? 0);
         $upload = bin2hex(random_bytes(8));
         $sha    = (string) hash_file('sha256', $local);
-        $chunk  = max(64 * 1024, min($chunk, self::MAX_CHUNK));
+        $chunk  = max(self::MIN_CHUNK, min($chunk, self::MAX_CHUNK));
         $offset = 0;
 
         try {
             do {
+                fseek($fh, $offset);
                 $data  = $size === 0 ? '' : (string) fread($fh, $chunk);
                 $final = $offset + strlen($data) >= $size;
                 $meta  = ['op' => 'chunk', 'upload' => $upload, 'offset' => $offset];
@@ -192,7 +200,17 @@ final class ConnectorClient {
                         $meta['target'] = $target;
                     }
                 }
-                $this->multipart($meta, $data, 120, 2);
+                try {
+                    $this->multipart($meta, $data, 120, 2);
+                } catch (ConnectorTooLargeException $e) {
+                    // The web server in front of PHP refused the size (PHP never
+                    // saw it, so nothing was written): resend this piece smaller.
+                    if ($chunk <= self::MIN_CHUNK) {
+                        throw $e;
+                    }
+                    $chunk = max(self::MIN_CHUNK, intdiv($chunk, 2));
+                    continue;
+                }
                 $offset += strlen($data);
                 if ($progress !== null) {
                     $progress($offset, $size);
@@ -203,7 +221,16 @@ final class ConnectorClient {
         }
         // phpcs:enable WordPress.WP.AlternativeFunctions.file_system_operations_fopen, WordPress.WP.AlternativeFunctions.file_system_operations_fread, WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
+        $this->last_chunk = $chunk;
+
         return $upload;
+    }
+
+    /**
+     * The chunk size the last upload() ended with (0 before any upload).
+     */
+    public function last_chunk(): int {
+        return $this->last_chunk;
     }
 
     /**
@@ -328,6 +355,23 @@ final class ConnectorClient {
             }
             if ($ours && $code === 409 && $error === 'version') {
                 throw new ConnectorVersionException('The connector file on the destination is outdated. Re-pair and upload the new one.');
+            }
+            if ($code === 413) {
+                throw new ConnectorTooLargeException(sprintf(
+                    'The destination\'s web server refused a %s upload (HTTP 413), even after retrying in smaller pieces. On nginx, set client_max_body_size to at least 2m for this site (its default is 1m), then reload nginx.',
+                    size_format(strlen($body))
+                ));
+            }
+            if (!$ours && in_array($code, [502, 503, 504], true)) {
+                // The web server gave up waiting for PHP (nginx: fastcgi_read_timeout,
+                // 60 s by default) — worth retrying; the work may have finished.
+                throw new \RuntimeException(sprintf(
+                    'The destination\'s web server stopped waiting for the connector (HTTP %d). On nginx, raise fastcgi_read_timeout (for example to 300s) for this site; on other hosts, ask them about PHP time limits.',
+                    $code
+                ));
+            }
+            if (!$ours && $code === 405) {
+                throw new ConnectorHostException(sprintf('The web server at %s refused to run the connector (HTTP 405): it is treating the file as static, not as PHP. Make sure PHP runs for .php files in that folder (on nginx, a location ~ \\.php$ block passing to PHP-FPM).', $this->endpoint()));
             }
             if ($code === 404) {
                 throw new ConnectorHostException('Connector file not found at ' . $this->endpoint() . ' — upload it to the folder served at the Destination URL.');

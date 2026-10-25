@@ -196,6 +196,17 @@
           <li>The folder must be writable by PHP. Test tells you if it isn’t.</li>
         </ul>
 
+        <h3>On nginx</h3>
+        <p class="bs-docs__muted">
+          nginx has limits PHP can’t see, so the connector can’t detect them. Make sure the destination site has at least:
+        </p>
+        <ul class="bs-docs__list">
+          <li><strong>PHP for the connector file</strong>: a <code>location ~ \.php$</code> block passing to PHP-FPM, as for any PHP site. Without it, Test reports HTTP 405 or 404.</li>
+          <li><code>client_max_body_size 2m;</code> or more. ShipStatic uploads in pieces under 1 MB and retries smaller pieces if they’re refused, so the 1 MB default works unless it has been lowered.</li>
+          <li><code>fastcgi_read_timeout 300s;</code> in that PHP location, so unpacking a large site doesn’t hit the 60-second default.</li>
+          <li>Rules that stop nginx serving <code>.htaccess</code> files and the connector’s in-progress uploads. The nginx snippet on the <strong>Destination Server Configuration</strong> tab includes them.</li>
+        </ul>
+
         <h3>Managing a pairing</h3>
         <ul class="bs-docs__list">
           <li><strong>Re-pair (new file)</strong> — generates a fresh pairing and a new file. The file currently on the destination stops working immediately, so upload the new one before the next sync. Use it if you lose the download, suspect the secret leaked, or moved the site to a new server.</li>

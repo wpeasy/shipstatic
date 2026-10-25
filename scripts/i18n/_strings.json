@@ -558,7 +558,19 @@
     "msgid": "Finish & Process"
   },
   {
-    "msgid": "Processing…"
+    "msgid": "Finish"
+  },
+  {
+    "msgid": "First Process"
+  },
+  {
+    "msgid": "Process renders every page you chose to include into static HTML, ready to check and sync. Nothing is uploaded anywhere yet."
+  },
+  {
+    "msgid": "It visits every included page, so it can take several minutes on a large site, and the site does a little extra work while it runs. Progress shows on the dashboard; you can keep working."
+  },
+  {
+    "msgid": "Process now when I finish"
   },
   {
     "msgid": "Preparing…"
@@ -1006,6 +1018,24 @@
   },
   {
     "msgid": "Needs PHP 7.4+ at the destination; ZipArchive there enables one-package deploys (otherwise files upload one by one)."
+  },
+  {
+    "msgid": "Using nginx?"
+  },
+  {
+    "msgid": "nginx has its own limits, which PHP (and so the connector) can’t see. Make sure the destination site has at least this:"
+  },
+  {
+    "msgid": "PHP runs for <code>.php</code> files in the folder the connector is in (a <code>location ~ \\.php$</code> block passing to PHP-FPM, as for any PHP site). Without it, Test reports HTTP 405 or 404."
+  },
+  {
+    "msgid": "<code>client_max_body_size</code> of at least <code>2m</code>. ShipStatic uploads in pieces under 1 MB and retries smaller ones if refused, so nginx’s <code>1m</code> default works unless it has been lowered."
+  },
+  {
+    "msgid": "<code>fastcgi_read_timeout 300s;</code> in that PHP location: unpacking a large site can take longer than the 60-second default."
+  },
+  {
+    "msgid": "Block public access to <code>.htaccess</code> files and the connector’s in-progress uploads. The nginx snippet on the <strong>Destination Server Configuration</strong> tab includes the rules."
   },
   {
     "msgid": "Not paired yet."
