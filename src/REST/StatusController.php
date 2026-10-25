@@ -25,6 +25,7 @@ use WPEasy\ShipStatic\Sync\Manifest;
 use WPEasy\ShipStatic\Sync\MethodResolver;
 use WPEasy\ShipStatic\Sync\Runner;
 use WPEasy\ShipStatic\Search\IndexBuilder;
+use WPEasy\ShipStatic\Search\LiveIndex;
 
 defined('ABSPATH') || exit;
 
@@ -118,6 +119,7 @@ final class StatusController {
                 : 0,
             'fabEnabled'    => get_option('shipstatic_fab_enabled', '1') !== '0',
             'searchEnabled' => IndexBuilder::enabled(),
+            'searchLive'    => LiveIndex::chosen(),
             // Max destinations deployed at once during a multi-destination sync.
             'concurrentSyncs' => DeployPool::concurrency(),
             // AI/MCP opt-ins. `aiAvailable` reflects whether the host WordPress
@@ -291,6 +293,11 @@ final class StatusController {
             }
         }
 
+        if (array_key_exists('searchLive', $params)) {
+            // Live site only — the export is unchanged, so no re-Process.
+            LiveIndex::set_enabled(!empty($params['searchLive']));
+        }
+
         if (array_key_exists('aiAllowChanges', $params)) {
             update_option(AbilityRegistry::OPT_CHANGES, !empty($params['aiAllowChanges']), false);
         }
@@ -314,6 +321,7 @@ final class StatusController {
             'discoveryMode'   => UrlCollector::mode(),
             'fabEnabled'      => get_option('shipstatic_fab_enabled', '1') !== '0',
             'searchEnabled'   => IndexBuilder::enabled(),
+            'searchLive'      => LiveIndex::chosen(),
             'aiAllowChanges'  => AbilityRegistry::changes_enabled(),
             'aiAllowSync'     => AbilityRegistry::sync_enabled(),
             'concurrentSyncs' => DeployPool::concurrency(),

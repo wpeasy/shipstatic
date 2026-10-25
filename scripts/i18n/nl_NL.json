@@ -712,5 +712,10 @@
   "Monthly (every 30 days)": "Maandelijks (elke 30 dagen)",
   "No enabled destinations are selected.": "Er is geen ingeschakelde bestemming geselecteerd.",
   "Another sync was already running.": "Er liep al een andere synchronisatie.",
-  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "Het zoekformulier verstuurt naar deze site — zet Zoeken op de site aan in Instellingen om het statisch te laten werken"
+  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "Het zoekformulier verstuurt naar deze site — zet Zoeken op de site aan in Instellingen om het statisch te laten werken",
+  "On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form, unless “Use ShipStatic search on the WordPress site too” is on.": "Op je statische site wordt al tijdens het typen gezocht. Zet Sitezoeken aan in ShipStatic → Instellingen en kies daarna Verwerken en Synchroniseren. Op de live WordPress-site is het een gewoon zoekformulier, tenzij ‘ShipStatic-zoeken ook op de WordPress-site gebruiken’ aan staat.",
+  "Scrollbar colour": "Kleur van de schuifbalk",
+  "Site search is not available.": "Sitezoeken is niet beschikbaar.",
+  "Use ShipStatic search on the WordPress site too": "ShipStatic-zoeken ook op de WordPress-site gebruiken",
+  "The ShipStatic Search element then searches as you type on this WordPress site as well, from the pages in the last Process (press Process to pick up new content). Other search boxes keep normal WordPress search.": "Het element ShipStatic Search zoekt dan ook op deze WordPress-site al tijdens het typen, op basis van de pagina’s uit de laatste verwerking (klik op Verwerken om nieuwe inhoud mee te nemen). Andere zoekvakken houden de gewone WordPress-zoekfunctie."
 }

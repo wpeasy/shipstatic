@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace WPEasy\ShipStatic\Bricks;
 
+use WPEasy\ShipStatic\Frontend\Search;
 use WPEasy\ShipStatic\Search\IndexBuilder;
 use WPEasy\ShipStatic\Search\SearchForm;
 
@@ -46,6 +47,7 @@ class SearchElement extends \Bricks\Element {
 
     public function enqueue_scripts() {
         SearchForm::enqueue_style();
+        Search::enqueue_live();
     }
 
     public function set_control_groups() {
@@ -79,7 +81,7 @@ class SearchElement extends \Bricks\Element {
         // ── Behaviour (ungrouped, top) ────────────────────────────────
         $this->controls['info'] = [
             'type'    => 'info',
-            'content' => esc_html__('On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form.', 'shipstatic'),
+            'content' => esc_html__('On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form, unless “Use ShipStatic search on the WordPress site too” is on.', 'shipstatic'),
         ];
         if (!IndexBuilder::enabled()) {
             $this->controls['infoOff'] = [
@@ -208,6 +210,7 @@ class SearchElement extends \Bricks\Element {
         $this->controls['dropdownBackground'] = ['group' => 'dropdown', 'label' => esc_html__('Background', 'shipstatic'), 'type' => 'color', 'css' => self::css('background-color', $box)];
         $this->controls['dropdownColor'] = ['group' => 'dropdown', 'label' => esc_html__('Text colour', 'shipstatic'), 'type' => 'color', 'css' => self::css('color', $box)];
         $this->controls['dropdownBorder'] = ['group' => 'dropdown', 'label' => esc_html__('Border', 'shipstatic'), 'type' => 'border', 'css' => self::css('border', $box)];
+        $this->controls['dropdownScrollbar'] = ['group' => 'dropdown', 'label' => esc_html__('Scrollbar colour', 'shipstatic'), 'type' => 'color', 'css' => self::css('--bs-search-scrollbar', $box)];
         $this->controls['dropdownShadow'] = ['group' => 'dropdown', 'label' => esc_html__('Box shadow', 'shipstatic'), 'type' => 'box-shadow', 'css' => self::css('box-shadow', $box)];
         $this->controls['dropdownZ'] = ['group' => 'dropdown', 'label' => esc_html__('Z-index', 'shipstatic'), 'type' => 'number', 'css' => self::css('z-index', $box), 'placeholder' => '9999'];
 

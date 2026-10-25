@@ -183,7 +183,7 @@
     "msgid": "No results"
   },
   {
-    "msgid": "On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form."
+    "msgid": "On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form, unless “Use ShipStatic search on the WordPress site too” is on."
   },
   {
     "msgid": "Site search is currently off in ShipStatic → Settings."
@@ -316,6 +316,9 @@
   },
   {
     "msgid": "Text colour"
+  },
+  {
+    "msgid": "Scrollbar colour"
   },
   {
     "msgid": "Z-index"
@@ -463,6 +466,9 @@
   },
   {
     "msgid": "Cloudflare token accepted — %s."
+  },
+  {
+    "msgid": "Site search is not available."
   },
   {
     "msgid": "(no title)"
@@ -670,6 +676,12 @@
   },
   {
     "msgid": "Makes the search boxes on your static site work: each sync adds a search index for that destination, searched in the visitor’s browser. The live WordPress site keeps its own search. Press Process after changing this."
+  },
+  {
+    "msgid": "Use ShipStatic search on the WordPress site too"
+  },
+  {
+    "msgid": "The ShipStatic Search element then searches as you type on this WordPress site as well, from the pages in the last Process (press Process to pick up new content). Other search boxes keep normal WordPress search."
   },
   {
     "msgid": "Concurrent syncs"

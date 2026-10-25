@@ -17,6 +17,7 @@ use WPEasy\ShipStatic\Export\ExportDownload;
 use WPEasy\ShipStatic\Frontend\Fab;
 use WPEasy\ShipStatic\Frontend\Search;
 use WPEasy\ShipStatic\REST\ScheduleController;
+use WPEasy\ShipStatic\REST\SearchIndexController;
 use WPEasy\ShipStatic\Sync\Scheduler;
 use WPEasy\ShipStatic\Render\LinkDeployReplacer;
 use WPEasy\ShipStatic\Render\MediaDeployReplacer;
@@ -196,5 +197,6 @@ final class Plugin {
         VideosController::register();
         SitemapController::register();
         ScheduleController::register();
+        SearchIndexController::register();
     }
 }

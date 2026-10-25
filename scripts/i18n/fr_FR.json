@@ -714,5 +714,10 @@
   "Monthly (every 30 days)": "Mensuel (tous les 30 jours)",
   "No enabled destinations are selected.": "Aucune destination activée n’est sélectionnée.",
   "Another sync was already running.": "Une autre synchronisation était déjà en cours.",
-  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "Le formulaire de recherche renvoie vers ce site — activez Recherche sur le site dans les Réglages pour qu’il fonctionne en statique"
+  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "Le formulaire de recherche renvoie vers ce site — activez Recherche sur le site dans les Réglages pour qu’il fonctionne en statique",
+  "On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form, unless “Use ShipStatic search on the WordPress site too” is on.": "Sur votre site statique, la recherche se fait pendant la saisie. Activez la recherche du site dans ShipStatic → Réglages, puis lancez Traiter et Synchroniser. Sur le site WordPress en ligne, c’est un formulaire de recherche normal, sauf si « Utiliser la recherche ShipStatic aussi sur le site WordPress » est activé.",
+  "Scrollbar colour": "Couleur de la barre de défilement",
+  "Site search is not available.": "La recherche du site n’est pas disponible.",
+  "Use ShipStatic search on the WordPress site too": "Utiliser la recherche ShipStatic aussi sur le site WordPress",
+  "The ShipStatic Search element then searches as you type on this WordPress site as well, from the pages in the last Process (press Process to pick up new content). Other search boxes keep normal WordPress search.": "L’élément ShipStatic Search recherche alors pendant la saisie sur ce site WordPress également, à partir des pages du dernier traitement (lancez Traiter pour prendre en compte le nouveau contenu). Les autres champs de recherche gardent la recherche WordPress normale."
 }

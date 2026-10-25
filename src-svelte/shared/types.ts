@@ -222,6 +222,8 @@ export interface Status {
   fabEnabled: boolean;
   /** Site search: export a search index + script (Settings → Site search). */
   searchEnabled: boolean;
+  /** Live WordPress site: the ShipStatic Search element searches as you type too (needs searchEnabled). */
+  searchLive: boolean;
   /** Max destinations deployed at once during a multi-destination sync (1–10). */
   concurrentSyncs: number;
   /** Whether the host WordPress exposes the Abilities API (WP 6.9+). */

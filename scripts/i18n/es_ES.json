@@ -714,5 +714,10 @@
   "Monthly (every 30 days)": "Mensual (cada 30 días)",
   "No enabled destinations are selected.": "No hay ningún destino activo seleccionado.",
   "Another sync was already running.": "Ya había otra sincronización en curso.",
-  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "El formulario de búsqueda envía a este sitio — activa Búsqueda en el sitio en Ajustes para que funcione en estático"
+  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "El formulario de búsqueda envía a este sitio — activa Búsqueda en el sitio en Ajustes para que funcione en estático",
+  "On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form, unless “Use ShipStatic search on the WordPress site too” is on.": "En tu sitio estático busca mientras escribes. Activa la búsqueda del sitio en ShipStatic → Ajustes y luego Procesar y Sincronizar. En el sitio WordPress en vivo es un formulario de búsqueda normal, salvo que esté activado «Usar la búsqueda de ShipStatic también en el sitio WordPress».",
+  "Scrollbar colour": "Color de la barra de desplazamiento",
+  "Site search is not available.": "La búsqueda del sitio no está disponible.",
+  "Use ShipStatic search on the WordPress site too": "Usar la búsqueda de ShipStatic también en el sitio WordPress",
+  "The ShipStatic Search element then searches as you type on this WordPress site as well, from the pages in the last Process (press Process to pick up new content). Other search boxes keep normal WordPress search.": "El elemento ShipStatic Search buscará también mientras escribes en este sitio WordPress, a partir de las páginas del último procesado (pulsa Procesar para incluir contenido nuevo). Los demás cuadros de búsqueda mantienen la búsqueda normal de WordPress."
 }

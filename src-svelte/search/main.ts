@@ -1,10 +1,13 @@
 /**
- * ShipStatic site search — runs on the EXPORTED static site only (the PHP side,
- * Frontend\Search, enqueues it just for the render).
+ * ShipStatic site search (the PHP side is Frontend\Search).
  *
- * Every form with an `s` field (WordPress / Bricks search boxes, the ShipStatic
- * Search element) is upgraded to search this destination's search-index.json
- * in the browser, with results listed under the box as you type. Options come
+ * In the EXPORTED static site, every form with an `s` field (WordPress / Bricks
+ * search boxes, the ShipStatic Search element) is upgraded to search this
+ * destination's search-index.json in the browser, with results listed under
+ * the box as you type. On the live WordPress site (when that setting is on)
+ * only the forms matching `selector` — the ShipStatic Search element — are,
+ * searching the REST index, and Enter with nothing to open falls through to
+ * normal WordPress search. Options come
  * from the form's data-bs-* attributes (set by Search\SearchForm); the look
  * from search.css. Self-contained on purpose — no imports, no framework — so it
  * works as one static file on any host. If the index can't load, the form is
@@ -27,6 +30,10 @@ interface Prepared {
 
 interface Config {
   index: string;
+  /** Forms to upgrade (default: every form with an `s` field). */
+  selector?: string;
+  /** Live WordPress site: a submit with no result to open goes to /?s=. */
+  live?: boolean;
   i18n: { noResults: string; results: string; oneResult: string; label: string };
 }
 
@@ -42,6 +49,8 @@ interface Options {
 const cfg = (window as unknown as { shipStaticSearch?: Config }).shipStaticSearch;
 
 let indexPromise: Promise<Prepared[] | null> | null = null;
+/** The index couldn't be loaded: forms behave as if never upgraded. */
+let indexFailed = false;
 let uid = 0;
 
 /** Lower-case and strip accents ("Café" → "cafe"). */
@@ -78,7 +87,11 @@ function loadIndex(): Promise<Prepared[] | null> {
           text: fold(page.x || ''),
         }));
       })
-      .catch(() => null);
+      .catch(() => null)
+      .then((pages) => {
+        if (!pages) indexFailed = true;
+        return pages;
+      });
   }
   return indexPromise;
 }
@@ -307,13 +320,19 @@ function enhance(form: HTMLFormElement, input: HTMLInputElement): void {
     }
   });
 
-  // There is no server to answer /?s= on a static site: Enter opens the
-  // highlighted result, or the best one.
+  // Enter opens the highlighted result, or the best one. With nothing to
+  // open, the static site has no server to answer /?s= (so stay), while the
+  // live WordPress site does. No index at all: submit as normal.
   form.addEventListener('submit', (e) => {
-    e.preventDefault();
+    if (indexFailed) return;
     const target = results[active >= 0 ? active : 0];
-    if (target) window.location.href = target.u;
-    else run();
+    if (target) {
+      e.preventDefault();
+      window.location.href = target.u;
+    } else if (!cfg!.live) {
+      e.preventDefault();
+      run();
+    }
   });
 
   // Close on a press outside the form (mousedown: before focus moves).
@@ -324,7 +343,7 @@ function enhance(form: HTMLFormElement, input: HTMLInputElement): void {
 
 function init(): void {
   if (!cfg || !cfg.index) return;
-  const forms = document.querySelectorAll('form');
+  const forms = document.querySelectorAll(cfg.selector || 'form');
   for (let i = 0; i < forms.length; i++) {
     const form = forms[i] as HTMLFormElement;
     const input = form.querySelector('input[name="s"]') as HTMLInputElement | null;

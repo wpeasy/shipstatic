@@ -77,7 +77,7 @@ There's no limit — ShipStatic renders and syncs every page in your export.
 
 = Does search work on the static site? =
 
-Yes, once you turn on **Site search** in ShipStatic → Settings, then Process and Sync. Every search box (WordPress, Bricks' Search element, or the ShipStatic Search element) then searches the destination's own index right in the browser, with results as you type. Each destination's index has its own text replacements and addresses. The live WordPress site keeps its normal search.
+Yes, once you turn on **Site search** in ShipStatic → Settings, then Process and Sync. Every search box (WordPress, Bricks' Search element, or the ShipStatic Search element) then searches the destination's own index right in the browser, with results as you type. Each destination's index has its own text replacements and addresses. The live WordPress site keeps its normal search, unless you also turn on **Use ShipStatic search on the WordPress site too**: the ShipStatic Search element then searches as you type there as well, from the pages in your last Process.
 
 = Which connections are supported? =
 
