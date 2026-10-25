@@ -10,6 +10,8 @@ import type {
   MediaItem,
   PagesOverview,
   ScheduleSettings,
+  LockdownProbe,
+  LockdownSettings,
   Preflight,
   ReplacementPage,
   VideoItem,
@@ -107,6 +109,11 @@ export const api = {
   getSchedule: () => request<ScheduleSettings>('/schedule'),
   saveSchedule: (data: Partial<Pick<ScheduleSettings, 'enabled' | 'period' | 'all' | 'destinations'>>) =>
     request<ScheduleSettings>('/schedule', 'POST', data),
+  getLockdown: () => request<LockdownSettings>('/lockdown'),
+  saveLockdown: (data: { enabled?: boolean; add?: { cidr: string; label: string }; remove?: string; redirect?: string; notify?: boolean }) =>
+    request<LockdownSettings>('/lockdown', 'POST', data),
+  newLockdownLink: () => request<LockdownSettings>('/lockdown/key', 'POST', {}),
+  probeLockdown: () => request<LockdownProbe>('/lockdown/probe', 'POST', {}),
   serverCheck: (dest: string) => request<ServerCheck>(`/sync/server-check?dest=${encodeURIComponent(dest)}`),
   getMedia: (page = '') =>
     request<{ pages: ReplacementPage[]; page: string; media: MediaItem[] }>(

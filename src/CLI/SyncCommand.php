@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\CLI;
 
 use WPEasy\ShipStatic\Deploy\ConnectorScript;
+use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
+use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\Settings\Destinations;
 use WPEasy\ShipStatic\Sync\Runner;
 use WPEasy\ShipStatic\Transport\CloudflareTransport;
@@ -505,6 +507,111 @@ final class SyncCommand {
         }
 
         \WP_CLI::error('Unknown action: ' . $action);
+    }
+
+    /**
+     * Lock this WordPress site to its allowed addresses, or get back in. See
+     * docs/LOCKDOWN_PLAN.md. WP-CLI itself is never locked out.
+     *
+     * ## OPTIONS
+     *
+     * <action>
+     * : What to do.
+     * ---
+     * options:
+     *   - status
+     *   - on
+     *   - off
+     *   - allow
+     *   - remove
+     *   - link
+     * ---
+     *
+     * [<address>]
+     * : For `allow` / `remove`: an IP address or range (203.0.113.7, 203.0.113.0/24, 2001:db8::/64).
+     *
+     * [--label=<text>]
+     * : For `allow`: a label for the address.
+     *
+     * [--regenerate]
+     * : For `link`: make a new unlock link (the old one and every unlock cookie stop working).
+     *
+     * ## EXAMPLES
+     *
+     *     wp shipstatic lockdown status
+     *     wp shipstatic lockdown allow 203.0.113.7 --label="Office"
+     *     wp shipstatic lockdown off
+     *
+     * @param array<int,string>    $args       [action, address].
+     * @param array<string,string> $assoc_args Flags.
+     * @when after_wp_load
+     */
+    public function lockdown(array $args, array $assoc_args): void {
+        $action = (string) ($args[0] ?? 'status');
+
+        switch ($action) {
+            case 'status':
+                $s = LockdownSettings::get();
+                \WP_CLI::log('Lockdown: ' . ($s['enabled'] ? 'on' : 'off'));
+                foreach ($s['entries'] as $e) {
+                    \WP_CLI::log(sprintf('  %-24s %-8s %s', $e['cidr'], $e['via'], $e['label']));
+                }
+                foreach (LockdownWriter::layers() as $layer => $state) {
+                    \WP_CLI::log(sprintf('  %-9s %s', $layer, $state));
+                }
+                if (LockdownWriter::environment()['server'] === '') {
+                    \WP_CLI::warning('The server type is not known yet: open the Lockdown tab once so .htaccess / .user.ini can be written.');
+                }
+                return;
+
+            case 'on':
+                if (LockdownSettings::cidrs() === []) {
+                    \WP_CLI::error('Add an address first (`lockdown allow <address>`): from the command line there is no visitor address to add.');
+                }
+                LockdownSettings::key();
+                LockdownSettings::update(['enabled' => true]);
+                break;
+
+            case 'off':
+                LockdownSettings::update(['enabled' => false]);
+                break;
+
+            case 'allow':
+            case 'remove':
+                $cidr = LockdownSettings::validate_cidr((string) ($args[1] ?? ''));
+                if (is_wp_error($cidr)) {
+                    \WP_CLI::error($cidr->get_error_message());
+                }
+                if ($action === 'allow') {
+                    LockdownSettings::add_entry($cidr, (string) ($assoc_args['label'] ?? ''), 'cli');
+                } elseif (!LockdownSettings::remove_entry($cidr)) {
+                    \WP_CLI::error($cidr . ' is not on the list.');
+                }
+                break;
+
+            case 'link':
+                if (!empty($assoc_args['regenerate'])) {
+                    LockdownSettings::regenerate_key();
+                    $this->lockdown_apply();
+                }
+                \WP_CLI::log(LockdownSettings::unlock_url());
+                return;
+
+            default:
+                \WP_CLI::error('Unknown action: ' . $action);
+        }
+
+        $this->lockdown_apply();
+        \WP_CLI::success('Lockdown is ' . (LockdownSettings::enabled() ? 'on' : 'off') . '.');
+    }
+
+    /**
+     * Write or remove the Lockdown files, reporting problems.
+     */
+    private function lockdown_apply(): void {
+        foreach (LockdownWriter::apply() as $problem) {
+            \WP_CLI::warning($problem);
+        }
     }
 
     /**

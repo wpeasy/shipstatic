@@ -13,3 +13,6 @@ Site search that works on the static site, with a **ShipStatic Search** element 
 
 ### New
 Scheduled syncs (hourly, daily, weekly or monthly), and one-click syncing of a single page from the pages list, the front end or the Bricks builder.
+
+### New
+Lockdown: once your visitors use the static site, lock the WordPress site to your editors' IP addresses and send everyone else to the same page on the static site. An unlock link gets you back in if your address changes.

@@ -42,6 +42,7 @@ Bricks isn't required. Rendering is builder-agnostic: ShipStatic captures whatev
 * Favicon and asset handling
 * "Sync this page" floating button for single-page pushes
 * **Scheduled sync** — Process and Sync automatically every hour, day, week or month, to all destinations or the ones you pick
+* **Lockdown** — lock the WordPress site to your editors' IP addresses and send everyone else to the static site, with an unlock link for when your address changes
 * WP-CLI command for reliable syncs on any host
 
 = Credits =
@@ -83,6 +84,10 @@ Yes, once you turn on **Site search** in ShipStatic → Settings, then Process a
 
 SFTP, FTP and explicit-TLS FTPS; the Connector (signed HTTPS to a small receiver file you upload once); Cloudflare; and GitHub Pages. SFTP uses a bundled pure-PHP library, so no special server extensions are required.
 
+= What files does Lockdown write? =
+
+Lockdown is off by default. When you turn it on, it writes `wp-content/shipstatic-lockdown.php` (the check that decides who gets in) and `wp-content/mu-plugins/shipstatic-lockdown.php` (which runs that check inside WordPress), plus a marked block at the top of `.htaccess` on Apache and LiteSpeed, or in `.user.ini` on nginx and other FastCGI hosts. Turning Lockdown off or deactivating the plugin removes them all. On hosts using `.user.ini`, the check file is left as an empty stub for 10 minutes first, because PHP keeps reading `.user.ini` from its cache for up to 5 minutes.
+
 = Why does the plugin run shell commands? =
 
 Only to start its own WP-CLI commands (`wp shipstatic …`) as background processes, so a long sync keeps running after the admin page request ends and several destinations can deploy in parallel. The commands are built from fixed internal paths and arguments, never from request input. When `exec()`/`proc_open()` are disabled on the host, the plugin falls back to running the sync in the browser.
@@ -117,4 +122,5 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 * Per-destination Text, Media, Links and Videos replacements, with each destination's own sub-path.
 * Site search for the static site, with a fully styleable ShipStatic Search element for Bricks and a [shipstatic_search] shortcode.
 * Scheduled syncs (hourly, daily, weekly or monthly), single-page sync from the admin, the front end and the Bricks builder, gzip pre-compression, remote pruning, sitemap.xml and robots.txt generation.
+* Lockdown: lock the WordPress site to your editors' IP addresses and send everyone else to the static site, with an unlock link for when your address changes.
 * Translations: French, German, Italian, Spanish and Dutch.

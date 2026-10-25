@@ -16,6 +16,9 @@ use WPEasy\ShipStatic\Admin\Menu;
 use WPEasy\ShipStatic\Export\ExportDownload;
 use WPEasy\ShipStatic\Frontend\Fab;
 use WPEasy\ShipStatic\Frontend\Search;
+use WPEasy\ShipStatic\Lockdown\Guard;
+use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
+use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\REST\ScheduleController;
 use WPEasy\ShipStatic\Sync\Scheduler;
 use WPEasy\ShipStatic\Render\LinkDeployReplacer;
@@ -31,6 +34,7 @@ use WPEasy\ShipStatic\REST\DestinationsController;
 use WPEasy\ShipStatic\REST\EditorController;
 use WPEasy\ShipStatic\REST\ExportController;
 use WPEasy\ShipStatic\REST\LinksController;
+use WPEasy\ShipStatic\REST\LockdownController;
 use WPEasy\ShipStatic\REST\MediaController;
 use WPEasy\ShipStatic\REST\SitemapController;
 use WPEasy\ShipStatic\REST\StatusController;
@@ -58,10 +62,14 @@ final class Plugin {
 
     /**
      * Runs on plugin deactivation: remove the scheduled-sync cron events (the
-     * settings are kept, and activate() puts the event back).
+     * settings are kept, and activate() puts the event back) and every
+     * Lockdown file. Lockdown is left off, so reactivating never re-locks the
+     * site without anyone noticing.
      */
     public static function deactivate(): void {
         Scheduler::unschedule();
+        LockdownSettings::update(['enabled' => false]);
+        LockdownWriter::remove_all();
     }
 
     /**
@@ -70,6 +78,10 @@ final class Plugin {
     public static function init(): void {
         // Migrate the legacy single destination into the destinations list once.
         Destinations::ensure_migrated();
+
+        // Lockdown first: it may answer the request (check, unlock link) itself.
+        Guard::init();
+        add_action(LockdownWriter::CLEANUP_HOOK, [LockdownWriter::class, 'cleanup']);
 
         self::register_pipeline();
 
@@ -196,5 +208,6 @@ final class Plugin {
         VideosController::register();
         SitemapController::register();
         ScheduleController::register();
+        LockdownController::register();
     }
 }

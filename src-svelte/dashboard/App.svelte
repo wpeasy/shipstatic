@@ -17,6 +17,7 @@
   import ExportProgress from './ExportProgress.svelte';
   import ServerConfigPanel from './ServerConfigPanel.svelte';
   import SchedulePanel from './SchedulePanel.svelte';
+  import LockdownPanel from './LockdownPanel.svelte';
   import SettingsDrawer from './SettingsDrawer.svelte';
   import SetupWizard from './SetupWizard.svelte';
   import { uiPrefs, themeAttr, accentAttr } from '../shared/uiPrefs.svelte';
@@ -484,6 +485,7 @@
       { value: 'destinations', label: __('tabDestinations') },
       { value: 'server', label: __('tabServerConfig') },
       { value: 'schedule', label: __('tabSchedule') },
+      { value: 'lockdown', label: __('tabLockdown') },
     ]}
   >
     {#snippet panel(tab)}
@@ -558,6 +560,8 @@
           </div>
         {:else if tab === 'schedule'}
           <SchedulePanel {destinations} />
+        {:else if tab === 'lockdown'}
+          <LockdownPanel {destinations} />
         {:else}
           <div class="bs-panels">
             <MethodPanel method={status?.method ?? null} mode={status?.discoveryMode} />
