@@ -36,6 +36,13 @@ final class LiveIndex {
     private const TRANSIENT = 'shipstatic_live_search_index';
 
     /**
+     * What each rendered page is — relative path => "post:<id>", "term:<id>",
+     * "home", "archive" or "none" — as the render request reported it
+     * (PageRenderer::OBJECT_HEADER). Written by the Runner at the end of a render.
+     */
+    public const OBJECTS_OPTION = 'shipstatic_render_objects';
+
+    /**
      * Whether the live site uses ShipStatic search.
      */
     public static function enabled(): bool {
@@ -56,6 +63,26 @@ final class LiveIndex {
      */
     public static function chosen(): bool {
         return get_option(self::OPTION, '0') === '1';
+    }
+
+    /**
+     * Save what each page of a render is (see OBJECTS_OPTION).
+     *
+     * @param array<string,string> $objects Relative path => object.
+     * @param bool                 $merge   Single-page render: merge into the stored map.
+     */
+    public static function save_objects(array $objects, bool $merge): void {
+        $clean = [];
+        foreach ($objects as $relative => $object) {
+            if (preg_match('/^(post|term):\d+$|^(home|archive|none)$/', (string) $object)) {
+                $clean[(string) $relative] = (string) $object;
+            }
+        }
+        if ($merge) {
+            $stored = get_option(self::OBJECTS_OPTION, []);
+            $clean  = array_merge(is_array($stored) ? $stored : [], $clean);
+        }
+        update_option(self::OBJECTS_OPTION, $clean, false);
     }
 
     /**
@@ -80,11 +107,13 @@ final class LiveIndex {
      *
      * @param array<string,array{size:int,hash:string,src?:string}> $render Render manifest.
      * @param string                                                $served Site's home path ("" or "/sub").
-     * @return array<int,array<string,mixed>> Records, each with an internal `id` (post id, 0 if none).
+     * @return array<int,array<string,mixed>> Records, each with an internal `o` (what the page is, see OBJECTS_OPTION).
      */
     private static function records(array $render, string $served): array {
         $pages = array_filter($render, static fn($meta, $rel): bool => strtolower((string) pathinfo((string) $rel, PATHINFO_EXTENSION)) === 'html', ARRAY_FILTER_USE_BOTH);
-        $key   = md5((string) wp_json_encode([IndexBuilder::VERSION, $served, array_map(static fn(array $m): string => (string) $m['hash'], $pages)]));
+        $objects = get_option(self::OBJECTS_OPTION, []);
+        $objects = is_array($objects) ? $objects : [];
+        $key     = md5((string) wp_json_encode([IndexBuilder::VERSION, $served, array_map(static fn(array $m): string => (string) $m['hash'], $pages), $objects]));
 
         $cached = get_transient(self::TRANSIENT);
         if (is_array($cached) && ($cached['key'] ?? '') === $key && is_array($cached['records'] ?? null)) {
@@ -103,8 +132,11 @@ final class LiveIndex {
             $html   = Url::rebase((string) file_get_contents($src), $served);
             $record = IndexBuilder::record($html, (string) $relative, $served);
             if ($record !== null) {
-                $record['id'] = url_to_postid(home_url('/' . preg_replace('#(^|/)index\.html$#i', '$1', ltrim((string) $relative, '/'))));
-                $records[]    = $record;
+                // What the page is, as its render reported it. Never resolved from
+                // the URL here: this runs in a visitor's request, where a private or
+                // draft post doesn't resolve and would look like an archive.
+                $record['o'] = (string) ($objects[$relative] ?? '');
+                $records[]   = $record;
             }
         }
         usort($records, static fn(array $a, array $b): int => strcmp((string) $a['u'], (string) $b['u']));
@@ -116,27 +148,42 @@ final class LiveIndex {
 
     /**
      * Keep pages still public now: a post unpublished, made private or
-     * password-protected since the last Process is left out. Pages that aren't
-     * a single post (home, archives) stay.
+     * password-protected since the last Process — or deleted — is left out,
+     * and so is a deleted term's archive. Fails closed: a page whose render
+     * didn't report what it is (a render from before this was recorded) is
+     * left out until the next Process.
      *
-     * @param array<int,array<string,mixed>> $records Records with `id`.
-     * @return array<int,array<string,mixed>> Records without `id`.
+     * @param array<int,array<string,mixed>> $records Records with `o`.
+     * @return array<int,array<string,mixed>> Records without `o`.
      */
     private static function published(array $records): array {
-        $ids = array_values(array_filter(array_map(static fn(array $r): int => (int) ($r['id'] ?? 0), $records)));
+        $ids = [];
+        foreach ($records as $record) {
+            if (preg_match('/^post:(\d+)$/', (string) ($record['o'] ?? ''), $m)) {
+                $ids[] = (int) $m[1];
+            }
+        }
         if ($ids !== []) {
             _prime_post_caches($ids, false, false);
         }
 
         $out = [];
         foreach ($records as $record) {
-            $id = (int) ($record['id'] ?? 0);
-            unset($record['id']);
-            if ($id > 0) {
-                $post = get_post($id);
+            $object = (string) ($record['o'] ?? '');
+            unset($record['o']);
+
+            if (preg_match('/^post:(\d+)$/', $object, $m)) {
+                $post = get_post((int) $m[1]);
                 if ($post === null || $post->post_status !== 'publish' || $post->post_password !== '' || !is_post_publicly_viewable($post)) {
                     continue;
                 }
+            } elseif (preg_match('/^term:(\d+)$/', $object, $m)) {
+                $term = get_term((int) $m[1]);
+                if (!$term instanceof \WP_Term) {
+                    continue;
+                }
+            } elseif (!in_array($object, ['home', 'archive'], true)) {
+                continue;
             }
             $out[] = $record;
         }

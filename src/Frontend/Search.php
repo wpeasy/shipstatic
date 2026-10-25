@@ -132,7 +132,7 @@ final class Search {
         // the page (the export rewrites it per destination).
         wp_add_inline_script(
             self::SCRIPT_HANDLE,
-            'window.shipStaticSearch = ' . wp_json_encode($config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';',
+            'window.shipStaticSearch = ' . wp_json_encode($config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . ';',
             'before'
         );
     }

@@ -39,22 +39,26 @@ final class VideoReplacer {
             '#<(iframe|video|source)\b[^>]*>#i',
             static function (array $m) use ($swaps, $dest_base): string {
                 $tag = $m[0];
-                $raw = self::attr($tag, 'src');
-                if ($raw === '') {
-                    return $tag; // e.g. a <video> that uses <source> children.
-                }
-                // Decode entities so &amp;-laden query strings match the stored key.
-                $src = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5);
+                // `src`, and `data-src` on lazy-loaded embeds (Bricks), each on its own.
+                foreach (['src', 'data-src'] as $name) {
+                    $raw = TagAttr::get($tag, $name);
+                    if ($raw === '') {
+                        continue; // e.g. a <video> that uses <source> children.
+                    }
+                    // Decode entities so &amp;-laden query strings match the stored key.
+                    $src = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5);
 
-                if (isset($swaps[$src])) {
-                    return self::set_attr($tag, 'src', $swaps[$src]);
-                }
+                    if (isset($swaps[$src])) {
+                        $tag = TagAttr::set($tag, $name, $swaps[$src]);
+                        continue;
+                    }
 
-                // Embed-origin fix applies to iframes only (local files have no origin).
-                if (strtolower($m[1]) === 'iframe' && $dest_base !== '') {
-                    $fixed = self::fix_origin($src, $dest_base);
-                    if ($fixed !== $src) {
-                        return self::set_attr($tag, 'src', $fixed);
+                    // Embed-origin fix applies to iframes only (local files have no origin).
+                    if (strtolower($m[1]) === 'iframe' && $dest_base !== '') {
+                        $fixed = self::fix_origin($src, $dest_base);
+                        if ($fixed !== $src) {
+                            $tag = TagAttr::set($tag, $name, $fixed);
+                        }
                     }
                 }
 
@@ -101,30 +105,5 @@ final class VideoReplacer {
         }
 
         return str_replace($search, $replace, $url);
-    }
-
-    /**
-     * Read an attribute value (raw, as in the HTML).
-     */
-    private static function attr(string $tag, string $name): string {
-        if (preg_match('#\b' . preg_quote($name, '#') . '\s*=\s*("([^"]*)"|\'([^\']*)\')#i', $tag, $m)) {
-            return $m[2] !== '' ? $m[2] : ($m[3] ?? '');
-        }
-
-        return '';
-    }
-
-    /**
-     * Set (replace, or add if missing) a double-quoted attribute.
-     */
-    private static function set_attr(string $tag, string $name, string $value): string {
-        $value   = esc_attr($value);
-        $pattern = '#\b' . preg_quote($name, '#') . '\s*=\s*("[^"]*"|\'[^\']*\')#i';
-
-        if (preg_match($pattern, $tag)) {
-            return (string) preg_replace($pattern, $name . '="' . $value . '"', $tag, 1);
-        }
-
-        return (string) preg_replace('#\s*/?>$#', ' ' . $name . '="' . $value . '"$0', $tag, 1);
     }
 }

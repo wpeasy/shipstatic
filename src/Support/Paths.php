@@ -120,6 +120,12 @@ final class Paths {
             return null;
         }
 
+        // Never the plugin's own cache folder: its renders, packages, exports
+        // and manifest are not site assets (the folder denies web access, but a
+        // file read from disk would bypass that).
+        $cache = realpath(self::cache_dir());
+        $cache = $cache === false ? '' : trailingslashit(wp_normalize_path($cache));
+
         foreach (self::url_dir_map() as [$url_prefix, $dir]) {
             if ($url_prefix === '' || strpos($path, $url_prefix) !== 0) {
                 continue;
@@ -133,6 +139,9 @@ final class Paths {
             }
 
             $file = wp_normalize_path($file);
+            if ($cache !== '' && strpos($file, $cache) === 0) {
+                return null;
+            }
             if (strpos($file, trailingslashit(wp_normalize_path($base))) === 0) {
                 return $file;
             }

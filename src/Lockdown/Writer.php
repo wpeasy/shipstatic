@@ -30,7 +30,7 @@ defined('ABSPATH') || exit;
 final class Writer {
 
     /** Bump when a template changes, so existing sites rewrite their files. */
-    public const VERSION = '2';
+    public const VERSION = '3';
 
     private const BEGIN = 'BEGIN ShipStatic Lockdown';
     private const END   = 'END ShipStatic Lockdown';
@@ -40,6 +40,9 @@ final class Writer {
 
     /** How long the stub stays: longer than PHP's default user_ini.cache_ttl (300 s). */
     private const STUB_SECONDS = 600;
+
+    /** Whether this server accepts RewriteOptions InheritDownBefore ('1' / '0'). */
+    private const INHERIT_OPTION = 'shipstatic_lockdown_inherit';
 
     /** Server facts, saved from a web request (WP-CLI can't see them). */
     public const ENV_OPTION = 'shipstatic_lockdown_env';
@@ -74,6 +77,7 @@ final class Writer {
         ];
         if (get_option(self::ENV_OPTION) !== $env) {
             update_option(self::ENV_OPTION, $env, false);
+            delete_option(self::INHERIT_OPTION); // A different server: test it again.
         }
     }
 
@@ -108,8 +112,9 @@ final class Writer {
     public static function uses_user_ini(): bool {
         $env = self::environment();
 
-        return !self::uses_htaccess()
-            && in_array($env['sapi'], ['fpm-fcgi', 'cgi-fcgi', 'cgi'], true)
+        // Also next to .htaccess (Apache + PHP-FPM): a sub-folder with its own
+        // rewrite rules can escape the .htaccess block, but never the gate.
+        return in_array($env['sapi'], ['fpm-fcgi', 'cgi-fcgi', 'cgi'], true)
             && self::user_ini_name() !== '';
     }
 
@@ -315,8 +320,24 @@ final class Writer {
             Settings::cidrs()
         );
 
+        // The path to redirect to, from REQUEST_URI rather than the rule's $1:
+        // $1 is relative to whichever folder's .htaccess runs (wrong in a
+        // sub-folder). This condition always matches, so it can never let a
+        // request through; it only captures the path below the home sub-path.
+        $home = untrailingslashit((string) wp_parse_url(home_url('/'), PHP_URL_PATH));
+        if (!preg_match('#^[A-Za-z0-9._~/-]*$#', $home)) {
+            throw new \RuntimeException('Unexpected characters in the home path.');
+        }
         $base = Settings::redirect_base();
-        $rule = $base !== '' ? 'RewriteRule ^(.*)$ ' . $base . '$1? [R=302,L]' : 'RewriteRule ^ - [F,L]';
+        $rule = $base !== ''
+            ? 'RewriteCond %{REQUEST_URI} ^' . ($home === '' ? '' : '(?:' . str_replace('.', '\\.', $home) . '(?=/|$))?') . '/?(.*)$' . "\n" . 'RewriteRule ^ ' . $base . '%1? [R=302,L]'
+            : 'RewriteRule ^ - [F,L]';
+
+        // Make sub-folders that have their own rewrite rules run these first
+        // (otherwise their RewriteEngine On replaces ours there). Apache 2.4.8+
+        // only — an unknown option is a 500 for the whole site — so it's used
+        // only when a test folder showed this server accepts it.
+        $inherit = self::inherit_supported() ? 'RewriteOptions InheritDownBefore' : '';
 
         return strtr(self::template('htaccess.txt'), [
             '__BS_TOKEN__'       => $token,
@@ -325,6 +346,7 @@ final class Writer {
             '__BS_COOKIE__'      => Settings::cookie_value(),
             '__BS_IPS__'         => implode("\n", $ips),
             '__BS_RULE__'        => $rule,
+            '__BS_INHERIT__'     => $inherit,
         ]);
     }
 
@@ -348,10 +370,57 @@ final class Writer {
 
         $base    = Settings::redirect_base();
         $lines[] = $base !== ''
-            ? 'if ($shipstatic_locked) { return 302 ' . untrailingslashit($base) . '$uri; }'
+            // $request_uri, never $uri: nginx decodes $uri, so "%0d%0a" in a path
+            // would become a real line break in the Location header.
+            ? 'if ($shipstatic_locked) { return 302 ' . untrailingslashit($base) . '$request_uri; }'
             : 'if ($shipstatic_locked) { return 403; }';
 
         return implode("\n", $lines) . "\n";
+    }
+
+    /**
+     * Whether this Apache accepts `RewriteOptions InheritDownBefore`: writes a
+     * throwaway uploads sub-folder whose .htaccess uses it, requests a file
+     * there, and keeps the answer (until the server changes). Apache only —
+     * LiteSpeed's support is unknown, so it never gets the option.
+     */
+    private static function inherit_supported(): bool {
+        if (self::environment()['server'] !== 'apache') {
+            return false;
+        }
+        $known = get_option(self::INHERIT_OPTION, '');
+        if ($known === '1' || $known === '0') {
+            return $known === '1';
+        }
+
+        $uploads = wp_upload_dir(null, false);
+        $name    = 'shipstatic-probe-' . wp_generate_password(12, false, false);
+        $dir     = trailingslashit((string) $uploads['basedir']) . $name;
+        $ok      = false;
+        if (empty($uploads['error']) && wp_mkdir_p($dir)
+            && file_put_contents($dir . '/.htaccess', "RewriteEngine On\nRewriteOptions InheritDownBefore\n") !== false
+            && file_put_contents($dir . '/probe.txt', 'ok') !== false) {
+            $args     = PageRenderer::request_args();
+            $args['redirection'] = 0;
+            $args['timeout']     = 10;
+            $response = wp_remote_get(trailingslashit((string) $uploads['baseurl']) . $name . '/probe.txt', $args);
+            $ok       = !is_wp_error($response)
+                && (int) wp_remote_retrieve_response_code($response) === 200
+                && trim((string) wp_remote_retrieve_body($response)) === 'ok';
+        }
+        foreach (['/probe.txt', '/.htaccess'] as $file) {
+            if (file_exists($dir . $file)) {
+                wp_delete_file($dir . $file);
+            }
+        }
+        if (is_dir($dir)) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- removes the empty throwaway test folder created above.
+            rmdir($dir);
+        }
+
+        update_option(self::INHERIT_OPTION, $ok ? '1' : '0', false);
+
+        return $ok;
     }
 
     /**

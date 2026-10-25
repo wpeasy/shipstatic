@@ -219,6 +219,8 @@ final class ExportRunner {
         $job->data['packTotal']  = count($files);
         $job->data['finalName']  = self::build_filename((string) $dest->get('name'));
         $job->data['zipTmpPath'] = Paths::export_dir() . '/.tmp-' . wp_generate_password(12, false, false) . '.zip';
+        $job->data['gzDir']      = Paths::export_dir() . '/.gz-' . wp_generate_password(12, false, false);
+        $job->data['gz']         = [];
 
         $job->data['phase']   = $gzip_total > 0 ? 'gzip' : 'packaging';
         $job->data['message'] = sprintf(
@@ -251,7 +253,19 @@ final class ExportRunner {
             if (Compressor::is_compressible($relative)) {
                 $src = (string) ($job->data['manifest'][$relative]['src'] ?? '');
                 if ($src !== '' && is_file($src)) {
-                    Compressor::write_sibling($src);
+                    if (self::in_cache($src)) {
+                        // Our own render/deploy copy: its sibling lives with it.
+                        Compressor::write_sibling($src);
+                        $job->data['gz'][$relative] = $src . '.gz';
+                    } else {
+                        // A theme/plugin/core file read in place: never write (or
+                        // delete) next to it — compress into this export's own folder.
+                        $dir = (string) $job->data['gzDir'];
+                        $gz  = $dir . '/' . md5($relative) . '.gz';
+                        if (wp_mkdir_p($dir) && Compressor::gzip_to($src, $gz)) {
+                            $job->data['gz'][$relative] = $gz;
+                        }
+                    }
                 }
                 $job->data['gzipDone']++;
             }
@@ -309,8 +323,10 @@ final class ExportRunner {
             if ($src !== '' && is_file($src)) {
                 $zip->addFile($src, $entry);
 
-                if (Compressor::is_compressible($relative) && is_file($src . '.gz')) {
-                    $zip->addFile($src . '.gz', $entry . '.gz');
+                // Only a .gz this export made (never a stale one beside a source file).
+                $gz = (string) ($job->data['gz'][$relative] ?? '');
+                if ($gz !== '' && is_file($gz)) {
+                    $zip->addFile($gz, $entry . '.gz');
                 }
             }
 
@@ -352,6 +368,7 @@ final class ExportRunner {
 
         $job->data['finalPath'] = $final;
         $job->data['bytes']     = (int) filesize($final);
+        self::remove_gz_dir($job);
 
         self::cleanup_stale_exports();
 
@@ -408,6 +425,16 @@ final class ExportRunner {
                 wp_delete_file($file);
             }
         }
+        // Temp .gz folders left by an export that crashed mid-way.
+        foreach ((array) glob($dir . '/.gz-*', GLOB_ONLYDIR) as $gz_dir) {
+            if ((time() - (int) filemtime((string) $gz_dir)) > 2 * HOUR_IN_SECONDS) {
+                foreach ((array) glob($gz_dir . '/*.gz') as $file) {
+                    wp_delete_file((string) $file);
+                }
+                // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- removes an emptied temp folder inside the plugin's export dir.
+                @rmdir((string) $gz_dir);
+            }
+        }
     }
 
     /**
@@ -420,6 +447,37 @@ final class ExportRunner {
         if ($tmp !== '' && is_file($tmp)) {
             wp_delete_file($tmp);
         }
+        self::remove_gz_dir($job);
+    }
+
+    /**
+     * Remove this export's temporary .gz folder (see tick_gzip()).
+     *
+     * @param ExportJob $job Active job.
+     */
+    private static function remove_gz_dir(ExportJob $job): void {
+        $dir = (string) ($job->data['gzDir'] ?? '');
+        if ($dir === '' || strpos(basename($dir), '.gz-') !== 0 || !is_dir($dir)) {
+            return;
+        }
+        foreach ((array) glob($dir . '/*.gz') as $file) {
+            wp_delete_file((string) $file);
+        }
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- removes this export's emptied temp folder.
+        @rmdir($dir);
+    }
+
+    /**
+     * Whether a file is inside the plugin's own cache folder.
+     *
+     * @param string $path Absolute path.
+     */
+    private static function in_cache(string $path): bool {
+        $cache = realpath(Paths::cache_dir());
+        $file  = realpath($path);
+
+        return $cache !== false && $file !== false
+            && strpos(wp_normalize_path($file), trailingslashit(wp_normalize_path($cache))) === 0;
     }
 
     /**

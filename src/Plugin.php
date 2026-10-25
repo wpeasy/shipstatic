@@ -114,6 +114,11 @@ final class Plugin {
             add_action('init', [self::class, 'prepare_render_output']);
         }
 
+        // Tell our own render requests what they rendered (see PageRenderer::OBJECT_HEADER).
+        if (PageRenderer::is_trusted_render_request()) {
+            add_action('template_redirect', [self::class, 'announce_render_object'], 0);
+        }
+
         // Let our own render requests through Bricks' maintenance / coming-soon
         // mode. Registered before `wp` (where Bricks applies it at priority 9).
         add_filter('bricks/maintenance/should_apply', [self::class, 'allow_render_through_maintenance']);
@@ -168,6 +173,28 @@ final class Plugin {
          * @param bool $bypass Whether to bypass.
          */
         return apply_filters('shipstatic_bypass_maintenance', true) ? false : (bool) $apply;
+    }
+
+    /**
+     * Send PageRenderer::OBJECT_HEADER for a trusted render request: what the
+     * page is, from the main query. Values are built from ints and constants.
+     */
+    public static function announce_render_object(): void {
+        if (headers_sent()) {
+            return;
+        }
+        if (is_singular()) {
+            $object = 'post:' . (int) get_queried_object_id();
+        } elseif (is_category() || is_tag() || is_tax()) {
+            $object = 'term:' . (int) get_queried_object_id();
+        } elseif (is_front_page() || is_home()) {
+            $object = 'home';
+        } elseif (is_404()) {
+            $object = 'none';
+        } else {
+            $object = 'archive'; // Post-type, author, date archives and similar.
+        }
+        header(PageRenderer::OBJECT_HEADER . ': ' . $object);
     }
 
     /**

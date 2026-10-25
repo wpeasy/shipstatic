@@ -41,7 +41,7 @@ final class LinkReplacer {
                 // match the stored, decoded swap key.
                 // Keys are plain paths (LinkCollector strips the destination-base
                 // placeholder), so compare in the same form.
-                $href = Url::strip_base_token(html_entity_decode(self::attr($tag, 'href'), ENT_QUOTES | ENT_HTML5));
+                $href = Url::strip_base_token(html_entity_decode(TagAttr::get($tag, 'href'), ENT_QUOTES | ENT_HTML5));
                 if ($href === '' || !isset($swaps[$href])) {
                     return $tag;
                 }
@@ -54,34 +54,9 @@ final class LinkReplacer {
                     $to = Url::BASE_TOKEN . $to;
                 }
 
-                return self::set_attr($tag, 'href', $to);
+                return TagAttr::set($tag, 'href', $to);
             },
             $html
         );
-    }
-
-    /**
-     * Read an attribute value (raw, as in the HTML).
-     */
-    private static function attr(string $tag, string $name): string {
-        if (preg_match('#\b' . preg_quote($name, '#') . '\s*=\s*("([^"]*)"|\'([^\']*)\')#i', $tag, $m)) {
-            return $m[2] !== '' ? $m[2] : ($m[3] ?? '');
-        }
-
-        return '';
-    }
-
-    /**
-     * Set (replace, or add if missing) a double-quoted attribute.
-     */
-    private static function set_attr(string $tag, string $name, string $value): string {
-        $value   = esc_attr($value);
-        $pattern = '#\b' . preg_quote($name, '#') . '\s*=\s*("[^"]*"|\'[^\']*\')#i';
-
-        if (preg_match($pattern, $tag)) {
-            return (string) preg_replace($pattern, $name . '="' . $value . '"', $tag, 1);
-        }
-
-        return (string) preg_replace('#\s*/?>$#', ' ' . $name . '="' . $value . '"$0', $tag, 1);
     }
 }

@@ -437,6 +437,7 @@
             <li>{@html __('connectorNginx2')}</li>
             <li>{@html __('connectorNginx3')}</li>
             <li>{@html __('connectorNginx4')}</li>
+            <li>{@html __('connectorNginx5')}</li>
           </ul>
           <!-- eslint-enable svelte/no-at-html-tags -->
         </Collapsible>
