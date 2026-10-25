@@ -223,27 +223,40 @@
 
   // The exact CLI command for this run, shown if the auto-spawn doesn't start so
   // the user can run it by hand — targeting the same destination(s) they chose.
-  function buildRunCommand(type: 'check' | 'sync', dest: string, prune: boolean): string {
+  function buildRunCommand(type: 'check' | 'sync', dest: string, prune: boolean, changes = false): string {
     let cmd = status?.cli ?? 'wp shipstatic sync';
     if (type === 'check') cmd += ' --check';
+    if (changes) cmd += ' --changes';
     if (dest === 'all') cmd += ' --all';
     else if (dest) cmd += ` --dest=${dest}`;
     if (prune) cmd += ' --prune';
     return cmd;
   }
 
-  // Render the site for the current discovery mode so the included/excluded
-  // page list is accurate (no destination/upload — just refreshes the manifest).
-  async function processPages(): Promise<void> {
-    runCommand = buildRunCommand('check', '', false);
+  // Process all: render the site for the current discovery mode so the
+  // included/excluded page list is accurate (no upload — just refreshes the
+  // manifest). Takes no arguments on purpose: it's wired to onclick handlers,
+  // whose event argument must never turn it into "Process changes".
+  function processPages(): Promise<void> {
+    return runProcess(false);
+  }
+
+  async function runProcess(changes: boolean): Promise<void> {
+    runCommand = buildRunCommand('check', '', false, changes);
     checkResult = null; // a fresh render invalidates the last preview
     exportSnap = null; // a stale needsProcess/result no longer applies
     try {
-      sync = await api.syncStart('check', {});
+      sync = await api.syncStart('check', changes ? { changes: true } : {});
       await runActiveJob();
     } catch (e) {
       loadError = (e as Error).message;
     }
+  }
+
+  // "Process changes": only the content recorded as changed since the last
+  // Process all (see Docs → Process changes).
+  function processChanges(): Promise<void> {
+    return runProcess(true);
   }
 
   // Setup wizard: Finish closes the modal at once and, if the last step's
@@ -278,11 +291,11 @@
 
   // Confirmation lives in the Sync controls (ab-ui ConfirmButton), so by the time
   // we're here the user has already opted in.
-  async function startSync(dest: string, prune: boolean): Promise<void> {
-    runCommand = buildRunCommand('sync', dest, prune);
+  async function startSync(dest: string, prune: boolean, rerender = false): Promise<void> {
+    runCommand = buildRunCommand('sync', dest, prune) + (rerender ? ' --rerender' : '');
     checkResult = null; // the push changes what's in sync — drop the stale preview
     try {
-      sync = await api.syncStart('sync', { dest, prune });
+      sync = await api.syncStart('sync', rerender ? { dest, prune, rerender } : { dest, prune });
       await runActiveJob();
     } catch (e) {
       loadError = (e as Error).message;
@@ -452,8 +465,10 @@
         disabled={syncing}
         renderCurrent={status.renderCurrent}
         excludedPublished={status.excludedPublished}
+        changes={status.changes}
         onChange={setDiscoveryMode}
         onProcess={processPages}
+        onProcessChanges={processChanges}
       />
       <div class="bs-globalbar__notice">
         <NoticePanel isLocal={status.isLocal} cli={status.cli} wpCli={status.wpCli} inline />
@@ -518,8 +533,9 @@
                       running={syncing}
                       exporting={exporting}
                       renderCurrent={status?.renderCurrent ?? true}
-                      onSyncAll={(prune) => startSync('all', prune)}
-                      onSyncOne={(id, prune) => startSync(id, prune)}
+                      changesPending={status?.changes?.count ?? 0}
+                      onSyncAll={(prune, rerender) => startSync('all', prune, rerender)}
+                      onSyncOne={(id, prune, rerender) => startSync(id, prune, rerender)}
                       onExportOne={startExport}
                       onSelect={(id) => (activeTab = id)}
                     />

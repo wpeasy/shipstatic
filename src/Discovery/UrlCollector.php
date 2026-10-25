@@ -229,9 +229,21 @@ final class UrlCollector {
      * @param array<int,string> $rendered Relative paths present in the render manifest.
      */
     public static function published_excluded_count(array $rendered): int {
+        return count(self::published_excluded($rendered));
+    }
+
+    /**
+     * Published pages/posts that aren't in the render — for the replacers'
+     * page lists, which show them greyed out so it's clear why a page is
+     * missing (not linked from anything, or left out by the discovery mode).
+     *
+     * @param array<int,string> $rendered Relative paths in the render manifest.
+     * @return array<int,array{label:string,title:string}> Sorted by label.
+     */
+    public static function published_excluded(array $rendered): array {
         $types = self::public_post_types();
         if (empty($types)) {
-            return 0;
+            return [];
         }
 
         $ids = get_posts([
@@ -243,19 +255,26 @@ final class UrlCollector {
             'suppress_filters' => false,
         ]);
         if (empty($ids)) {
-            return 0;
+            return [];
         }
 
-        $have  = array_flip($rendered);
-        $count = 0;
+        $have = array_flip($rendered);
+        $out  = [];
         foreach ($ids as $pid) {
-            $rel = Url::to_relative_path((string) get_permalink((int) $pid));
-            if ($rel === null || !isset($have[$rel])) {
-                $count++;
+            $link = (string) get_permalink((int) $pid);
+            $rel  = Url::to_relative_path($link);
+            if ($rel !== null && isset($have[$rel])) {
+                continue;
             }
+            $path  = $rel !== null ? '/' . preg_replace('#/?index\.html$#i', '/', $rel) : (string) wp_parse_url($link, PHP_URL_PATH);
+            $out[] = [
+                'label' => $path === '/' ? '/' : rtrim($path, '/') . '/',
+                'title' => wp_strip_all_tags(get_the_title((int) $pid)),
+            ];
         }
+        usort($out, static fn(array $a, array $b): int => strcasecmp($a['label'], $b['label']));
 
-        return $count;
+        return $out;
     }
 
     /**

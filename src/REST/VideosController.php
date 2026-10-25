@@ -13,6 +13,8 @@ namespace WPEasy\ShipStatic\REST;
 use WP_REST_Request;
 use WP_REST_Response;
 use WPEasy\ShipStatic\Media\VideoCollector;
+use WPEasy\ShipStatic\Discovery\UrlCollector;
+use WPEasy\ShipStatic\Sync\Manifest;
 
 defined('ABSPATH') || exit;
 
@@ -56,6 +58,8 @@ final class VideosController {
 
         return new WP_REST_Response([
             'pages'  => VideoCollector::pages(),
+            // Published pages missing from the export, shown greyed out in the page list.
+            'excluded' => UrlCollector::published_excluded(array_keys(Manifest::load(Manifest::RENDER_OPTION))),
             'page'   => $page,
             'videos' => $page !== '' ? VideoCollector::collect($page) : [],
         ]);

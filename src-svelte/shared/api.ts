@@ -14,6 +14,7 @@ import type {
   LockdownSettings,
   Preflight,
   ReplacementPage,
+  ExcludedPage,
   VideoItem,
   ServerCheck,
   ServerConfig,
@@ -93,7 +94,7 @@ export const api = {
   removeDestination: (id: string) => request<DestinationsResponse>(`/destinations/${id}`, 'DELETE'),
   testDestination: (id: string, data: ConnectionInput) => request<TestResult>(`/destinations/${id}/test`, 'POST', data),
   packageTest: (id: string) => request<TestResult>(`/destinations/${id}/package-test`, 'POST', {}),
-  syncStart: (type: 'check' | 'sync', opts: { prune?: boolean; dest?: string } = {}) =>
+  syncStart: (type: 'check' | 'sync', opts: { prune?: boolean; dest?: string; changes?: boolean; rerender?: boolean } = {}) =>
     request<SyncSnapshot>('/sync/start', 'POST', { type, ...opts }),
   checkDestination: (id: string) => request<CheckPreview>(`/sync/check?dest=${encodeURIComponent(id)}`),
   syncTick: () => request<SyncSnapshot>('/sync/tick', 'POST', {}),
@@ -118,12 +119,12 @@ export const api = {
   probeLockdown: () => request<LockdownProbe>('/lockdown/probe', 'POST', {}),
   serverCheck: (dest: string) => request<ServerCheck>(`/sync/server-check?dest=${encodeURIComponent(dest)}`),
   getMedia: (page = '') =>
-    request<{ pages: ReplacementPage[]; page: string; media: MediaItem[] }>(
+    request<{ pages: ReplacementPage[]; excluded: ExcludedPage[]; page: string; media: MediaItem[] }>(
       `/media${page ? `?page=${encodeURIComponent(page)}` : ''}`,
     ),
   getLinks: () => request<{ links: LinkItem[] }>('/links'),
   getVideos: (page = '') =>
-    request<{ pages: ReplacementPage[]; page: string; videos: VideoItem[] }>(
+    request<{ pages: ReplacementPage[]; excluded: ExcludedPage[]; page: string; videos: VideoItem[] }>(
       `/videos${page ? `?page=${encodeURIComponent(page)}` : ''}`,
     ),
   exportStart: (dest: string) => request<ExportSnapshot>('/export/start', 'POST', { dest }),

@@ -190,7 +190,9 @@ final class Scheduler {
         }
 
         try {
-            $snapshot = Runner::start('sync', ['targets' => $targets]);
+            // Unattended: always a fresh full render, the safety net for changes
+            // the change tracker can't see.
+            $snapshot = Runner::start('sync', ['targets' => $targets, 'rerender' => true]);
         } catch (\Throwable $e) {
             self::record('error', $e->getMessage(), $targets);
             return;

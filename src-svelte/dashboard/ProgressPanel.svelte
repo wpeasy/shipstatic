@@ -159,8 +159,13 @@
     {#if snapshot.message}
       <p class="bs-progress__msg">{snapshot.message}</p>
     {/if}
+    {#if snapshot.reusedRender}
+      <p class="bs-progress__msg">{__f('reusedRenderNote', snapshot.reusedRenderAt ?? '')}</p>
+    {/if}
 
     <div class="bs-progress__bar-group">
+      <!-- No render bars when Sync reused the current render (nothing rendered). -->
+      {#if !snapshot.reusedRender}
       <div class="bs-progress__row">
         <span class="bs-progress__label">{__('lblPages')}</span>
         <Progress class="bs-progress__bar" value={pagesDone} max={Math.max(pagesTotal, 1)} tone={abTone} label={__('lblPages')} />
@@ -171,6 +176,7 @@
         <Progress class="bs-progress__bar" value={assetsDone} max={Math.max(assetsTotal, 1)} tone={abTone} label={__('lblAssets')} />
         <span class="bs-progress__num">{assetsDone}/{assetsTotal}</span>
       </div>
+      {/if}
       {#if isParallel}
         {#each parallelTargets as t (t.destId)}
           {@const terminal = t.status === 'done' || t.status === 'error' || t.status === 'cancelled'}

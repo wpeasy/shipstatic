@@ -150,6 +150,14 @@ final class SyncController {
         }
 
         $options = ['prune' => !empty($params['prune'])];
+        // Sync: re-render first even when the current render is up to date.
+        if ($type === 'sync' && !empty($params['rerender'])) {
+            $options['rerender'] = true;
+        }
+        // "Process changes": a Process (check) of only the recorded changes.
+        if ($type === 'check' && !empty($params['changes'])) {
+            $options['changes'] = true;
+        }
         $dest    = (string) ($params['dest'] ?? '');
         if ($type === 'sync') {
             if ($dest === 'all') {

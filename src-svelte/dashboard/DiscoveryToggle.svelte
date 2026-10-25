@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Button, Select, Table, Tabs, Tag, Tooltip } from '@wpeasy/ab-ui';
+  import { Button, ConfirmButton, Select, Table, Tabs, Tag, Tooltip } from '@wpeasy/ab-ui';
   import Modal from '../lib/Modal.svelte';
   import ListSkeleton from '../lib/ListSkeleton.svelte';
   import { api } from '../shared/api';
-  import type { DiscoveryMode, PageRef } from '../shared/types';
+  import type { DiscoveryMode, PageRef, Status } from '../shared/types';
   import { __, __f } from '../shared/i18n';
 
   let {
@@ -12,8 +12,10 @@
     renderCurrent = false,
     excludedPublished = 0,
     section = 'all',
+    changes = { count: 0, unlinked: [], sitewide: [] },
     onChange,
     onProcess,
+    onProcessChanges,
   }: {
     mode: DiscoveryMode;
     disabled?: boolean;
@@ -24,10 +26,28 @@
     /** Which half to render: `mode` (the select + help, in the Settings drawer),
         `actions` (Process / View list / excluded, on the toolbar), or `all`. */
     section?: 'mode' | 'actions' | 'all';
+    /** Recorded changes since the last Process all (offers "Process changes"). */
+    changes?: Status['changes'];
     onChange: (mode: DiscoveryMode) => void;
-    /** Run a render so the list becomes accurate (mode/content changed or none yet). */
+    /** Process all: run a full render so the list becomes accurate. */
     onProcess: () => void;
+    /** Process changes: render only the recorded changes. */
+    onProcessChanges?: () => void;
   } = $props();
+
+  const docsUrl = (window as unknown as { shipStaticData?: { docsUrl?: string } }).shipStaticData?.docsUrl ?? '';
+
+  const sitewideLabel: Record<string, string> = {
+    menus: __('swMenus'),
+    templates: __('swTemplates'),
+    bricks: __('swBricks'),
+    widgets: __('swWidgets'),
+    site: __('swSite'),
+    permalinks: __('swPermalinks'),
+    theme: __('swTheme'),
+    many: __('swMany'),
+  };
+  let sitewideText = $derived(changes.sitewide.map((r) => sitewideLabel[r] ?? r).join(', '));
 
   let helpOpen = $state(false);
 
@@ -105,8 +125,38 @@
       {/if}
     {:else}
       <Tooltip content={__('btnProcessHint')} placement="bottom">
-        <Button variant="secondary" size="sm" {disabled} onclick={onProcess}>{__('btnProcess')}</Button>
+        <Button variant="secondary" size="sm" {disabled} onclick={() => onProcess()}>{__('btnProcess')}</Button>
       </Tooltip>
+      {#if onProcessChanges && changes.count > 0}
+        <Tooltip content={__('btnProcessChangesHint')} placement="bottom">
+          <ConfirmButton
+            variant="ghost"
+            size="sm"
+            {disabled}
+            label={__f('btnProcessChanges', changes.count)}
+            confirmLabel={__('btnProcessChangesConfirm')}
+            onconfirm={() => onProcessChanges?.()}
+          />
+        </Tooltip>
+      {/if}
+      {#if changes.unlinked.length > 0}
+        <Tooltip content={__('unlinkedTip')} placement="bottom">
+          <Tag
+            size="sm"
+            tone="warning"
+            variant="soft"
+            label={changes.unlinked.length === 1 ? __f('unlinkedOne', changes.unlinked[0]) : __f('unlinkedMany', changes.unlinked.length)}
+          />
+        </Tooltip>
+      {/if}
+      {#if docsUrl && (changes.count > 0 || changes.unlinked.length > 0 || changes.sitewide.length > 0)}
+        <a class="bs-disc__doc" href={`${docsUrl}#process-changes`} target="_blank" rel="noopener noreferrer">{__('processChangesDoc')}</a>
+      {/if}
+      {#if changes.sitewide.length > 0}
+        <Tooltip content={__('sitewideTip')} placement="bottom">
+          <Tag size="sm" tone="warning" variant="soft" label={__f('sitewideChanged', sitewideText)} />
+        </Tooltip>
+      {/if}
     {/if}
   {/if}
 </div>
@@ -179,6 +229,10 @@
     align-items: center;
     flex-wrap: wrap;
     gap: var(--ab-space-2) var(--ab-space-3);
+  }
+
+  .bs-disc__doc {
+    font-size: var(--ab-text-sm);
   }
 
   .bs-disc__label {
