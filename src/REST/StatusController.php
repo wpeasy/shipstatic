@@ -17,6 +17,7 @@ use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Render\CompatibilityScanner;
 use WPEasy\ShipStatic\Settings\Destinations;
 use WPEasy\ShipStatic\Sync\ChangeTracker;
+use WPEasy\ShipStatic\Sync\ChangedContent;
 use WPEasy\ShipStatic\Sync\DeployPool;
 use WPEasy\ShipStatic\Support\Environment;
 use WPEasy\ShipStatic\Support\Paths;
@@ -114,6 +115,8 @@ final class StatusController {
                 && ChangeTracker::rendered_mode() === UrlCollector::mode(),
             // Published pages NOT in the export — surfaced beside "View list" so an
             // in-sync export never silently hides content the user just published.
+            // What "Process changes" would cover, and why Process all may be needed.
+            'changes'       => self::changes(),
             'excludedPublished' => $has_rendered
                 ? UrlCollector::published_excluded_count(array_keys($render))
                 : 0,
@@ -327,5 +330,21 @@ final class StatusController {
             'concurrentSyncs' => DeployPool::concurrency(),
             'wizardSeen'      => get_option('shipstatic_wizard_seen', '0') !== '0',
         ]);
+    }
+
+    /**
+     * What "Process changes" would do now: how many recorded changes it acts on,
+     * new pages it can't add without a link, and site-wide changes it ignores.
+     *
+     * @return array{count:int,unlinked:array<int,string>,sitewide:array<int,string>}
+     */
+    private static function changes(): array {
+        $plan = ChangeTracker::changed_ids() === [] ? null : ChangedContent::plan();
+
+        return [
+            'count'    => $plan === null ? 0 : ChangedContent::actionable($plan),
+            'unlinked' => $plan === null ? [] : $plan['unlinked'],
+            'sitewide' => ChangeTracker::sitewide_reasons(),
+        ];
     }
 }

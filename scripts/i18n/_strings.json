@@ -1047,10 +1047,79 @@
     "msgid": "View included/excluded pages"
   },
   {
-    "msgid": "Process"
+    "msgid": "Process all"
   },
   {
-    "msgid": "Render the site for the current mode so the page list is accurate."
+    "msgid": "Re-render every page. The safe choice: it picks up every change, including menus, templates and site settings."
+  },
+  {
+    "msgid": "Process changes (%d)"
+  },
+  {
+    "msgid": "Re-render only the content added, edited or unpublished since the last Process all, plus the lists that show it and new pages it links to. Site-wide changes (menus, templates, settings) are not checked: use Process all for those."
+  },
+  {
+    "msgid": "Changed content only?"
+  },
+  {
+    "msgid": "Re-render before syncing"
+  },
+  {
+    "msgid": "Every page is rendered again before uploading. Use it after plugin or theme updates, or changes the dashboard can’t see (other plugins’ settings, time-based content)."
+  },
+  {
+    "msgid": "The current render is up to date, so Sync uploads it straight away without rendering again. Tick Re-render if you changed something the dashboard can’t see."
+  },
+  {
+    "msgid": "Content has changed since the last Process, so Sync will render every page first. To render only what changed, use Process changes first."
+  },
+  {
+    "msgid": "The render is out of date, so Sync will render every page first."
+  },
+  {
+    "msgid": "Using the render from %s (no re-render)."
+  },
+  {
+    "msgid": "“%s” isn’t linked from the export yet"
+  },
+  {
+    "msgid": "%d new pages aren’t linked from the export yet"
+  },
+  {
+    "msgid": "With Pages to include set to “Only linked pages”, a page joins the export only when an exported page links to it. Add a link to it from an exported page, then use Process changes — or Process all."
+  },
+  {
+    "msgid": "How Process changes works"
+  },
+  {
+    "msgid": "Site-wide changes: %s. Use Process all."
+  },
+  {
+    "msgid": "These can change every page, which Process changes doesn’t check."
+  },
+  {
+    "msgid": "menus"
+  },
+  {
+    "msgid": "Bricks templates"
+  },
+  {
+    "msgid": "Bricks styles or settings"
+  },
+  {
+    "msgid": "widgets"
+  },
+  {
+    "msgid": "site settings"
+  },
+  {
+    "msgid": "permalinks"
+  },
+  {
+    "msgid": "theme"
+  },
+  {
+    "msgid": "many posts"
   },
   {
     "msgid": "View processed list"
@@ -1506,7 +1575,13 @@
     "msgid": "Image Replacer"
   },
   {
-    "msgid": "Select a page…"
+    "msgid": "Select a page, or type to filter…"
+  },
+  {
+    "msgid": "%s — not in the export"
+  },
+  {
+    "msgid": "%d published page(s) aren’t in the export, so they can’t be picked (shown greyed out). Link to them from an exported page, or change Pages to include in Settings, then Process."
   },
   {
     "msgid": "Select a page above to replace its images."
@@ -2005,6 +2080,18 @@
   },
   {
     "msgid": "An Export ZIP is currently running — wait for it to finish, then try again."
+  },
+  {
+    "msgid": "There is no up-to-date full render to add changes to yet. Use Process all."
+  },
+  {
+    "msgid": "Pages to include has changed since the last Process all, which affects the whole export. Use Process all."
+  },
+  {
+    "msgid": "Nothing to process yet: %s isn’t linked from any page in the export, and with Pages to include set to “Only linked pages” a page only joins the export through a link. Link to it from an exported page, then use Process changes (or Process all)."
+  },
+  {
+    "msgid": "No content changes are recorded since the last Process. Site-wide changes (menus, templates, settings) need Process all."
   },
   {
     "msgid": "site is in maintenance mode, or temporarily unavailable"

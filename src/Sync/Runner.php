@@ -76,6 +76,9 @@ final class Runner {
      */
     private const RENDER_FORMAT_OPTION = 'shipstatic_render_format';
 
+    /** When the render last finished (full or partial), for "Using the render from …". */
+    private const RENDER_AT_OPTION = 'shipstatic_render_at';
+
     /**
      * Where a destination's pre-existing .htaccess is preserved, once.
      */
@@ -104,7 +107,22 @@ final class Runner {
         $only   = trim((string) ($options['only'] ?? ''));
         $single = $only !== '';
 
-        if (!$single) {
+        // "Process changes": render only the posts ChangeTracker recorded (and
+        // what lists them / what they newly link to), merged into the existing
+        // render like a single-page run. See ChangedContent and Docs.
+        $partial = !$single && !empty($options['changes']);
+        $plan    = $partial ? self::partial_plan() : null;
+
+        // Sync reuses an up-to-date render (Process all / Process changes built
+        // it, nothing tracked has changed since) instead of rendering again.
+        // `rerender` forces a fresh full render — for changes the tracker can't
+        // see (plugin/theme updates, other plugins' options, time-based content);
+        // scheduled syncs always pass it.
+        if ($type === 'sync' && !$single && !$partial && empty($options['rerender']) && self::render_is_current()) {
+            return self::start_from_render($options);
+        }
+
+        if (!$single && !$partial) {
             self::reset_output();
         }
         Job::clear();
@@ -114,14 +132,14 @@ final class Runner {
 
         $job = Job::create($type);
         // Never prune on a single-page sync — it's incremental, not a full rebuild.
-        $job->data['prune'] = !$single && !empty($options['prune']);
+        $job->data['prune'] = !$single && !$partial && !empty($options['prune']);
 
         // A "check" run is a dry-run preview of what would sync to one destination.
         if ($type !== 'sync') {
             $job->data['checkDest'] = (string) ($options['checkDest'] ?? '');
         }
 
-        if ($single) {
+        if ($single || $partial) {
             $job->data['singlePage'] = true;
             // Pages already in the render — don't re-crawl them; only follow links
             // to pages NOT yet here, so a page is never pushed with links to
@@ -132,23 +150,26 @@ final class Runner {
         // Which destination(s) this run pushes to. Single-page targets the
         // destinations opted into single-page sync; otherwise 'targets' (sync all)
         // / 'destId' / primary.
-        $targets = [];
         if ($single) {
             $targets = Destinations::single_page_ids();
-        } elseif (isset($options['targets']) && is_array($options['targets'])) {
-            $targets = array_values(array_filter(array_map('strval', $options['targets'])));
-        }
-        if (empty($targets)) {
-            if ($single) {
+            if (empty($targets)) {
                 throw new \RuntimeException('No destinations are enabled for single-page sync.');
             }
-            $targets = [(string) ($options['destId'] ?? Destinations::primary()->id())];
+        } else {
+            $targets = self::targets_from($options);
         }
         $job->data['targets'] = $targets;
         $job->data['destId']  = $targets[0];
 
         if ($single) {
             $job->enqueue_page($only); // The changed page — always (re)rendered.
+        } elseif ($partial) {
+            $job->data['partial']       = true;
+            $job->data['partialIds']    = $plan['ids'];
+            $job->data['partialRemove'] = $plan['remove'];
+            foreach ($plan['urls'] as $url) {
+                $job->enqueue_page($url);
+            }
         } else {
             // Seeds come solely from UrlCollector, which honours the discovery mode
             // ('linked' = home page only, then follow links; 'all' = + every
@@ -187,6 +208,82 @@ final class Runner {
         $job->save();
 
         return self::snapshot($job);
+    }
+
+    /**
+     * The destinations a run pushes to: 'targets' (sync all / chosen), else
+     * 'destId', else the primary destination.
+     *
+     * @param array<string,mixed> $options Run options.
+     * @return array<int,string>
+     */
+    private static function targets_from(array $options): array {
+        $targets = isset($options['targets']) && is_array($options['targets'])
+            ? array_values(array_filter(array_map('strval', $options['targets'])))
+            : [];
+
+        return $targets !== [] ? $targets : [(string) ($options['destId'] ?? Destinations::primary()->id())];
+    }
+
+    /**
+     * Sync from the current render: no rendering, straight to the deploy (as a
+     * retry does), sequentially or across the worker pool.
+     *
+     * @param array<string,mixed> $options Run options (targets/destId, prune).
+     * @return array<string,mixed> Snapshot.
+     */
+    private static function start_from_render(array $options): array {
+        Job::clear();
+        delete_option(self::CANCEL_FLAG);
+        delete_option(self::HEARTBEAT);
+        self::release_driver();
+
+        $job                          = Job::create('sync');
+        $job->data['prune']           = !empty($options['prune']);
+        $job->data['targets']         = self::targets_from($options);
+        $job->data['destId']          = $job->data['targets'][0];
+        $job->data['reusedRender']    = (int) get_option(self::RENDER_AT_OPTION, 0);
+        $render                       = Manifest::load(Manifest::RENDER_OPTION);
+        $job->data['counts']['files'] = count($render);
+        $job->data['counts']['bytes'] = (int) array_sum(array_column($render, 'size'));
+
+        if (self::parallel_eligible($job)) {
+            self::begin_parallel_deploy($job);
+        } else {
+            $job->data['targetIndex'] = 0;
+            self::start_target($job);
+        }
+        $job->save();
+
+        return self::snapshot($job);
+    }
+
+    /**
+     * The "Process changes" plan, refusing when only Process all will do.
+     *
+     * @return array{urls:array<int,string>,remove:array<int,string>,ids:array<int,int>,unlinked:array<int,string>}
+     * @throws \RuntimeException With a message for the dashboard.
+     */
+    private static function partial_plan(): array {
+        if (empty(Manifest::load(Manifest::RENDER_OPTION)) || (int) get_option(self::RENDER_FORMAT_OPTION, 0) !== self::RENDER_FORMAT) {
+            throw new \RuntimeException(__('There is no up-to-date full render to add changes to yet. Use Process all.', 'shipstatic'));
+        }
+        if (ChangeTracker::rendered_mode() !== UrlCollector::mode()) {
+            throw new \RuntimeException(__('Pages to include has changed since the last Process all, which affects the whole export. Use Process all.', 'shipstatic'));
+        }
+        $plan = ChangedContent::plan();
+        if ($plan['urls'] === [] && $plan['remove'] === []) {
+            if ($plan['unlinked'] !== []) {
+                throw new \RuntimeException(sprintf(
+                    /* translators: %s: page title(s). */
+                    __('Nothing to process yet: %s isn’t linked from any page in the export, and with Pages to include set to “Only linked pages” a page only joins the export through a link. Link to it from an exported page, then use Process changes (or Process all).', 'shipstatic'),
+                    '“' . implode('”, “', $plan['unlinked']) . '”'
+                ));
+            }
+            throw new \RuntimeException(__('No content changes are recorded since the last Process. Site-wide changes (menus, templates, settings) need Process all.', 'shipstatic'));
+        }
+
+        return $plan;
     }
 
     /**
@@ -777,12 +874,25 @@ final class Runner {
             // existing render, leaving the rest of the site untouched. (Sitemaps
             // aren't regenerated here — the next full sync refreshes them.)
             $manifest = array_merge(Manifest::load(Manifest::RENDER_OPTION), Manifest::from_plan($job->data['plan']));
+            if (!empty($job->data['partial'])) {
+                // Pages whose post left the export, then the sitemap/robots for the
+                // merged page set (a partial run adds or removes pages).
+                foreach ((array) ($job->data['partialRemove'] ?? []) as $relative) {
+                    unset($manifest[(string) $relative]);
+                }
+                self::emit_extra_files($job, array_keys($manifest));
+                $manifest = array_merge($manifest, Manifest::from_plan($job->data['plan']));
+            }
             ksort($manifest);
         }
 
         Manifest::save(Manifest::RENDER_OPTION, $manifest);
+        update_option(self::RENDER_AT_OPTION, time(), false);
         self::write_manifest_file($job, $manifest);
-        LiveIndex::save_objects((array) ($job->data['objects'] ?? []), !empty($job->data['singlePage']));
+        LiveIndex::save_objects((array) ($job->data['objects'] ?? []), !empty($job->data['singlePage']), (array) ($job->data['partialRemove'] ?? []));
+        if (!empty($job->data['partial'])) {
+            ChangeTracker::mark_partial((array) ($job->data['partialIds'] ?? []));
+        }
 
         // A full render reflects current content under the current mode — clear
         // the "content changed" flag and record the mode it was built under.
@@ -1271,13 +1381,14 @@ final class Runner {
      * returns relativePath => contents; build_deploy_manifest() rewrites any
      * origin-absolute file to each destination's origin.
      *
-     * @param Job $job Active job.
+     * @param Job                    $job       Active job.
+     * @param array<int,string>|null $relatives Pages to list (default: this run's plan).
      */
-    private static function emit_extra_files(Job $job): void {
+    private static function emit_extra_files(Job $job, ?array $relatives = null): void {
         $emitters = Pipeline::extra_file_emitters();
         if (!empty($emitters)) {
             $page_urls = [];
-            foreach (array_keys($job->data['plan']) as $rel) {
+            foreach ($relatives ?? array_keys($job->data['plan']) as $rel) {
                 if (substr(strtolower($rel), -5) === '.html') {
                     $page_urls[] = self::url_for_relative($rel);
                 }
@@ -2606,6 +2717,9 @@ HTML;
             ],
             'removed'      => $d['removed'] ?? 0,
             'prune'        => !empty($d['prune']),
+            // Sync reused the current render (no rendering): when it was made.
+            'reusedRender' => (int) ($d['reusedRender'] ?? 0),
+            'reusedRenderAt' => !empty($d['reusedRender']) ? wp_date((string) get_option('time_format'), (int) $d['reusedRender']) : '',
             'pageLimitHit' => !empty($d['pageLimitHit']),
             // A destination configured for package (zip) deploy fell back to
             // file-by-file because the sync runtime has no ZipArchive.

@@ -8,6 +8,7 @@
     running,
     exporting = false,
     renderCurrent = true,
+    changesPending = 0,
     onSyncAll,
     onSyncOne,
     onExportOne,
@@ -19,13 +20,17 @@
     exporting?: boolean;
     /** The render reflects current content — when false (e.g. a page was edited), say so instead of a bare "Out of date". */
     renderCurrent?: boolean;
-    onSyncAll: (prune: boolean) => void;
-    onSyncOne: (id: string, prune: boolean) => void;
+    /** Recorded changes Process changes could render instead of a full re-render. */
+    changesPending?: number;
+    onSyncAll: (prune: boolean, rerender: boolean) => void;
+    onSyncOne: (id: string, prune: boolean, rerender: boolean) => void;
     onExportOne: (id: string) => void;
     onSelect: (id: string) => void;
   } = $props();
 
   let prune = $state(false);
+  // Off by default: Sync reuses an up-to-date render (see Docs → Process changes).
+  let rerender = $state(false);
   let enabledCount = $derived(destinations.filter((d) => d.enabled).length);
   let busy = $derived(running || exporting);
 </script>
@@ -54,7 +59,7 @@
           size="sm"
           label={__('btnSync')}
           confirmLabel={__('btnConfirmSync')}
-          onconfirm={() => onSyncOne(d.id, prune)}
+          onconfirm={() => onSyncOne(d.id, prune, rerender)}
           disabled={busy || !d.enabled}
         />
       </li>
@@ -62,13 +67,25 @@
   </ul>
 
   <Checkbox label={__('pruneOption')} checked={prune ? 1 : 0} disabled={busy} onchange={(c) => (prune = c === 1)} />
+  <Checkbox label={__('rerenderOption')} checked={rerender ? 1 : 0} disabled={busy} onchange={(c) => (rerender = c === 1)} />
+  <p class="bs-all__hint">
+    {#if rerender}
+      {__('rerenderOn')}
+    {:else if renderCurrent}
+      {__('rerenderReuse')}
+    {:else if changesPending > 0}
+      {__('rerenderPendingChanges')}
+    {:else}
+      {__('rerenderStale')}
+    {/if}
+  </p>
 
   <div class="bs-row">
     <ConfirmButton
       variant="primary"
       label={running ? __('btnWorking') : __f('syncAllN', enabledCount)}
       confirmLabel={__('btnConfirmSyncAll')}
-      onconfirm={() => onSyncAll(prune)}
+      onconfirm={() => onSyncAll(prune, rerender)}
       disabled={busy || enabledCount === 0}
     />
   </div>
@@ -83,6 +100,12 @@
     border: 1px solid var(--ab-color-border);
     border-radius: var(--ab-radius-lg);
     box-shadow: var(--ab-shadow-sm);
+  }
+
+  .bs-all__hint {
+    margin: 0;
+    color: var(--ab-color-text-muted);
+    font-size: var(--ab-text-sm);
   }
 
   .bs-all__lead {

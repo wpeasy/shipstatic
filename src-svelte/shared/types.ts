@@ -75,6 +75,12 @@ export interface ReplacementPage {
   label: string;
 }
 
+/** A published page that isn't in the export (shown greyed out in page lists). */
+export interface ExcludedPage {
+  label: string;
+  title: string;
+}
+
 export interface MediaItem {
   url: string;
   thumb: string;
@@ -219,6 +225,15 @@ export interface Status {
   renderCurrent: boolean;
   /** Published pages not in the current export (orphans in linked mode, etc.). */
   excludedPublished: number;
+  /** Recorded since the last Process all: what "Process changes" covers. */
+  changes: {
+    /** Recorded changes Process changes would act on (0 = nothing it can do). */
+    count: number;
+    /** New published pages it can't add: not linked from the export ("Only linked pages"). */
+    unlinked: string[];
+    /** Changes that may show on every page (menus, templates, …) — need Process all. */
+    sitewide: Array<'menus' | 'templates' | 'bricks' | 'widgets' | 'site' | 'permalinks' | 'theme' | 'many'>;
+  };
   fabEnabled: boolean;
   /** Site search: export a search index + script (Settings → Site search). */
   searchEnabled: boolean;
@@ -302,6 +317,10 @@ export interface SyncSnapshot {
   totals?: SyncTotals;
   queued?: { pages: number; assets: number; uploads: number };
   targets?: { index: number; total: number; done: number; name: string };
+  /** Sync reused the current render (no rendering): when it was made (unix time), else 0. */
+  reusedRender?: number;
+  /** That time, formatted in the site's timezone. */
+  reusedRenderAt?: string;
   /** Parallel deploy: fan-out across destinations is active. */
   parallel?: boolean;
   /** How many destinations are being deployed at once. */

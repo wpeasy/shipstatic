@@ -70,8 +70,9 @@ final class LiveIndex {
      *
      * @param array<string,string> $objects Relative path => object.
      * @param bool                 $merge   Single-page render: merge into the stored map.
+     * @param array<int,string>    $remove  Relative paths no longer in the render.
      */
-    public static function save_objects(array $objects, bool $merge): void {
+    public static function save_objects(array $objects, bool $merge, array $remove = []): void {
         $clean = [];
         foreach ($objects as $relative => $object) {
             if (preg_match('/^(post|term):\d+$|^(home|archive|none)$/', (string) $object)) {
@@ -81,6 +82,9 @@ final class LiveIndex {
         if ($merge) {
             $stored = get_option(self::OBJECTS_OPTION, []);
             $clean  = array_merge(is_array($stored) ? $stored : [], $clean);
+        }
+        foreach ($remove as $relative) {
+            unset($clean[(string) $relative]);
         }
         update_option(self::OBJECTS_OPTION, $clean, false);
     }

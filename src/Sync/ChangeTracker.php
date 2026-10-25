@@ -37,6 +37,45 @@ final class ChangeTracker {
     public const MODE_OPTION = 'shipstatic_render_mode';
 
     /**
+     * Option: ids of public posts added/edited/unpublished/deleted since the
+     * last full render — what "Process changes" re-renders (Runner::start()
+     * with `changes`). Cleared by a full render; trimmed by a partial one.
+     */
+    public const CHANGED_OPTION = 'shipstatic_changed_posts';
+
+    /**
+     * Option: why the last changes may affect every page (menus, Bricks
+     * templates/settings, widgets, site title, permalinks) — reason => true.
+     * "Process changes" can't cover these; the dashboard says to Process all.
+     */
+    public const SITEWIDE_OPTION = 'shipstatic_sitewide_changes';
+
+    /** Past this many changed posts, Process all is the sensible choice anyway. */
+    private const MAX_CHANGED = 500;
+
+    /** Options whose change shows on every page => reason. */
+    private const SITEWIDE_OPTIONS = [
+        'blogname'            => 'site',
+        'blogdescription'     => 'site',
+        'sidebars_widgets'    => 'widgets',
+        'permalink_structure' => 'permalinks',
+        'show_on_front'       => 'site',
+        'page_on_front'       => 'site',
+        'page_for_posts'      => 'site',
+        // Bricks design data that styles or appears on every page. (Not every
+        // bricks_* option: some are caches, licence checks or builder UI state.)
+        'bricks_global_settings'     => 'bricks',
+        'bricks_global_classes'      => 'bricks',
+        'bricks_global_variables'    => 'bricks',
+        'bricks_global_pseudo_classes' => 'bricks',
+        'bricks_color_palette'       => 'bricks',
+        'bricks_theme_styles'        => 'bricks',
+        'bricks_components'          => 'bricks',
+        'bricks_global_elements'     => 'bricks',
+        'bricks_icon_sets'           => 'bricks',
+    ];
+
+    /**
      * Register hooks.
      */
     public static function init(): void {
@@ -53,7 +92,36 @@ final class ChangeTracker {
         // different pages) AND the menu markup baked into every exported page —
         // but it saves `nav_menu_item` posts, not a public type, so the hooks
         // above miss it. Flag dirty whenever a menu is saved/reordered.
-        add_action('wp_update_nav_menu', [self::class, 'mark_dirty']);
+        add_action('wp_update_nav_menu', [self::class, 'on_menu']);
+        // Changes that show on every page (see SITEWIDE_OPTION).
+        add_action('updated_option', [self::class, 'on_option'], 10, 1);
+        add_action('switch_theme', [self::class, 'on_theme']);
+    }
+
+    /**
+     * A nav menu was saved: every page's chrome (and the link graph) changed.
+     */
+    public static function on_menu(): void {
+        self::mark_sitewide('menus');
+    }
+
+    /**
+     * Bricks global settings/classes/theme styles and core site options.
+     *
+     * @param string $option Option name.
+     */
+    public static function on_option($option): void {
+        $option = (string) $option;
+        if (isset(self::SITEWIDE_OPTIONS[$option])) {
+            self::mark_sitewide(self::SITEWIDE_OPTIONS[$option]);
+        }
+    }
+
+    /**
+     * The active theme changed.
+     */
+    public static function on_theme(): void {
+        self::mark_sitewide('theme');
     }
 
     /**
@@ -68,7 +136,10 @@ final class ChangeTracker {
             return;
         }
         if (self::is_public_type((string) $post->post_type)) {
-            self::mark_dirty();
+            self::mark_changed((int) $post_id);
+        } elseif ((string) $post->post_type === 'bricks_template') {
+            // Header/footer/single templates show on many pages.
+            self::mark_sitewide('templates');
         }
     }
 
@@ -82,7 +153,7 @@ final class ChangeTracker {
             return;
         }
         if (self::is_public_type((string) $post->post_type)) {
-            self::mark_dirty();
+            self::mark_changed((int) $post->ID);
         }
     }
 
@@ -94,7 +165,7 @@ final class ChangeTracker {
     public static function on_post_id_change($post_id): void {
         $type = (string) get_post_type((int) $post_id);
         if ($type !== '' && self::is_public_type($type)) {
-            self::mark_dirty();
+            self::mark_changed((int) $post_id);
         }
     }
 
@@ -110,7 +181,9 @@ final class ChangeTracker {
         }
         $type = (string) get_post_type((int) $post_id);
         if ($type !== '' && self::is_public_type($type)) {
-            self::mark_dirty();
+            self::mark_changed((int) $post_id);
+        } elseif ($type === 'bricks_template') {
+            self::mark_sitewide('templates');
         }
     }
 
@@ -131,14 +204,89 @@ final class ChangeTracker {
     }
 
     /**
-     * Record that a full render just finalised: clear the dirty flag and store the
-     * discovery mode it was built under.
+     * Record a changed public post (and flag the render stale).
+     *
+     * @param int $post_id Post id.
+     */
+    public static function mark_changed(int $post_id): void {
+        self::mark_dirty();
+        $ids = self::changed_ids();
+        if ($post_id > 0 && !in_array($post_id, $ids, true)) {
+            $ids[] = $post_id;
+            if (count($ids) > self::MAX_CHANGED) {
+                self::mark_sitewide('many');
+                $ids = array_slice($ids, -self::MAX_CHANGED);
+            }
+            update_option(self::CHANGED_OPTION, $ids, false);
+        }
+    }
+
+    /**
+     * Record a change that may show on every page (and flag the render stale).
+     *
+     * @param string $reason menus | templates | bricks | widgets | site | permalinks | theme | many.
+     */
+    public static function mark_sitewide(string $reason): void {
+        self::mark_dirty();
+        $reasons = self::sitewide_reasons();
+        if (!in_array($reason, $reasons, true)) {
+            $reasons[] = $reason;
+            update_option(self::SITEWIDE_OPTION, $reasons, false);
+        }
+    }
+
+    /**
+     * Ids of public posts changed since the last full render.
+     *
+     * @return array<int,int>
+     */
+    public static function changed_ids(): array {
+        $ids = get_option(self::CHANGED_OPTION, []);
+
+        return is_array($ids) ? array_values(array_unique(array_map('intval', $ids))) : [];
+    }
+
+    /**
+     * Site-wide change reasons since the last full render.
+     *
+     * @return array<int,string>
+     */
+    public static function sitewide_reasons(): array {
+        $reasons = get_option(self::SITEWIDE_OPTION, []);
+
+        return is_array($reasons) ? array_values(array_map('strval', $reasons)) : [];
+    }
+
+    /**
+     * Record that a full render just finalised: clear the dirty flag and the
+     * change lists, and store the discovery mode it was built under.
      *
      * @param string $mode Discovery mode used for the render.
      */
     public static function mark_rendered(string $mode): void {
         update_option(self::DIRTY_OPTION, 0, false);
         update_option(self::MODE_OPTION, $mode, false);
+        delete_option(self::CHANGED_OPTION);
+        delete_option(self::SITEWIDE_OPTION);
+    }
+
+    /**
+     * Record that "Process changes" just processed these posts. The render
+     * counts as current again only when no change is left and nothing
+     * site-wide is pending (that still needs Process all).
+     *
+     * @param array<int,int> $ids Processed post ids.
+     */
+    public static function mark_partial(array $ids): void {
+        $left = array_values(array_diff(self::changed_ids(), array_map('intval', $ids)));
+        if ($left === []) {
+            delete_option(self::CHANGED_OPTION);
+        } else {
+            update_option(self::CHANGED_OPTION, $left, false);
+        }
+        if ($left === [] && self::sitewide_reasons() === []) {
+            update_option(self::DIRTY_OPTION, 0, false);
+        }
     }
 
     /**
@@ -147,6 +295,8 @@ final class ChangeTracker {
     public static function forget(): void {
         delete_option(self::DIRTY_OPTION);
         delete_option(self::MODE_OPTION);
+        delete_option(self::CHANGED_OPTION);
+        delete_option(self::SITEWIDE_OPTION);
     }
 
     /**

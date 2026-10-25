@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   const version = (window as unknown as { shipStaticData?: { version?: string } }).shipStaticData?.version ?? '';
 
   const sections = [
     { id: 'why', label: 'Built for Bricks' },
     { id: 'features', label: 'Features' },
     { id: 'how', label: 'How it works' },
+    { id: 'process-changes', label: 'Process changes' },
     { id: 'search', label: 'Site search' },
     { id: 'schedule', label: 'Scheduled sync' },
     { id: 'lockdown', label: 'Lockdown' },
@@ -15,6 +18,13 @@
     { id: 'troubleshooting', label: 'Troubleshooting' },
     { id: 'cli', label: 'CLI & reference' },
   ];
+
+  // The page renders after the browser tried the #anchor (e.g. the dashboard's
+  // "How Process changes works" link), so scroll to it once it exists.
+  onMount(() => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (id) document.getElementById(id)?.scrollIntoView();
+  });
 
   const features = [
     {
@@ -134,8 +144,42 @@
           <li><strong>Deploy</strong> only what changed (delta against the last push) — over FTP/SFTP (as a package with a one-shot helper, or per file) or through the Connector. Cloudflare destinations instead receive the complete file list each time and upload only the files Cloudflare doesn’t already hold, then go live in one step.</li>
         </ol>
         <p class="bs-docs__muted">
-          <strong>Check</strong> is a dry run: it renders and catalogues everything (and lists anything that won’t work on a static host) without uploading. <strong>Sync</strong> renders and uploads. <strong>Export ZIP</strong> packages the current render for one destination into a downloadable zip instead of uploading it — for manual deploys, with no effect on that destination’s sync stats. <strong>Reset sync state</strong> forgets every destination’s push record so the next sync re-uploads in full.
+          <strong>Check</strong> is a dry run: it compares the current render with what a destination already has, without uploading. <strong>Sync</strong> uploads the changes — rendering first only when the render is out of date (see below). <strong>Export ZIP</strong> packages the current render for one destination into a downloadable zip instead of uploading it — for manual deploys, with no effect on that destination’s sync stats. <strong>Reset sync state</strong> forgets every destination’s push record so the next sync re-uploads in full.
         </p>
+      </section>
+
+      <!-- Process changes -->
+      <section id="process-changes" class="bs-docs__section bs-stack bs-stack--sm">
+        <h2>Process all vs Process changes</h2>
+        <p class="bs-docs__muted">
+          <strong>Process all</strong> re-renders every page in the export. It is always correct, and it is the safe choice whenever you are unsure. On a large site it takes a while, because every page is fetched.
+        </p>
+        <p class="bs-docs__muted">
+          <strong>Process changes</strong> is a shortcut for the common case of adding or editing a few posts. It only re-renders content ShipStatic <em>knows</em> has changed since the last Process all — it does not look for anything else.
+        </p>
+        <h3>What Process changes covers</h3>
+        <ul class="bs-docs__list">
+          <li>Pages and posts you <strong>added, edited, unpublished or deleted</strong> (including Bricks content). Unpublished and deleted ones are removed from the export.</li>
+          <li>The <strong>lists that show them</strong>: your blog page or posts home page, the post’s category and tag archives, and its post-type archive — when those are already in the export.</li>
+          <li><strong>New pages those pages link to</strong>, as the normal crawl would find them. With “Only linked pages”, a new page appears once a page that links to it is re-rendered — for example, after you add a link to it from the home page. Until then the toolbar says the page “isn’t linked from the export yet”, and Process changes has nothing to do for it.</li>
+          <li>The sitemap and robots.txt, rebuilt for the updated page list.</li>
+        </ul>
+        <h3>What it does not check</h3>
+        <ul class="bs-docs__list">
+          <li><strong>Site-wide changes</strong> that appear on every page: menus, Bricks templates (header, footer, single), Bricks global styles, classes, variables and settings, widgets, the site title and tagline, permalinks and the theme. The dashboard warns when it has seen one of these: use Process all.</li>
+          <li><strong>Other pages that show your content</strong> in their own way — a “related posts” or “latest posts” block on some other page, a query loop elsewhere, a shortcode. They keep showing what they showed at the last Process all.</li>
+          <li>A change to <strong>Pages to include</strong>, or a site with no up-to-date full render yet: Process changes refuses and asks for Process all.</li>
+        </ul>
+        <p class="bs-docs__muted">
+          A good rhythm: Process changes for everyday edits and new posts, and Process all after changing menus, templates or site settings — or every now and then, to be sure everything is current. From the command line: <code>wp shipstatic sync --check --changes</code>.
+        </p>
+        <h3>Sync and the current render</h3>
+        <ul class="bs-docs__list">
+          <li>When the render is up to date (after Process all or Process changes, with nothing changed since), <strong>Sync uploads it straight away</strong> — no second render. The progress panel says which render it used.</li>
+          <li>When content has changed since, Sync renders every page first, as before. To render only what changed, use Process changes first.</li>
+          <li><strong>Re-render before syncing</strong> (under All destinations) renders every page again anyway. Use it after plugin or theme updates, or changes ShipStatic can’t see — other plugins’ settings, or content that changes over time. From the command line: <code>wp shipstatic sync --rerender</code>.</li>
+          <li><strong>Scheduled syncs always render every page</strong>: they run unattended, so they catch anything the change tracking missed.</li>
+        </ul>
       </section>
 
       <!-- Site search -->

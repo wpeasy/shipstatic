@@ -177,6 +177,7 @@ final class Menu {
             'restUrl' => esc_url_raw(rest_url('shipstatic/v1')),
             'nonce'   => wp_create_nonce('wp_rest'),
             'version' => SHIPSTATIC_VERSION,
+            'docsUrl' => admin_url('admin.php?page=' . self::DOCS_SLUG),
             // Translated UI strings for the Svelte bundle (shared/i18n.ts).
             'i18n'    => I18n::all(),
         ], $extra));

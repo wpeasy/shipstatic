@@ -42,6 +42,12 @@ final class SyncCommand {
      * [--prune]
      * : Also remove destination files that no longer exist locally (sync only).
      *
+     * [--rerender]
+     * : Render every page again before uploading, even when the current render is up to date (by default a sync reuses an up-to-date render). Use after plugin/theme updates or changes the change tracker can't see.
+     *
+     * [--changes]
+     * : With --check: process only the content recorded as changed since the last full Process (new/edited/unpublished posts, the lists that show them, and new pages they link to). Site-wide changes (menus, templates, settings) are not picked up — run a plain --check for those.
+     *
      * [--dest=<id>]
      * : Sync only the destination with this id.
      *
@@ -62,6 +68,9 @@ final class SyncCommand {
     public function sync(array $args, array $assoc_args): void {
         $type  = isset($assoc_args['check']) ? 'check' : 'sync';
         $prune = isset($assoc_args['prune']);
+        if (isset($assoc_args['changes']) && $type !== 'check') {
+            \WP_CLI::error('--changes only works with --check (it processes; it does not sync).');
+        }
 
         // A specific destination, otherwise every enabled one (incl. --all).
         $options['targets'] = isset($assoc_args['dest'])
@@ -79,13 +88,18 @@ final class SyncCommand {
         }, $options['targets']);
         \WP_CLI::log('Destinations: ' . implode(', ', $names));
 
-        \WP_CLI::log(sprintf('Starting %s%s…', $type, $prune ? ' (prune)' : ''));
+        $options['changes']  = isset($assoc_args['changes']);
+        $options['rerender'] = isset($assoc_args['rerender']);
+        \WP_CLI::log(sprintf('Starting %s%s…', $options['changes'] ? 'check of changed content only' : $type, $prune ? ' (prune)' : ''));
 
         try {
             $snapshot = Runner::start($type, $options);
         } catch (\Throwable $e) {
             \WP_CLI::error($e->getMessage());
             return;
+        }
+        if (!empty($snapshot['reusedRender'])) {
+            \WP_CLI::log('  Using the current render from ' . wp_date((string) get_option('time_format'), (int) $snapshot['reusedRender']) . ' (no re-render; add --rerender to render every page again).');
         }
 
         $last_phase   = '';

@@ -328,8 +328,36 @@ final class I18n {
             'discAllBody'     => __('Also includes every published page, post and taxonomy archive — even ones nothing links to (orphaned content). Use this if you rely on pages reached only through JavaScript navigation, or deliberately keep unlinked landing pages.', 'shipstatic'),
             'discNote'        => __('Either way, builder/preview post types are never exported.', 'shipstatic'),
             'viewPagesList'   => __('View included/excluded pages', 'shipstatic'),
-            'btnProcess'      => __('Process', 'shipstatic'),
-            'btnProcessHint'  => __('Render the site for the current mode so the page list is accurate.', 'shipstatic'),
+            'btnProcess'      => __('Process all', 'shipstatic'),
+            'btnProcessHint'  => __('Re-render every page. The safe choice: it picks up every change, including menus, templates and site settings.', 'shipstatic'),
+            /* translators: %d: number of changed posts. */
+            'btnProcessChanges' => __('Process changes (%d)', 'shipstatic'),
+            'btnProcessChangesHint' => __('Re-render only the content added, edited or unpublished since the last Process all, plus the lists that show it and new pages it links to. Site-wide changes (menus, templates, settings) are not checked: use Process all for those.', 'shipstatic'),
+            'btnProcessChangesConfirm' => __('Changed content only?', 'shipstatic'),
+            'rerenderOption'  => __('Re-render before syncing', 'shipstatic'),
+            'rerenderOn'      => __('Every page is rendered again before uploading. Use it after plugin or theme updates, or changes the dashboard can’t see (other plugins’ settings, time-based content).', 'shipstatic'),
+            'rerenderReuse'   => __('The current render is up to date, so Sync uploads it straight away without rendering again. Tick Re-render if you changed something the dashboard can’t see.', 'shipstatic'),
+            'rerenderPendingChanges' => __('Content has changed since the last Process, so Sync will render every page first. To render only what changed, use Process changes first.', 'shipstatic'),
+            'rerenderStale'   => __('The render is out of date, so Sync will render every page first.', 'shipstatic'),
+            /* translators: %s: time of day. */
+            'reusedRenderNote' => __('Using the render from %s (no re-render).', 'shipstatic'),
+            /* translators: %s: page title. */
+            'unlinkedOne'     => __('“%s” isn’t linked from the export yet', 'shipstatic'),
+            /* translators: %d: number of pages. */
+            'unlinkedMany'    => __('%d new pages aren’t linked from the export yet', 'shipstatic'),
+            'unlinkedTip'     => __('With Pages to include set to “Only linked pages”, a page joins the export only when an exported page links to it. Add a link to it from an exported page, then use Process changes — or Process all.', 'shipstatic'),
+            'processChangesDoc' => __('How Process changes works', 'shipstatic'),
+            /* translators: %s: list of change types, e.g. "menus, site settings". */
+            'sitewideChanged' => __('Site-wide changes: %s. Use Process all.', 'shipstatic'),
+            'sitewideTip'     => __('These can change every page, which Process changes doesn’t check.', 'shipstatic'),
+            'swMenus'         => __('menus', 'shipstatic'),
+            'swTemplates'     => __('Bricks templates', 'shipstatic'),
+            'swBricks'        => __('Bricks styles or settings', 'shipstatic'),
+            'swWidgets'       => __('widgets', 'shipstatic'),
+            'swSite'          => __('site settings', 'shipstatic'),
+            'swPermalinks'    => __('permalinks', 'shipstatic'),
+            'swTheme'         => __('theme', 'shipstatic'),
+            'swMany'          => __('many posts', 'shipstatic'),
             'btnViewList'     => __('View processed list', 'shipstatic'),
             /* translators: %d: number of published pages not in the static export. */
             'excludedHint'    => __('%d not in export', 'shipstatic'),
@@ -564,7 +592,11 @@ final class I18n {
         return [
             'mediaReplacer'        => __('Image Replacer', 'shipstatic'),
             'mediaSelectPage'      => __('Page', 'shipstatic'),
-            'mediaSelectPagePh'    => __('Select a page…', 'shipstatic'),
+            'mediaSelectPagePh'    => __('Select a page, or type to filter…', 'shipstatic'),
+            /* translators: %s: page path, e.g. /about/. */
+            'pageNotInExport'      => __('%s — not in the export', 'shipstatic'),
+            /* translators: %d: number of pages. */
+            'pagesNotInExportHint' => __('%d published page(s) aren’t in the export, so they can’t be picked (shown greyed out). Link to them from an exported page, or change Pages to include in Settings, then Process.', 'shipstatic'),
             'mediaPickPageFirst'   => __('Select a page above to replace its images.', 'shipstatic'),
             'noRenderForMedia'     => __('Process the site first, then choose a page to replace its images.', 'shipstatic'),
             'noMediaOnPage'        => __('No replaceable images on this page.', 'shipstatic'),

@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
-  import { Button, Select, Tag, Tooltip } from '@wpeasy/ab-ui';
+  import { Button, Tag, Tooltip } from '@wpeasy/ab-ui';
   import { api } from '../shared/api';
-  import type { MediaItem, MediaReplacement, DestinationDisplay, ReplacementPage } from '../shared/types';
+  import type { MediaItem, MediaReplacement, DestinationDisplay, ReplacementPage, ExcludedPage } from '../shared/types';
   import { __, __f } from '../shared/i18n';
   import ListSkeleton from '../lib/ListSkeleton.svelte';
+  import PageSelect from '../lib/PageSelect.svelte';
 
   let { destination, onSaved }: { destination: DestinationDisplay; onSaved: () => void } = $props();
 
@@ -14,6 +15,7 @@
   );
 
   let pages = $state<ReplacementPage[]>([]);
+  let excluded = $state<ExcludedPage[]>([]);
   let selectedPage = $state('');
   let media = $state<MediaItem[]>([]);
   let loadingPages = $state(true);
@@ -24,6 +26,7 @@
     try {
       const r = await api.getMedia('');
       pages = r.pages;
+      excluded = r.excluded ?? [];
     } catch (e) {
       error = (e as Error).message;
     } finally {
@@ -60,7 +63,6 @@
     if (replacements.length !== before) void persist();
   }
 
-  const pageOptions = $derived(pages.map((p) => ({ value: p.value, label: p.label })));
 
   // Pages that already have at least one saved swap, with their count — lets the
   // user see AT A GLANCE which pages need attention and jump straight to one,
@@ -150,12 +152,13 @@
     {/if}
 
     <div class="bs-media__picker">
-      <Select
+      <PageSelect
         label={__('mediaSelectPage')}
         placeholder={__('mediaSelectPagePh')}
-        options={pageOptions}
+        {pages}
+        {excluded}
         value={selectedPage}
-        onchange={(v) => (selectedPage = v as string)}
+        onchange={(v) => (selectedPage = v)}
       />
     </div>
 
