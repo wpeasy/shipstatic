@@ -20,6 +20,7 @@ use WPEasy\ShipStatic\Lockdown\Guard;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\REST\ScheduleController;
+use WPEasy\ShipStatic\REST\SearchIndexController;
 use WPEasy\ShipStatic\Sync\Scheduler;
 use WPEasy\ShipStatic\Render\LinkDeployReplacer;
 use WPEasy\ShipStatic\Render\MediaDeployReplacer;
@@ -209,5 +210,6 @@ final class Plugin {
         SitemapController::register();
         ScheduleController::register();
         LockdownController::register();
+        SearchIndexController::register();
     }
 }

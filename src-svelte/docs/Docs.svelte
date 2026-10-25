@@ -153,11 +153,19 @@
         <p class="bs-docs__muted">
           Find it in the Bricks elements panel under <strong>ShipStatic</strong>. Besides the placeholder, number of results, snippets and “no results” text, every part can be styled from Bricks — the field (and its focus state), the leading icon, the input, the button (and hover), the label, the results box, each result (and the hovered or keyboard-selected one), titles, snippets, the highlighted words and the “no results” line. While you edit, the builder shows sample results so you can style them in place. On pages not built with Bricks, use the <code>[shipstatic_search]</code> shortcode.
         </p>
+        <h3>The same search on your WordPress site</h3>
+        <p class="bs-docs__muted">
+          Turn on <strong>Use ShipStatic search on the WordPress site too</strong> (under Site search in Settings) and the ShipStatic Search element — or the shortcode — searches as you type on the live WordPress site as well, so both look and behave the same. Pressing Enter opens the highlighted result; with nothing to open, it falls back to the normal WordPress search results page. Other search boxes on the WordPress site are left alone.
+        </p>
+        <ul class="bs-docs__list">
+          <li><strong>As fresh as your last Process.</strong> Live results come from the pages ShipStatic last processed, so press <strong>Process</strong> to pick up new pages and edited text. A page you unpublish, make private or password-protect drops out straight away.</li>
+          <li><strong>Uses the WordPress REST API.</strong> If a security plugin blocks the REST API for visitors, the box quietly behaves as a normal search form.</li>
+        </ul>
         <h3>Good to know</h3>
         <ul class="bs-docs__list">
           <li><strong>Per destination.</strong> Each destination’s index has its own text replacements and its own addresses, so a site only finds its own wording.</li>
           <li><strong>Main content only.</strong> Menus, headers, footers and forms aren’t indexed, so every page doesn’t match on its menu. Pages marked <code>noindex</code> are left out.</li>
-          <li><strong>The live WordPress site is unchanged</strong> — its search box keeps using normal WordPress search.</li>
+          <li><strong>The live WordPress site is unchanged by default</strong> — its search boxes keep using normal WordPress search.</li>
           <li><strong>Size.</strong> The index is downloaded only when someone clicks into a search box — roughly 120 KB (compressed) for 300 pages. Best for sites up to a few hundred pages.</li>
           <li><strong>Fresh after every sync.</strong> The browser checks for a new index each time, so new pages show up even on hosts that cache for a while (GitHub Pages caches pages for 10 minutes).</li>
         </ul>

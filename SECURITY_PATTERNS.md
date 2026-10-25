@@ -19,7 +19,14 @@ Namespace `WPEasy\ShipStatic`, REST namespace `shipstatic/v1`, option/hook/const
 
 ## 0. Authorization model: admin-only, uniform
 
-Every REST route in `src/REST/*` registers `permission_callback => [self::class, 'can_manage']`, and **`can_manage()` is `current_user_can('manage_options')`**. There are **no** `wp_ajax_*`, `wp_ajax_nopriv_*`, `admin_post_*`, or `__return_true` endpoints, and no public liveness probe. The admin page (`Admin\Menu`) is gated on `manage_options` and re-checks it in `render_page()`. Lockdown adds two unauthenticated *request handlers* that are not endpoints (the unlock link and the 204 check request) — see §11 for their rules.
+Every REST route in `src/REST/*` registers `permission_callback => [self::class, 'can_manage']`, and **`can_manage()` is `current_user_can('manage_options')`** — with ONE deliberate exception, below. There are **no** `wp_ajax_*`, `wp_ajax_nopriv_*`, `admin_post_*`, or `__return_true` endpoints, and no public liveness probe.
+
+**The one public route: `GET /shipstatic/v1/search-index`** (`REST\SearchIndexController`, permission `is_public()`), fetched by the visitor's browser for live-site search. Its invariants — keep all of them:
+- **Read-only, GET only, no parameters.** It never takes a URL, path, id or query from the request, so there is nothing to inject or traverse.
+- **404 unless** Site search AND "Use ShipStatic search on the WordPress site too" are on, and a render exists.
+- **Only text visitors can already read**: built from the render cache (published pages in the export, rendered logged-out), then filtered on every request by the post's CURRENT status — not `publish`, password-protected or not publicly viewable → left out. `noindex` pages are already dropped by `TextExtractor`.
+- **Reads only cache files**: each manifest `src` is `realpath`-contained in `Paths::cache_dir()` before it is read.
+- Never add fields that aren't in the export's own `search-index.json` shape, and never add a write method to this route. The admin page (`Admin\Menu`) is gated on `manage_options` and re-checks it in `render_page()`. Lockdown adds two unauthenticated *request handlers* that are not endpoints (the unlock link and the 204 check request) — see §11 for their rules. While Lockdown is on, the public route above is blocked for everyone not allowed in, like the rest of the site.
 
 **Rules for new surfaces:**
 - A new REST route is `manage_options` by default. If you need anything lower-privileged, that is a design change — justify it, and then the IDOR/ownership rules below apply.
@@ -255,7 +262,7 @@ Lockdown turns settings into `.htaccess` rules, a `.user.ini` line, a generated 
 
 ## Audit checklist for new code
 
-- New REST route → `manage_options` unless justified; nonce intact; ownership check if it touches a request-supplied object id.
+- New REST route → `manage_options` unless justified (the only public one is `/search-index`, §0 — don't widen it); nonce intact; ownership check if it touches a request-supplied object id.
 - New server-side fetch of a request URL → `UrlSafety::guarded_post()` / `guarded_get()` / `is_safe_url()`, never a bare `wp_remote_*`.
 - New outbound call → `sslverify` left at the WP default (verified); relax only via `UrlSafety::is_dev_host()`.
 - Touching `UnzipScript` → token + expiry + zip-slip + self-delete all intact.

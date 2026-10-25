@@ -255,6 +255,8 @@ final class I18n {
             'syncGroup'        => __('Sync', 'shipstatic'),
             'siteSearch'       => __('Site search', 'shipstatic'),
             'siteSearchHelp'   => __('Makes the search boxes on your static site work: each sync adds a search index for that destination, searched in the visitor’s browser. The live WordPress site keeps its own search. Press Process after changing this.', 'shipstatic'),
+            'siteSearchLive'     => __('Use ShipStatic search on the WordPress site too', 'shipstatic'),
+            'siteSearchLiveHelp' => __('The ShipStatic Search element then searches as you type on this WordPress site as well, from the pages in the last Process (press Process to pick up new content). Other search boxes keep normal WordPress search.', 'shipstatic'),
             'concurrentSyncs'  => __('Concurrent syncs', 'shipstatic'),
             'concurrentSyncsHelp' => __('How many destinations to upload to at the same time during a multi-destination sync. Higher is faster but uses more connections. Requires WP-CLI; otherwise syncs run one at a time.', 'shipstatic'),
             'tabDestinations'  => __('Destinations', 'shipstatic'),

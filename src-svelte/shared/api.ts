@@ -80,6 +80,8 @@ export const api = {
     request<{ fabEnabled: boolean }>('/settings', 'POST', { fabEnabled: enabled }),
   setSearchEnabled: (enabled: boolean) =>
     request<{ searchEnabled: boolean; renderCurrent?: boolean }>('/settings', 'POST', { searchEnabled: enabled }),
+  setSearchLive: (enabled: boolean) =>
+    request<{ searchLive: boolean }>('/settings', 'POST', { searchLive: enabled }),
   setAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) =>
     request<{ aiAllowChanges: boolean; aiAllowSync: boolean }>('/settings', 'POST', toggles),
   setConcurrentSyncs: (n: number) =>

@@ -167,6 +167,18 @@
     }
   }
 
+  async function setSearchLive(enabled: boolean): Promise<void> {
+    if (!status) return;
+    const previous = status.searchLive;
+    status.searchLive = enabled; // optimistic
+    try {
+      status.searchLive = (await api.setSearchLive(enabled)).searchLive;
+    } catch (e) {
+      status.searchLive = previous;
+      loadError = (e as Error).message;
+    }
+  }
+
   async function setFabEnabled(enabled: boolean): Promise<void> {
     if (!status) return;
     const previous = status.fabEnabled;
@@ -457,6 +469,7 @@
     onProcess={processPages}
     onSetFabEnabled={setFabEnabled}
     onSetSearchEnabled={setSearchEnabled}
+    onSetSearchLive={setSearchLive}
     onSetAiToggles={setAiToggles}
     onSetConcurrentSyncs={setConcurrentSyncs}
     onOpenWizard={openWizard}

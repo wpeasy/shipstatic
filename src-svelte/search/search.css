@@ -151,6 +151,29 @@
   font-size: 15px;
   line-height: 1.4;
   text-align: left;
+  /* Thin scrollbar in the list's own text colour (set --bs-search-scrollbar
+     to change it); scrolling the list doesn't scroll the page behind it. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--bs-search-scrollbar, color-mix(in srgb, currentColor 30%, transparent)) transparent;
+  overscroll-behavior: contain;
+}
+
+/* Browsers without scrollbar-color (older Safari). */
+@supports not (scrollbar-color: auto) {
+  :where(.bs-search)::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  :where(.bs-search)::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  :where(.bs-search)::-webkit-scrollbar-thumb {
+    background: var(--bs-search-scrollbar, color-mix(in srgb, currentColor 30%, transparent));
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-clip: padding-box;
+  }
 }
 
 :where(.bs-search[hidden]) {

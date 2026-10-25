@@ -78,7 +78,7 @@ There's no limit — ShipStatic renders and syncs every page in your export.
 
 = Does search work on the static site? =
 
-Yes, once you turn on **Site search** in ShipStatic → Settings, then Process and Sync. Every search box (WordPress, Bricks' Search element, or the ShipStatic Search element) then searches the destination's own index right in the browser, with results as you type. Each destination's index has its own text replacements and addresses. The live WordPress site keeps its normal search.
+Yes, once you turn on **Site search** in ShipStatic → Settings, then Process and Sync. Every search box (WordPress, Bricks' Search element, or the ShipStatic Search element) then searches the destination's own index right in the browser, with results as you type. Each destination's index has its own text replacements and addresses. The live WordPress site keeps its normal search, unless you also turn on **Use ShipStatic search on the WordPress site too**: the ShipStatic Search element then searches as you type there as well, from the pages in your last Process.
 
 = Which connections are supported? =
 
@@ -120,7 +120,7 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 * First public release.
 * Render Bricks (or any WordPress) pages to static HTML and deploy them to unlimited destinations: SFTP / FTP / FTPS, the Connector (HTTPS), Cloudflare, GitHub Pages, or an Export ZIP.
 * Per-destination Text, Media, Links and Videos replacements, with each destination's own sub-path.
-* Site search for the static site, with a fully styleable ShipStatic Search element for Bricks and a [shipstatic_search] shortcode.
+* Site search for the static site, with a fully styleable ShipStatic Search element for Bricks and a [shipstatic_search] shortcode. The element can also search as you type on the live WordPress site (optional).
 * Scheduled syncs (hourly, daily, weekly or monthly), single-page sync from the admin, the front end and the Bricks builder, gzip pre-compression, remote pruning, sitemap.xml and robots.txt generation.
 * Lockdown: lock the WordPress site to your editors' IP addresses and send everyone else to the static site, with an unlock link for when your address changes.
 * Translations: French, German, Italian, Spanish and Dutch.

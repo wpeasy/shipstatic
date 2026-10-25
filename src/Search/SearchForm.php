@@ -10,13 +10,14 @@ declare(strict_types=1);
 
 namespace WPEasy\ShipStatic\Search;
 
+use WPEasy\ShipStatic\Frontend\Search;
 use WPEasy\ShipStatic\Support\Assets;
 
 defined('ABSPATH') || exit;
 
 /**
  * Renders the search box. On the live WordPress site it is an ordinary search
- * form (submits to /?s=). In the static export, src-svelte/search/main.ts
+ * form (submits to /?s=) unless LiveIndex is on. In the static export, src-svelte/search/main.ts
  * upgrades it to search the destination's index, reading its options from the
  * form's data-bs-* attributes.
  *
@@ -171,6 +172,7 @@ final class SearchForm {
             'shipstatic_search'
         );
         self::enqueue_style();
+        Search::enqueue_live();
 
         return self::render([
             'placeholder' => $atts['placeholder'],

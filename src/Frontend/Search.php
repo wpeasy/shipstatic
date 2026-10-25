@@ -12,16 +12,23 @@ namespace WPEasy\ShipStatic\Frontend;
 
 use WPEasy\ShipStatic\Render\PageRenderer;
 use WPEasy\ShipStatic\Search\IndexBuilder;
+use WPEasy\ShipStatic\Search\LiveIndex;
 use WPEasy\ShipStatic\Search\SearchForm;
 use WPEasy\ShipStatic\Support\Assets;
 
 defined('ABSPATH') || exit;
 
 /**
- * Enqueues the site-search script, ONLY into the render (the HTML captured
- * for the static export). The live WordPress site is untouched and keeps its
- * own search. In the export, the script upgrades every search form (any form
- * with an `s` field) to search the destination's search-index.json.
+ * Enqueues the site-search script.
+ *
+ * - Into the render (the HTML captured for the static export): the script
+ *   upgrades every search form (any form with an `s` field) to search the
+ *   destination's search-index.json.
+ * - On the live WordPress site, only when "Use ShipStatic search on the
+ *   WordPress site too" is on, and only on pages with the ShipStatic Search
+ *   element or shortcode (enqueue_live()): it upgrades just those forms
+ *   (`.bs-ss`), searching GET /shipstatic/v1/search-index. Other search forms
+ *   keep normal WordPress search.
  */
 final class Search {
 
@@ -62,6 +69,48 @@ final class Search {
             return;
         }
 
+        // The index URL is an ordinary site URL here, so the export's URL
+        // rewriting gives every destination its own path to it.
+        self::enqueue_script(['index' => home_url('/' . IndexBuilder::FILE)]);
+    }
+
+    /**
+     * Enqueue the script for the live site — called by the ShipStatic Search
+     * element and shortcode, so it loads only where one of them is.
+     */
+    public static function enqueue_live(): void {
+        if (!LiveIndex::enabled() || PageRenderer::is_render_request() || self::in_builder()) {
+            return; // A render gets enqueue()'s export settings instead.
+        }
+
+        self::enqueue_script([
+            'index'    => rest_url('shipstatic/v1/search-index'),
+            // Only our own element: other search forms keep WordPress search.
+            'selector' => 'form.bs-ss',
+            // WordPress can answer /?s=, so Enter with no result to open searches there.
+            'live'     => true,
+        ]);
+    }
+
+    /**
+     * Whether this is the Bricks builder (either window), where the script
+     * must not run.
+     */
+    private static function in_builder(): bool {
+        return (function_exists('bricks_is_builder') && bricks_is_builder())
+            || (function_exists('bricks_is_builder_iframe') && bricks_is_builder_iframe())
+            || (function_exists('bricks_is_builder_call') && bricks_is_builder_call());
+    }
+
+    /**
+     * Enqueue the script, its stylesheet and its settings (once per page).
+     *
+     * @param array<string,mixed> $config index (+ selector, live).
+     */
+    private static function enqueue_script(array $config): void {
+        if (wp_script_is(self::SCRIPT_HANDLE, 'enqueued')) {
+            return;
+        }
         $entry = Assets::entry(self::ENTRY);
         if ($entry === null) {
             return; // Assets not built.
@@ -71,20 +120,16 @@ final class Search {
         SearchForm::enqueue_style();
         wp_enqueue_script(self::SCRIPT_HANDLE, SHIPSTATIC_PLUGIN_URL . 'assets/dist/' . $entry['file'], [], SHIPSTATIC_VERSION, true);
 
-        // The index URL is an ordinary site URL here, so the export's URL
-        // rewriting gives every destination its own path to it. Slashes stay
-        // unescaped so it reads like any other link in the page.
-        $config = [
-            'index' => home_url('/' . IndexBuilder::FILE),
-            'i18n'  => [
-                /* translators: %s: what the visitor searched for. */
-                'noResults' => __('No results for “%s”', 'shipstatic'),
-                /* translators: %d: number of search results (2 or more). */
-                'results'   => __('%d results', 'shipstatic'),
-                'oneResult' => __('1 result', 'shipstatic'),
-                'label'     => __('Search results', 'shipstatic'),
-            ],
+        $config['i18n'] = [
+            /* translators: %s: what the visitor searched for. */
+            'noResults' => __('No results for “%s”', 'shipstatic'),
+            /* translators: %d: number of search results (2 or more). */
+            'results'   => __('%d results', 'shipstatic'),
+            'oneResult' => __('1 result', 'shipstatic'),
+            'label'     => __('Search results', 'shipstatic'),
         ];
+        // Slashes stay unescaped so the index URL reads like any other link in
+        // the page (the export rewrites it per destination).
         wp_add_inline_script(
             self::SCRIPT_HANDLE,
             'window.shipStaticSearch = ' . wp_json_encode($config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';',

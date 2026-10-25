@@ -7,9 +7,12 @@
 > both rendered by `Search\SearchForm`; default look in
 > `src-svelte/search/search.css`, all `:where()` (zero specificity). The
 > `/search/` results page is not built. Differences from the text below:
-> - The script is enqueued **only into the render** (`PageRenderer::is_render_request()`),
->   not on the live WordPress site, which keeps its own search untouched.
->   §6 step 3's fallback still applies if the index can't load.
+> - The script goes into the render (`PageRenderer::is_render_request()`).
+>   On the live WordPress site it loads **only** when the opt-in "Use
+>   ShipStatic search on the WordPress site too" is on, and then only for
+>   the ShipStatic Search element (§13). Otherwise the live site keeps its own
+>   search untouched. §6 step 3's fallback still applies if the index can't
+>   load: the form submits as normal.
 > - No on-disk record cache yet: a per-request memo keyed by `md5(page)`
 >   suffices (8 pages → 0.07 s per destination). Add the disk cache in phase 2
 >   if large sites need it.
@@ -42,8 +45,9 @@ extra files during an export (`sitemap.xml` and `robots.txt` through
   Pages) and with Export ZIP.
 - Each destination's index matches **its** content: its text replacements and
   its sub-path.
-- On the live WordPress site, nothing changes: the box falls back to normal
-  WordPress search.
+- On the live WordPress site, nothing changes by default: the box falls back
+  to normal WordPress search. An opt-in setting makes the ShipStatic Search
+  element search as you type there too (§13).
 - No new runtime dependencies on the host; PHP only.
 
 **Non-goals (v1)**
@@ -281,3 +285,74 @@ it is downloaded only when someone focuses the search box.
    static site.
 4. **Multilingual sites** (WPML/Polylang): one index per language folder
    would be better than one mixed index. Defer until someone asks.
+
+## 13. Live-site search for the ShipStatic Search element (implemented 2026-10-25)
+
+**Problem.** On the live site the element was a plain `/?s=` form; on exports it
+searches as you type. Users want both to behave the same.
+
+**Setting.** `shipstatic_search_live` ('1'/'0', default '0'): "Use ShipStatic
+search on the WordPress site too", a second switch under Site search in the
+Settings drawer, disabled while Site search is off. It takes effect only while
+Site search is on (`LiveIndex::enabled()`). It doesn't touch the export, so
+toggling it needs no Process. Off = exactly the old behaviour.
+
+**Index source: the render cache, not WP_Query.** Considered building from
+WP_Query (always current) and rejected:
+- Bricks stores page content in `_bricks_page_content_2` post meta, so
+  `post_content` is nearly empty for Bricks pages. Getting their text means
+  rendering each page (templates, dynamic data, query loops), which the
+  render already does.
+- The render is exactly the export's page set and text, so live and static
+  results match. WP_Query would also need its own rules for which pages count
+  (discovery mode, manual include, archives).
+- Cost: the render is parsed once and cached; WP_Query + rendering would be
+  per request or need its own cache anyway.
+
+Trade-off: live search is as fresh as the last **Process**. Softened by a
+per-request status check: each record keeps its post id (`url_to_postid` at
+build time), and pages whose post is no longer `publish`, is
+password-protected or isn't publicly viewable are dropped on every request
+(one primed query). So unpublishing takes effect at once; new pages and edited
+text appear after the next Process.
+
+**Endpoint.** `GET /wp-json/shipstatic/v1/search-index`
+(`REST\SearchIndexController`), the plugin's only public route (SECURITY_PATTERNS.md
+§0). It returns `{v, pages: [{u, t, h, x}]}`, the same shape as
+`search-index.json`, built by `Search\LiveIndex` with
+`IndexBuilder::record()` from each rendered page after `Url::rebase()` with the
+site's own home path. So URLs are the live site's, with no destination text
+replacements and no sub-path. It returns 404 when off or when nothing has been
+rendered. Records are cached in the transient `shipstatic_live_search_index`,
+keyed by the render's page hashes + `IndexBuilder::VERSION` + home path, so a
+new Process rebuilds it and nothing else does. The response carries an `ETag`
+(the script's `cache: 'no-cache'` fetch revalidates, so an unchanged index costs
+a 304) and `Cache-Control: public, max-age=300`.
+
+**Loading.** `Frontend\Search::enqueue_live()` is called from
+`SearchElement::enqueue_scripts()` and the `[shipstatic_search]` shortcode, so
+the script loads only on pages that have the box. It is skipped during a render
+(the export gets `enqueue()`'s settings) and in both Bricks builder windows.
+Settings: `index` = the REST URL, `selector` = `form.bs-ss`, `live` = true.
+
+**Scope / behaviour differences** (`src-svelte/search/main.ts`):
+- Live: only `form.bs-ss` is upgraded. Plain WordPress/Bricks search forms keep
+  normal WordPress search. Exports still upgrade every form with an `s` field.
+- Enter opens the highlighted (or best) result, as on exports. With nothing to
+  open, live falls through to normal WordPress search (`/?s=`). An export has
+  no server to answer that, so it stays put.
+- Both: if the index can't be loaded (REST blocked by a security plugin,
+  404), the submit isn't intercepted, so the form works as a plain search form.
+
+**Verified** (playground, element in the Site Header template, a temporary
+plain `get_search_form()` in the footer):
+- Live: dropdown as you type; Enter opens the best match; a no-match Enter
+  lands on `/?s=…`; the plain form isn't upgraded and submits normally; no
+  script in the builder (main window or iframe).
+- Endpoint: 404 while off; 35 pages, live URLs, no base placeholder; ETag →
+  304; a page switched to draft disappears immediately.
+- Export: the render's config is unchanged (`/__shipstatic_base__/search-index.json`,
+  no selector); per-destination `search-index.json` with each sub-path; a local
+  copy of the export upgrades both forms and searches.
+- Mobile width (500 px): the dropdown stays on screen with no horizontal
+  scroll, and tapping a result opens it, on both the live site and the export.
