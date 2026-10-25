@@ -714,5 +714,16 @@
   "Monthly (every 30 days)": "Mensuel (tous les 30 jours)",
   "No enabled destinations are selected.": "Aucune destination activée n’est sélectionnée.",
   "Another sync was already running.": "Une autre synchronisation était déjà en cours.",
-  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "Le formulaire de recherche renvoie vers ce site — activez Recherche sur le site dans les Réglages pour qu’il fonctionne en statique"
+  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "Le formulaire de recherche renvoie vers ce site — activez Recherche sur le site dans les Réglages pour qu’il fonctionne en statique",
+  "Finish": "Terminer",
+  "First Process": "Premier traitement",
+  "Process renders every page you chose to include into static HTML, ready to check and sync. Nothing is uploaded anywhere yet.": "Le traitement génère en HTML statique chaque page que vous avez choisi d’inclure, prête à être vérifiée et synchronisée. Rien n’est encore envoyé nulle part.",
+  "It visits every included page, so it can take several minutes on a large site, and the site does a little extra work while it runs. Progress shows on the dashboard; you can keep working.": "Il visite chaque page incluse : sur un grand site, cela peut prendre plusieurs minutes, et le site travaille un peu plus pendant ce temps. La progression s’affiche sur le tableau de bord ; vous pouvez continuer à travailler.",
+  "Process now when I finish": "Traiter dès que je termine",
+  "Using nginx?": "Vous utilisez nginx ?",
+  "nginx has its own limits, which PHP (and so the connector) can’t see. Make sure the destination site has at least this:": "nginx a ses propres limites, que PHP (et donc le connecteur) ne peut pas voir. Assurez-vous que le site de destination a au moins ceci :",
+  "PHP runs for <code>.php</code> files in the folder the connector is in (a <code>location ~ \\.php$</code> block passing to PHP-FPM, as for any PHP site). Without it, Test reports HTTP 405 or 404.": "PHP s’exécute pour les fichiers <code>.php</code> du dossier du connecteur (un bloc <code>location ~ \\.php$</code> qui transmet à PHP-FPM, comme pour tout site PHP). Sans cela, le test indique HTTP 405 ou 404.",
+  "<code>client_max_body_size</code> of at least <code>2m</code>. ShipStatic uploads in pieces under 1 MB and retries smaller ones if refused, so nginx’s <code>1m</code> default works unless it has been lowered.": "Un <code>client_max_body_size</code> d’au moins <code>2m</code>. ShipStatic envoie par morceaux de moins de 1 Mo et réessaie avec des morceaux plus petits en cas de refus : la valeur par défaut de nginx, <code>1m</code>, suffit tant qu’elle n’a pas été abaissée.",
+  "<code>fastcgi_read_timeout 300s;</code> in that PHP location: unpacking a large site can take longer than the 60-second default.": "<code>fastcgi_read_timeout 300s;</code> dans ce bloc PHP : décompresser un grand site peut dépasser les 60 secondes par défaut.",
+  "Block public access to <code>.htaccess</code> files and the connector’s in-progress uploads. The nginx snippet on the <strong>Destination Server Configuration</strong> tab includes the rules.": "Bloquez l’accès public aux fichiers <code>.htaccess</code> et aux envois en cours du connecteur. Le snippet nginx de l’onglet <strong>Destination Server Configuration</strong> contient les règles."
 }

@@ -226,23 +226,36 @@ final class Url {
             return false;
         }
 
-        foreach (['#', 'mailto:', 'tel:', 'data:', 'javascript:'] as $skip) {
-            if (stripos($url, $skip) === 0) {
-                return false;
-            }
+        if (strpos($url, '#') === 0) {
+            return false;
         }
 
         if (strpos($url, '//') === 0) {
-            $host = wp_parse_url('https:' . $url, PHP_URL_HOST);
+            $parts = wp_parse_url('https:' . $url);
         } elseif (preg_match('#^https?://#i', $url)) {
-            $host = wp_parse_url($url, PHP_URL_HOST);
+            $parts = wp_parse_url($url);
+        } elseif (preg_match('#^[a-z][a-z0-9+.-]*:#i', $url)) {
+            // Any other scheme (mailto:, tel:, sms:, data:, javascript:, ftp://,
+            // whatsapp://, a malformed "https:/x") is never a page of this site.
+            return false;
         } else {
             return true; // Relative or root-relative path → internal.
         }
 
+        if (!is_array($parts) || !isset($parts['host']) || isset($parts['user'])) {
+            return false;
+        }
+
+        // Another port is another site (http and https on their default ports
+        // are the same one — the scheme isn't compared).
+        $self_port = wp_parse_url(home_url(), PHP_URL_PORT);
+        if (($parts['port'] ?? null) !== $self_port) {
+            return false;
+        }
+
         $self = wp_parse_url(home_url(), PHP_URL_HOST);
 
-        return is_string($host) && self::normalize_host($host) === self::normalize_host((string) $self);
+        return self::normalize_host((string) $parts['host']) === self::normalize_host((string) $self);
     }
 
     /**

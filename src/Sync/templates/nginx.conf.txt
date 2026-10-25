@@ -19,3 +19,19 @@ location ~* \.(__BS_ASSETS__)$ {
 location ~* \.html$ {
     add_header Cache-Control "public, max-age=0, must-revalidate";
 }
+
+# Never serve web-server config files, or the Connector's in-progress uploads.
+location ~ /\.ht {
+    deny all;
+}
+location ~ /bs-connector-[^/]+\.(part|zip)$ {
+    deny all;
+}
+
+# Deploying with the Connector? Its minimum nginx setup:
+# - PHP must run for the bs-connector-….php file (a location ~ \.php$ block
+#   passing to PHP-FPM, as for any PHP site).
+# - client_max_body_size 2m;   (or more) in this server { } block. ShipStatic
+#   uploads in pieces under 1 MB, so nginx's 1m default works unless lowered.
+# - fastcgi_read_timeout 300s; in that PHP location: unpacking a large site
+#   can take longer than nginx's 60 s default.

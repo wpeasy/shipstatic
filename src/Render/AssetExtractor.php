@@ -143,17 +143,49 @@ final class AssetExtractor {
         $out = [];
 
         foreach (self::match($html, $regex) as $value) {
-            foreach (explode(',', $value) as $candidate) {
-                $candidate = trim($candidate);
-                if ($candidate === '') {
-                    continue;
-                }
-                // "url 2x" / "url 800w" → take the URL part.
-                $out[] = preg_split('/\s+/', $candidate)[0] ?? '';
+            foreach (self::srcset_urls($value) as $url) {
+                $out[] = $url;
             }
         }
 
         return $out;
+    }
+
+    /**
+     * The URLs in one srcset value, parsed as the HTML spec does: a URL runs to
+     * the next whitespace (so a CDN's "?w=100,200" keeps its comma), trailing
+     * commas on it end the candidate, otherwise its descriptor runs to the
+     * next comma. Splitting on every comma instead turned "…?w=100,200 1x"
+     * into a bogus "200" asset.
+     *
+     * @param string $value Attribute value.
+     * @return array<int,string>
+     */
+    private static function srcset_urls(string $value): array {
+        $urls = [];
+        $len  = strlen($value);
+        $i    = 0;
+        while ($i < $len) {
+            $i += strspn($value, " \t\n\r\f,", $i);
+            if ($i >= $len) {
+                break;
+            }
+            $url_len = strcspn($value, " \t\n\r\f", $i);
+            $url     = substr($value, $i, $url_len);
+            $i      += $url_len;
+            if (substr($url, -1) === ',') {
+                $url = rtrim($url, ',');
+            } else {
+                // Skip the descriptor ("2x", "800w") up to the next comma.
+                $comma = strpos($value, ',', $i);
+                $i     = $comma === false ? $len : $comma + 1;
+            }
+            if ($url !== '') {
+                $urls[] = $url;
+            }
+        }
+
+        return $urls;
     }
 
     /**

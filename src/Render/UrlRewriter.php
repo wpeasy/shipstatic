@@ -42,22 +42,12 @@ final class UrlRewriter {
         $prefix  = Url::home_base() === '' ? Url::BASE_TOKEN : '';
         $escaped = str_replace('/', '\/', $prefix);
 
-        $search  = [];
-        $replace = [];
-
-        foreach (self::source_hosts() as $host) {
-            // Order matters: scheme-qualified forms before bare "//host", so the
-            // latter can't chew the slashes out of the former. Both plain and
-            // JSON-escaped (\/\/) slash forms are covered.
-            array_push($search, 'https://' . $host, 'http://' . $host, '//' . $host);
-            array_push($replace, $prefix, $prefix, $prefix);
-            array_push($search, 'https:\/\/' . $host, 'http:\/\/' . $host, '\/\/' . $host);
-            array_push($replace, $escaped, $escaped, $escaped);
-        }
-
         // Replacing the origin with '' (or the placeholder) leaves the following
         // path (escaped or not): "https://host/about" → "/about", "https:\/\/host\/x" → "\/x".
-        $content = str_replace($search, $replace, $content);
+        $content = self::replace_origins(
+            $content,
+            static fn(bool $json, bool $bare): string => $json ? $escaped : $prefix
+        );
 
         // Now swap the source home sub-path for the placeholder, so e.g.
         // "/test-for-vid/about/" becomes "/__shipstatic_base__/about/".
@@ -149,25 +139,13 @@ final class UrlRewriter {
         // this destination's sub-path goes after its origin — directly for a
         // root install, in place of the home sub-path otherwise (below).
         $prefix  = Url::home_base() === '' ? $base : '';
-        $search  = [];
-        $replace = [];
-        foreach (self::source_hosts() as $host) {
-            // Same ordering as rewrite(): scheme-qualified before bare "//host".
-            $search[] = 'https://' . $host;
-            $replace[] = $origin . $prefix;
-            $search[] = 'http://' . $host;
-            $replace[] = $origin . $prefix;
-            $search[] = '//' . $host;
-            $replace[] = '//' . $authority . $prefix;
-            $search[] = 'https:\/\/' . $host;
-            $replace[] = str_replace('/', '\/', $origin . $prefix);
-            $search[] = 'http:\/\/' . $host;
-            $replace[] = str_replace('/', '\/', $origin . $prefix);
-            $search[] = '\/\/' . $host;
-            $replace[] = str_replace('/', '\/', '//' . $authority . $prefix);
-        }
-
-        $content = str_replace($search, $replace, $content);
+        $content = self::replace_origins(
+            $content,
+            static function (bool $json, bool $bare) use ($origin, $authority, $prefix): string {
+                $to = ($bare ? '//' . $authority : $origin) . $prefix;
+                return $json ? str_replace('/', '\/', $to) : $to;
+            }
+        );
 
         // Swap the source home sub-path for this destination's sub-path
         // ("/test-for-vid/about/" → "/about/" or "/repo/about/"). Anchored to the
@@ -187,6 +165,68 @@ final class UrlRewriter {
         }
 
         return $content;
+    }
+
+    /**
+     * Replace each reference to the source origin — `https://host`, `http://host`,
+     * `//host`, and their JSON-escaped (`\/\/`) forms, for every source host —
+     * with what `$to(json, bare)` returns, leaving the path after it intact.
+     *
+     * Only whole references to THIS site are touched (tester report: external
+     * URLs were being mangled):
+     * - the host must end there: not `host.evil.com`, `hostname`, `host:8443`
+     *   (another port is another site) or `host@evil.com`;
+     * - nothing may run into it from the left (`xhttps://`, `ftp://host`);
+     * - it must start its own URL, not sit inside another one — e.g. the
+     *   `?u=https://host/page/` of a share link, a Wayback Machine URL, or an
+     *   embed's `origin=` — which is when the text since the last delimiter
+     *   (quote, whitespace, bracket, comma, semicolon) already holds a `//`.
+     *
+     * @param string                    $content Document text.
+     * @param callable(bool,bool):string $to      Replacement for (JSON-escaped?, protocol-relative?).
+     */
+    private static function replace_origins(string $content, callable $to): string {
+        $hosts = implode('|', array_map(static fn(string $h): string => preg_quote($h, '#'), self::source_hosts()));
+        if ($hosts === '') {
+            return $content;
+        }
+
+        // (?<!…) nothing runs into it from the left; (\\\\?/)\2 is "//" or "\/\/";
+        // (?!…) the host ends there.
+        $pattern = '#(?<![\w.@%+:/\\\\-])(https?:)?(\\\\?/)\2(?:' . $hosts . ')(?![\w.:@-])#i';
+
+        return (string) preg_replace_callback(
+            $pattern,
+            static function (array $m) use ($content, $to): string {
+                [$match, $offset] = $m[0];
+                if (self::inside_another_url($content, (int) $offset)) {
+                    return $match;
+                }
+
+                return $to($m[2][0] === '\\/', $m[1][0] === '');
+            },
+            $content,
+            -1,
+            $count,
+            PREG_OFFSET_CAPTURE
+        );
+    }
+
+    /**
+     * Whether the URL starting at $offset is part of a longer URL: the text back
+     * to the last delimiter already contains "//" (plain or JSON-escaped).
+     *
+     * @param string $content Document text.
+     * @param int    $offset  Byte offset of the match.
+     */
+    private static function inside_another_url(string $content, int $offset): bool {
+        $start  = max(0, $offset - 2048);
+        $before = substr($content, $start, $offset - $start);
+        if (preg_match('#[\s"\'()<>,;`\[\]{}]([^\s"\'()<>,;`\[\]{}]*)$#', $before, $tail)) {
+            $before = $tail[1];
+        }
+
+        return strpos($before, '//') !== false || strpos($before, '\\/\\/') !== false;
     }
 
     /**

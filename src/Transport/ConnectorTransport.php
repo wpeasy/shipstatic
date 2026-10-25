@@ -39,10 +39,14 @@ final class ConnectorTransport implements TransportInterface, PackageCapableTran
      */
     private array $info = [];
 
+    /** Destination URL (keys the remembered chunk size). */
+    private string $url = '';
+
     /**
      * @param array<string,mixed> $config Destination connection config.
      */
     public function __construct(array $config) {
+        $this->url    = (string) ($config['url'] ?? '');
         $this->client = new ConnectorClient(
             (string) ($config['url'] ?? ''),
             (string) ($config['connectorId'] ?? ''),
@@ -105,6 +109,10 @@ final class ConnectorTransport implements TransportInterface, PackageCapableTran
         if (!empty($i['free'])) {
             $bits[] = size_format((int) $i['free']) . ' free';
         }
+        if (stripos((string) ($i['server'] ?? ''), 'nginx') !== false) {
+            // nginx has limits PHP can't see (request size, PHP timeout).
+            $bits[] = 'nginx — check its minimum setup under "Using nginx?"';
+        }
 
         return implode(', ', $bits);
     }
@@ -123,6 +131,7 @@ final class ConnectorTransport implements TransportInterface, PackageCapableTran
      */
     public function put(string $local_path, string $remote_path): void {
         $this->client->upload($local_path, ltrim($remote_path, '/'), $this->chunk_size());
+        $this->remember_chunk();
     }
 
     /**
@@ -193,6 +202,7 @@ final class ConnectorTransport implements TransportInterface, PackageCapableTran
                     $report(sprintf('Uploading package… %d%%', (int) floor($sent / $total * 100)));
                 }
             });
+            $this->remember_chunk();
 
             $report('Extracting on the destination…');
             $r = $this->client->extract($upload, $deletes, max(10, (int) apply_filters('shipstatic_package_timeout', 120)));
@@ -216,14 +226,48 @@ final class ConnectorTransport implements TransportInterface, PackageCapableTran
     }
 
     /**
-     * Chunk size: under the receiver's upload limit, capped.
+     * Chunk size: under nginx's default 1 MB request limit (PHP can't see it,
+     * so the receiver can't report it), under the receiver's PHP upload limit,
+     * and no larger than a size that needed shrinking here before.
      */
     private function chunk_size(): int {
+        /**
+         * Filters the largest Connector upload chunk (bytes). Raise it for
+         * fewer round trips on a host that accepts bigger requests (nginx:
+         * client_max_body_size); the PHP upload limit still applies.
+         *
+         * @param int    $bytes Default ConnectorClient::SAFE_CHUNK (900 KiB).
+         * @param string $url   Destination URL.
+         */
+        $chunk = (int) apply_filters('shipstatic_connector_chunk', ConnectorClient::SAFE_CHUNK, $this->url);
+
         $max = (int) ($this->info['uploadMax'] ?? 0);
-        if ($max <= 0) {
-            return ConnectorClient::DEFAULT_CHUNK;
+        if ($max > 0) {
+            // Leave headroom for the multipart envelope + meta field.
+            $chunk = min($chunk, (int) floor($max * 0.9));
         }
-        // Leave headroom for the multipart envelope + meta field.
-        return (int) max(64 * 1024, min(ConnectorClient::MAX_CHUNK, floor($max * 0.9)));
+        $remembered = (int) get_transient($this->chunk_key());
+        if ($remembered > 0) {
+            $chunk = min($chunk, $remembered);
+        }
+
+        return (int) max(ConnectorClient::MIN_CHUNK, min(ConnectorClient::MAX_CHUNK, $chunk));
+    }
+
+    /**
+     * Remember a chunk size that had to shrink, so the next upload starts there.
+     */
+    private function remember_chunk(): void {
+        $used = $this->client->last_chunk();
+        if ($used > 0 && $used < $this->chunk_size()) {
+            set_transient($this->chunk_key(), $used, MONTH_IN_SECONDS);
+        }
+    }
+
+    /**
+     * Transient key for this destination's remembered chunk size.
+     */
+    private function chunk_key(): string {
+        return 'shipstatic_conn_chunk_' . md5($this->url);
     }
 }

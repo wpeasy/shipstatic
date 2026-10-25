@@ -88,7 +88,11 @@ final class I18n {
             'wizardBack'      => __('Back', 'shipstatic'),
             'wizardNext'      => __('Next', 'shipstatic'),
             'wizardFinish'    => __('Finish & Process', 'shipstatic'),
-            'wizardFinishing' => __('Processing…', 'shipstatic'),
+            'wizardFinishOnly' => __('Finish', 'shipstatic'),
+            'wizardProcessStep' => __('First Process', 'shipstatic'),
+            'wizardProcessHelp' => __('Process renders every page you chose to include into static HTML, ready to check and sync. Nothing is uploaded anywhere yet.', 'shipstatic'),
+            'wizardProcessTime' => __('It visits every included page, so it can take several minutes on a large site, and the site does a little extra work while it runs. Progress shows on the dashboard; you can keep working.', 'shipstatic'),
+            'wizardProcessNow' => __('Process now when I finish', 'shipstatic'),
         ];
     }
 
@@ -341,6 +345,12 @@ final class I18n {
             'connectorStep3'   => __('Upload <code>bs-connector-&lt;id&gt;.php</code> to the folder served at that URL.', 'shipstatic'),
             'connectorStep4'   => __('Press <strong>Test</strong>, then Check / Sync as usual.', 'shipstatic'),
             'connectorReq'     => __('Needs PHP 7.4+ at the destination; ZipArchive there enables one-package deploys (otherwise files upload one by one).', 'shipstatic'),
+            'connectorNginx'   => __('Using nginx?', 'shipstatic'),
+            'connectorNginxLead' => __('nginx has its own limits, which PHP (and so the connector) can’t see. Make sure the destination site has at least this:', 'shipstatic'),
+            'connectorNginx1'  => __('PHP runs for <code>.php</code> files in the folder the connector is in (a <code>location ~ \.php$</code> block passing to PHP-FPM, as for any PHP site). Without it, Test reports HTTP 405 or 404.', 'shipstatic'),
+            'connectorNginx2'  => __('<code>client_max_body_size</code> of at least <code>2m</code>. ShipStatic uploads in pieces under 1 MB and retries smaller ones if refused, so nginx’s <code>1m</code> default works unless it has been lowered.', 'shipstatic'),
+            'connectorNginx3'  => __('<code>fastcgi_read_timeout 300s;</code> in that PHP location: unpacking a large site can take longer than the 60-second default.', 'shipstatic'),
+            'connectorNginx4'  => __('Block public access to <code>.htaccess</code> files and the connector’s in-progress uploads. The nginx snippet on the <strong>Destination Server Configuration</strong> tab includes the rules.', 'shipstatic'),
             'connectorUnpaired'=> __('Not paired yet.', 'shipstatic'),
             /* translators: %s: connector filename */
             'connectorPaired'  => __('Paired — expects %s in the destination folder.', 'shipstatic'),

@@ -712,5 +712,16 @@
   "Monthly (every 30 days)": "Maandelijks (elke 30 dagen)",
   "No enabled destinations are selected.": "Er is geen ingeschakelde bestemming geselecteerd.",
   "Another sync was already running.": "Er liep al een andere synchronisatie.",
-  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "Het zoekformulier verstuurt naar deze site — zet Zoeken op de site aan in Instellingen om het statisch te laten werken"
+  "Search form posts back to this site — turn on Site search in Settings to make it work statically": "Het zoekformulier verstuurt naar deze site — zet Zoeken op de site aan in Instellingen om het statisch te laten werken",
+  "Finish": "Voltooien",
+  "First Process": "Eerste verwerking",
+  "Process renders every page you chose to include into static HTML, ready to check and sync. Nothing is uploaded anywhere yet.": "Verwerken zet elke pagina die je hebt gekozen om in statische HTML, klaar om te controleren en te synchroniseren. Er wordt nog niets geüpload.",
+  "It visits every included page, so it can take several minutes on a large site, and the site does a little extra work while it runs. Progress shows on the dashboard; you can keep working.": "Het bezoekt elke opgenomen pagina, dus op een grote site kan het enkele minuten duren en heeft de site in die tijd wat meer werk. De voortgang staat op het dashboard; je kunt gewoon doorwerken.",
+  "Process now when I finish": "Meteen verwerken als ik voltooi",
+  "Using nginx?": "Gebruik je nginx?",
+  "nginx has its own limits, which PHP (and so the connector) can’t see. Make sure the destination site has at least this:": "nginx heeft eigen limieten die PHP (en dus de connector) niet kan zien. Zorg dat de bestemmingssite minimaal dit heeft:",
+  "PHP runs for <code>.php</code> files in the folder the connector is in (a <code>location ~ \\.php$</code> block passing to PHP-FPM, as for any PHP site). Without it, Test reports HTTP 405 or 404.": "PHP draait voor <code>.php</code>-bestanden in de map van de connector (een <code>location ~ \\.php$</code>-blok dat doorgeeft aan PHP-FPM, zoals bij elke PHP-site). Zonder dat meldt de test HTTP 405 of 404.",
+  "<code>client_max_body_size</code> of at least <code>2m</code>. ShipStatic uploads in pieces under 1 MB and retries smaller ones if refused, so nginx’s <code>1m</code> default works unless it has been lowered.": "Een <code>client_max_body_size</code> van minimaal <code>2m</code>. ShipStatic uploadt in stukken onder 1 MB en probeert kleinere als ze worden geweigerd, dus de nginx-standaard <code>1m</code> werkt, tenzij die is verlaagd.",
+  "<code>fastcgi_read_timeout 300s;</code> in that PHP location: unpacking a large site can take longer than the 60-second default.": "<code>fastcgi_read_timeout 300s;</code> in dat PHP-blok: het uitpakken van een grote site kan langer duren dan de standaard 60 seconden.",
+  "Block public access to <code>.htaccess</code> files and the connector’s in-progress uploads. The nginx snippet on the <strong>Destination Server Configuration</strong> tab includes the rules.": "Blokkeer openbare toegang tot <code>.htaccess</code>-bestanden en de lopende uploads van de connector. Het nginx-fragment op het tabblad <strong>Destination Server Configuration</strong> bevat de regels."
 }

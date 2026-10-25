@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace WPEasy\ShipStatic\Render;
 
+use WPEasy\ShipStatic\Support\Url;
 use WPEasy\ShipStatic\Support\UrlSafety;
 
 defined('ABSPATH') || exit;
@@ -101,7 +102,7 @@ final class PageRenderer {
      */
     public static function render(string $url): array {
         self::release_session();
-        $response = wp_remote_get($url, self::request_args($url));
+        $response = self::get($url, self::request_args($url));
 
         if (is_wp_error($response)) {
             throw new \RuntimeException($response->get_error_message());
@@ -134,7 +135,7 @@ final class PageRenderer {
          */
         $args['timeout'] = max(5, (int) apply_filters('shipstatic_asset_timeout', 60, $url));
 
-        $response = wp_remote_get($url, $args);
+        $response = self::get($url, $args);
 
         if (is_wp_error($response)) {
             throw new \RuntimeException($response->get_error_message());
@@ -145,6 +146,38 @@ final class PageRenderer {
             'body'        => (string) wp_remote_retrieve_body($response),
             'contentType' => (string) wp_remote_retrieve_header($response, 'content-type'),
         ];
+    }
+
+    /**
+     * GET a URL of this site, following redirects only while they stay on this
+     * site. A redirect to another site (a redirect plugin, a "/go/" link) ends
+     * there: its 3xx is returned, so the page is skipped instead of the other
+     * site's HTML being saved as ours — and the render token never leaves.
+     *
+     * @param string              $url  Absolute URL.
+     * @param array<string,mixed> $args Request args (`redirection` = how many to follow).
+     * @return array<string,mixed>|\WP_Error
+     */
+    private static function get(string $url, array $args) {
+        $hops                = max(0, (int) ($args['redirection'] ?? 5));
+        $args['redirection'] = 0;
+
+        $response = wp_remote_get($url, $args);
+        while (!is_wp_error($response) && $hops-- > 0) {
+            $code     = (int) wp_remote_retrieve_response_code($response);
+            $location = (string) wp_remote_retrieve_header($response, 'location');
+            if ($code < 300 || $code > 399 || $location === '') {
+                break;
+            }
+            $next = Url::absolutize($location, $url);
+            if ($next === '' || !Url::is_internal($next)) {
+                break;
+            }
+            $url      = $next;
+            $response = wp_remote_get($url, $args);
+        }
+
+        return $response;
     }
 
     /**
