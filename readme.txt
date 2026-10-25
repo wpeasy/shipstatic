@@ -122,4 +122,5 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 * Per-destination Text, Media, Links and Videos replacements, with each destination's own sub-path.
 * Site search for the static site, with a fully styleable ShipStatic Search element for Bricks and a [shipstatic_search] shortcode.
 * Scheduled syncs (hourly, daily, weekly or monthly), single-page sync from the admin, the front end and the Bricks builder, gzip pre-compression, remote pruning, sitemap.xml and robots.txt generation.
+* Lockdown: lock the WordPress site to your editors' IP addresses and send everyone else to the static site, with an unlock link for when your address changes.
 * Translations: French, German, Italian, Spanish and Dutch.

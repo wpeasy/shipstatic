@@ -16,6 +16,7 @@ First public release.
 - **Per-destination replacements**: Text, Media (whole responsive sets), Links and Videos.
 - **Site search** for static sites: a per-destination `search-index.json` built at deploy (after replacements), an in-browser search script, the **ShipStatic Search** Bricks element (style controls for every part, builder preview) and the `[shipstatic_search]` shortcode.
 - **Scheduled sync**: hourly / daily / weekly / monthly, to all or chosen destinations, via WP-Cron (WP-CLI when available).
+- **Lockdown**: lock the WordPress site to an IP allow-list and send everyone else to the same page on a destination. An unlock link adds a visitor's address (and emails the admin); blocking happens in `.htaccess` (Apache / LiteSpeed) or before every PHP file via `.user.ini` (nginx / FastCGI), with an mu-plugin everywhere. Process, Sync and WP-Cron keep working while locked. WP-CLI: `wp shipstatic lockdown`.
 - **Single-page sync** from the pages list, the front end and the Bricks builder (draggable button).
 - First-run setup wizard, settings drawer (theme, discovery mode, AI tools), WP-CLI commands, WordPress Abilities (MCP) with opt-in tiers.
 - Translations: fr_FR, de_DE, it_IT, es_ES, nl_NL.
