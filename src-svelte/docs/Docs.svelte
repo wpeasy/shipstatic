@@ -7,6 +7,7 @@
     { id: 'how', label: 'How it works' },
     { id: 'search', label: 'Site search' },
     { id: 'schedule', label: 'Scheduled sync' },
+    { id: 'lockdown', label: 'Lockdown' },
     { id: 'connector', label: 'Connector' },
     { id: 'cloudflare', label: 'Cloudflare' },
     { id: 'github', label: 'GitHub Pages' },
@@ -171,6 +172,40 @@
         <p class="bs-docs__muted">
           Schedules use WP-Cron, which fires when someone visits the site, so on a quiet site a sync may start a little late. For exact timing, have your host’s cron call <code>wp-cron.php</code> every few minutes. With WP-CLI available the sync runs in the background; otherwise WordPress runs it in short steps until it’s done.
         </p>
+      </section>
+
+      <!-- Lockdown -->
+      <section id="lockdown" class="bs-docs__section bs-stack bs-stack--sm">
+        <h2>Lockdown</h2>
+        <p class="bs-docs__muted">
+          Once your visitors use the static site, your WordPress site only needs to reach its editors. <strong>Lockdown</strong> locks it to a list of IP addresses and sends everyone else to the same page on your static site. A WordPress site no stranger can reach can’t be attacked through its plugins, login page or forms.
+        </p>
+        <h3>Turning it on</h3>
+        <ol class="bs-docs__steps">
+          <li>On the <strong>Lockdown</strong> tab, copy the <strong>unlock link</strong> and keep it somewhere safe (a bookmark, a password manager).</li>
+          <li>Turn <strong>Lockdown</strong> on. Your current address is added to the list, and the tab checks that a stranger really is turned away.</li>
+          <li>Add your team’s addresses, or send them the unlock link: opening it adds the address they’re on.</li>
+        </ol>
+        <h3>How it locks the site</h3>
+        <p class="bs-docs__muted">
+          ShipStatic picks the strongest method your server allows, and the tab says which one is working. On Apache and LiteSpeed it adds rules to the top of <code>.htaccess</code>, so strangers are stopped before any PHP runs. On nginx it adds a line to <code>.user.ini</code> that runs a small check before every PHP file (PHP can take up to 5 minutes to notice a change). Everywhere, a small file in <code>wp-content/mu-plugins</code> stops strangers inside WordPress too, before other plugins load.
+        </p>
+        <p class="bs-docs__muted">
+          The site’s own requests still get through, so Process, Sync, scheduled syncs, WP-Cron and Site Health keep working, and so do certificate renewals (<code>/.well-known/</code>). WP-CLI is never affected.
+        </p>
+        <h3>If you’re locked out</h3>
+        <ul class="bs-docs__list">
+          <li>Open your <strong>unlock link</strong>. It adds the address you’re on and keeps you in for 12 hours even if your address changes.</li>
+          <li>With WP-CLI: <code>wp shipstatic lockdown off</code>, or <code>wp shipstatic lockdown allow &lt;address&gt;</code>.</li>
+          <li>Over FTP: replace everything in <code>wp-content/shipstatic-lockdown.php</code> with just <code>&lt;?php</code> (don’t delete it while <code>.user.ini</code> still points to it), then remove the <code>ShipStatic Lockdown</code> lines from <code>.htaccess</code> and <code>.user.ini</code>.</li>
+          <li>Deactivating ShipStatic removes every Lockdown file.</li>
+        </ul>
+        <h3>Good to know</h3>
+        <ul class="bs-docs__list">
+          <li>Behind a proxy or CDN (Cloudflare, a load balancer) the server may see the proxy’s address instead of yours. The tab warns you when it looks that way; the unlock link still works.</li>
+          <li>Anyone with the unlock link can get in. Each address it adds is marked in the list, and the site admin gets an email. <strong>New link</strong> replaces it and signs everyone out of their unlock cookie.</li>
+          <li>Nothing on your static site is affected: it never loads anything from the WordPress site.</li>
+        </ul>
       </section>
 
       <!-- Connector -->

@@ -35,9 +35,14 @@ spl_autoload_register(static function (string $class): void {
 function shipstatic_uninstall_site(): void {
     global $wpdb;
 
+    // Lockdown's files (deactivation already removed them; be sure). Before the
+    // options go: the saved server facts say where .user.ini is.
+    \WPEasy\ShipStatic\Lockdown\Writer::remove_all();
+
     // Scheduled-sync cron events (deactivation already clears them; be sure).
     wp_clear_scheduled_hook('shipstatic_scheduled_sync');
     wp_clear_scheduled_hook('shipstatic_scheduled_continue');
+    wp_clear_scheduled_hook('shipstatic_lockdown_cleanup');
 
     // Options + transients. Every key the plugin writes starts with
     // `shipstatic_` (transients: `_transient[_timeout]_shipstatic_…`).

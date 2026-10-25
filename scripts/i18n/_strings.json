@@ -417,6 +417,33 @@
     "msgid": "Search results"
   },
   {
+    "msgid": "Added with the unlock link"
+  },
+  {
+    "msgid": "[%s] An address was added to Lockdown"
+  },
+  {
+    "msgid": "%1$s was added to the Lockdown list with the unlock link on %2$s.\n\nIf that wasn’t you or your team, remove it and generate a new unlock link:\n%3$s"
+  },
+  {
+    "msgid": "Unexpected answer (HTTP %d)."
+  },
+  {
+    "msgid": "“%s” is not an IP address or range."
+  },
+  {
+    "msgid": "IPv6 ranges must end on a whole group: /16, /32, /48, /64 … /128."
+  },
+  {
+    "msgid": "Couldn’t write %s."
+  },
+  {
+    "msgid": "Couldn’t remove the Lockdown lines from %s."
+  },
+  {
+    "msgid": "Couldn’t delete %s."
+  },
+  {
     "msgid": "Enter and save the Destination URL first — the connector is called at that address."
   },
   {
@@ -463,6 +490,9 @@
   },
   {
     "msgid": "Cloudflare token accepted — %s."
+  },
+  {
+    "msgid": "You (when Lockdown was turned on)"
   },
   {
     "msgid": "(no title)"
@@ -616,6 +646,192 @@
   },
   {
     "msgid": "Including…"
+  },
+  {
+    "msgid": "Lockdown"
+  },
+  {
+    "msgid": "Lock this WordPress site to the addresses below and send everyone else to your static site. Your visitors use the static site, so only editors need WordPress, and a site no stranger can reach can’t be attacked through its plugins, logins or forms."
+  },
+  {
+    "msgid": "Unlock link"
+  },
+  {
+    "msgid": "Opening this link adds the address you’re on to the list, so it gets you back in when your address changes. Anyone who has it can get in, so keep it private, and bookmark it rather than sharing it in public places."
+  },
+  {
+    "msgid": "Copy"
+  },
+  {
+    "msgid": "Copied"
+  },
+  {
+    "msgid": "New link"
+  },
+  {
+    "msgid": "Replace the link?"
+  },
+  {
+    "msgid": "I’ve saved this link somewhere safe"
+  },
+  {
+    "msgid": "Your address, as this server sees it: %s"
+  },
+  {
+    "msgid": "allowed"
+  },
+  {
+    "msgid": "not on the list"
+  },
+  {
+    "msgid": "Add my address"
+  },
+  {
+    "msgid": "Added from the dashboard"
+  },
+  {
+    "msgid": "A proxy or CDN says your address is %1$s, but the server sees %2$s. The site is probably behind a proxy, so the address it sees may be shared or change. Use the unlock link if you get locked out."
+  },
+  {
+    "msgid": "Locked"
+  },
+  {
+    "msgid": "Off: anyone can reach this WordPress site."
+  },
+  {
+    "msgid": "Strangers are stopped by .htaccess rules, before any PHP runs."
+  },
+  {
+    "msgid": "Strangers are stopped before any PHP file runs (through .user.ini). Changes can take up to 5 minutes to apply; until then WordPress itself blocks them."
+  },
+  {
+    "msgid": "Strangers are stopped inside WordPress, before other plugins load. This server offers no way to stop them earlier, so a plugin file opened directly isn’t covered."
+  },
+  {
+    "msgid": "Your address isn’t getting in"
+  },
+  {
+    "msgid": "A test from this browser without its unlock cookie was turned away. You’re still in for 12 hours thanks to the cookie, but after that you’d be locked out. Add your address, or turn Lockdown off again."
+  },
+  {
+    "msgid": "Turn Lockdown off"
+  },
+  {
+    "msgid": "Checked: a stranger is stopped by .htaccess, before PHP runs."
+  },
+  {
+    "msgid": "Checked: a stranger is stopped before any PHP file runs."
+  },
+  {
+    "msgid": "Checked: strangers are only being stopped inside WordPress. The .htaccess rules aren’t taking effect: this server may ignore .htaccess, or (OpenLiteSpeed) need a restart to read it."
+  },
+  {
+    "msgid": "Checked: strangers are only being stopped inside WordPress for now. PHP can take up to 5 minutes to read .user.ini; check again then. If it stays like this, the host ignores .user.ini."
+  },
+  {
+    "msgid": "Checked: strangers are stopped inside WordPress."
+  },
+  {
+    "msgid": "Couldn’t check: the server’s own address (%s) is on the list, so its test request got in."
+  },
+  {
+    "msgid": "A test request without permission got in, so the site isn’t locked. Write the files again."
+  },
+  {
+    "msgid": "Couldn’t check: %s"
+  },
+  {
+    "msgid": "Lockdown’s files are missing or out of date (another plugin may have rewritten .htaccess)."
+  },
+  {
+    "msgid": "Write them again"
+  },
+  {
+    "msgid": "Check again"
+  },
+  {
+    "msgid": "Checking…"
+  },
+  {
+    "msgid": "Allowed addresses"
+  },
+  {
+    "msgid": "Single addresses (203.0.113.7) or ranges (203.0.113.0/24, 2001:db8::/64). An address added with the unlock link is added as its /64 for IPv6, which changes within that range every day."
+  },
+  {
+    "msgid": "No addresses yet. Turning Lockdown on adds yours."
+  },
+  {
+    "msgid": "Address"
+  },
+  {
+    "msgid": "Added"
+  },
+  {
+    "msgid": "Label, e.g. Office"
+  },
+  {
+    "msgid": "Add"
+  },
+  {
+    "msgid": "Remove"
+  },
+  {
+    "msgid": "Remove?"
+  },
+  {
+    "msgid": "you"
+  },
+  {
+    "msgid": "when turned on"
+  },
+  {
+    "msgid": "via unlock link"
+  },
+  {
+    "msgid": "added by hand"
+  },
+  {
+    "msgid": "via WP-CLI"
+  },
+  {
+    "msgid": "Send blocked visitors to"
+  },
+  {
+    "msgid": "The first enabled destination"
+  },
+  {
+    "msgid": "Nowhere: show a 403 page"
+  },
+  {
+    "msgid": "Blocked visitors go to the same page on %s."
+  },
+  {
+    "msgid": "Blocked visitors see a 403 page (no destination has a Destination URL)."
+  },
+  {
+    "msgid": "Email the site admin when the unlock link adds an address"
+  },
+  {
+    "msgid": "Optional: block in nginx too"
+  },
+  {
+    "msgid": "If you manage this server, paste this into the site’s server { } block and reload nginx. It holds the list as it is now: after any change, including an address added by the unlock link, paste it again. Lockdown works without it."
+  },
+  {
+    "msgid": "If you’re locked out"
+  },
+  {
+    "msgid": "Open your <strong>unlock link</strong>. It adds the address you’re on."
+  },
+  {
+    "msgid": "With WP-CLI: <code>wp shipstatic lockdown off</code>, or <code>wp shipstatic lockdown allow &lt;address&gt;</code>."
+  },
+  {
+    "msgid": "Over FTP or a file manager: replace everything in <code>wp-content/shipstatic-lockdown.php</code> with just <code>&lt;?php</code> (don’t delete it: PHP needs it while <code>.user.ini</code> points to it), then delete the <code># BEGIN ShipStatic Lockdown</code> block from <code>.htaccess</code> and the <code>; BEGIN ShipStatic Lockdown</code> lines from <code>.user.ini</code>. Renaming the plugin folder alone isn’t enough."
+  },
+  {
+    "msgid": "Turning ShipStatic off (deactivating it) removes every Lockdown file."
   },
   {
     "msgid": "Generate and serve static HTML versions of your site for performance."
@@ -1215,9 +1431,6 @@
     "msgid": "Check"
   },
   {
-    "msgid": "Checking…"
-  },
-  {
     "msgid": "Preview what a sync would change on this destination — compares the last render, uploads nothing."
   },
   {
@@ -1297,9 +1510,6 @@
   },
   {
     "msgid": "Replace…"
-  },
-  {
-    "msgid": "Remove"
   },
   {
     "msgid": "Filter by page…"
@@ -1572,9 +1782,6 @@
     "msgid": "Check server"
   },
   {
-    "msgid": "Check again"
-  },
-  {
     "msgid": "No destination has a Destination URL yet — set one on the destination to enable the check."
   },
   {
@@ -1683,9 +1890,6 @@
     "msgid": "Rich"
   },
   {
-    "msgid": "Add"
-  },
-  {
     "msgid": "Paragraph"
   },
   {
@@ -1741,12 +1945,6 @@
   },
   {
     "msgid": "Testing…"
-  },
-  {
-    "msgid": "Copy"
-  },
-  {
-    "msgid": "Copied"
   },
   {
     "msgid": "Dismiss"

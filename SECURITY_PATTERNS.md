@@ -19,7 +19,7 @@ Namespace `WPEasy\ShipStatic`, REST namespace `shipstatic/v1`, option/hook/const
 
 ## 0. Authorization model: admin-only, uniform
 
-Every REST route in `src/REST/*` registers `permission_callback => [self::class, 'can_manage']`, and **`can_manage()` is `current_user_can('manage_options')`**. There are **no** `wp_ajax_*`, `wp_ajax_nopriv_*`, `admin_post_*`, or `__return_true` endpoints, and no public liveness probe. The admin page (`Admin\Menu`) is gated on `manage_options` and re-checks it in `render_page()`.
+Every REST route in `src/REST/*` registers `permission_callback => [self::class, 'can_manage']`, and **`can_manage()` is `current_user_can('manage_options')`**. There are **no** `wp_ajax_*`, `wp_ajax_nopriv_*`, `admin_post_*`, or `__return_true` endpoints, and no public liveness probe. The admin page (`Admin\Menu`) is gated on `manage_options` and re-checks it in `render_page()`. Lockdown adds two unauthenticated *request handlers* that are not endpoints (the unlock link and the 204 check request) — see §11 for their rules.
 
 **Rules for new surfaces:**
 - A new REST route is `manage_options` by default. If you need anything lower-privileged, that is a design change — justify it, and then the IDOR/ownership rules below apply.
@@ -232,6 +232,26 @@ The crawler follows every same-origin URL it finds in rendered pages and CSS —
 
 ---
 
+## 11. Lockdown writes server config and executable PHP (`src/Lockdown/`, docs/LOCKDOWN_PLAN.md)
+
+Lockdown turns settings into `.htaccess` rules, a `.user.ini` line, a generated PHP gate (`wp-content/shipstatic-lockdown.php`) and an mu-plugin. Injection here is server-config injection or code execution, and a mistake can lock every editor out or take the site down.
+
+**Rules:**
+- **Only validated values reach generated files.** Ranges go through `Cidr::parse()`, which rebuilds the text from `inet_pton()` bytes (raw input never reaches a file); IPv6 prefixes must be multiples of 16. The unlock key and render token are letters/digits (`Writer::htaccess_block()` re-checks and throws), the cookie value is hex, the redirect URL is rebuilt by `Settings::redirect_base()` from a strict character set (no `%`, `$`, quotes, whitespace). **Labels never go into a generated file** — they live only in the option.
+- **PHP literals are written with `var_export()`** into `templates/*.txt` via `strtr()`; never concatenate a value into PHP source.
+- **No plain secrets in the gate:** it holds sha256 hashes of the key, render token and cookie. `.htaccess` must hold them literally (mod_rewrite can only match literals); Apache/LiteSpeed refuse to serve `.ht*`.
+- **Forwarding headers are never trusted for access** (`Guard::remote_addr()` is `REMOTE_ADDR` only); `Guard::forwarded_addr()` is a warning in the UI and nothing else.
+- **The unlock link** (`?unlock=`) is a GET that changes state with no nonce: the 32-character key *is* the credential, compared with `hash_equals()`. A wrong key changes nothing and gets the same redirect as any blocked request. Every address it adds is labelled `via: key`, and the admin is emailed (default on).
+- **The check request** (`?shipstatic_lockdown_check=`) answers 204 with the requester's own address and changes nothing. Keep it that way.
+- **The render token is only sent to this site's own host** (`Guard::sign_own_requests()`), and is stripped when a redirect leaves the host (`Guard::unsign_on_redirect()`, because the HTTP library keeps headers across redirects).
+- **Writes are atomic** (temp file + `rename`), `.htaccess` is backed up once before the first block, and a failed gate write turns Lockdown back off rather than claiming the site is locked.
+- **Never delete the gate while `.user.ini` may still point at it**: PHP caches `.user.ini` per worker (`user_ini.cache_ttl`, 300 s) and a missing `auto_prepend_file` is a fatal error on every request. `Writer::remove_all()` leaves a stub (which still runs any chained prepend) and deletes it after 10 minutes. Manual instructions say to empty the file, not delete it.
+- **Exemptions must survive path tricks.** `/.well-known/` is matched on `THE_REQUEST` (unchanged when WordPress's rules rewrite to `index.php` and Apache re-runs the block) and only as a plain path — no dot segments, no `%`-escapes, no query — since `/.well-known/x/../../wp-login.php` resolves to the login page while still *starting* with `/.well-known/`. The PHP gate has no path exemption at all: `REQUEST_URI` is the raw request. Never add a prefix-match exemption on a raw path.
+- **An existing `auto_prepend_file` (a firewall) is chained, never dropped**: the gate includes it after letting a request through, and the stub keeps including it.
+- **No AI ability can change Lockdown** — turning it on or adding an address is too high-impact for an agent.
+
+---
+
 ## Audit checklist for new code
 
 - New REST route → `manage_options` unless justified; nonce intact; ownership check if it touches a request-supplied object id.
@@ -243,6 +263,7 @@ The crawler follows every same-origin URL it finds in rendered pages and CSS —
 - Touching the Connector template/client → signature + nonce + timestamp + hash-only secret intact; executable deny-list, `.htaccess` allow-list (every depth, fail closed) and `realpath` jail intact; HTTPS checked before every send; lockout applied only on failure; no new op without an allow-list; `VERSION` bumped on wire or security-check changes.
 - New `{@html}` / `innerHTML` → server-sanitise the source with `wp_kses_post`, or escape client-side.
 - New code mapping a URL to a file (local or remote) → `Url::is_unsafe_path()` / `has_traversal()` first, `realpath` containment for local reads, static-extension allow-list (rule 10).
+- Touching Lockdown → values validated before any generated file (ranges via `Cidr::parse()`, no labels in files, `var_export()` for PHP); hashes not secrets in the gate; forwarding headers never trusted; token only to the own host; the gate never deleted while `.user.ini` may point at it (rule 11).
 - New `$wpdb` query → `prepare()` with placeholders.
 - New `error_log` of content → gate behind `WP_DEBUG`.
 - New AI ability → `manage_options` via `register()`; `'permission' => 'changes'|'sync'` for any state change (registered *and* re-checked behind its opt-in); no secrets returned; annotations honest.

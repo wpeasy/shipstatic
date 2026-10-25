@@ -53,6 +53,7 @@ final class I18n {
             self::ai(),
             self::export(),
             self::wizard(),
+            self::lockdown(),
             self::common()
         );
     }
@@ -136,6 +137,85 @@ final class I18n {
     }
 
     /**
+     * Lockdown tab (docs/LOCKDOWN_PLAN.md).
+     *
+     * @return array<string,string>
+     */
+    private static function lockdown(): array {
+        return [
+            'ldHeading'          => __('Lockdown', 'shipstatic'),
+            'ldLead'             => __('Lock this WordPress site to the addresses below and send everyone else to your static site. Your visitors use the static site, so only editors need WordPress, and a site no stranger can reach can’t be attacked through its plugins, logins or forms.', 'shipstatic'),
+            'ldLinkHeading'      => __('Unlock link', 'shipstatic'),
+            'ldLinkHelp'         => __('Opening this link adds the address you’re on to the list, so it gets you back in when your address changes. Anyone who has it can get in, so keep it private, and bookmark it rather than sharing it in public places.', 'shipstatic'),
+            'ldCopy'             => __('Copy', 'shipstatic'),
+            'ldCopied'           => __('Copied', 'shipstatic'),
+            'ldNewLink'          => __('New link', 'shipstatic'),
+            'ldNewLinkConfirm'   => __('Replace the link?', 'shipstatic'),
+            'ldLinkSaved'        => __('I’ve saved this link somewhere safe', 'shipstatic'),
+            'ldEnabled'          => __('Lockdown', 'shipstatic'),
+            /* translators: %s: IP address. */
+            'ldYourIp'           => __('Your address, as this server sees it: %s', 'shipstatic'),
+            'ldAllowed'          => __('allowed', 'shipstatic'),
+            'ldNotAllowed'       => __('not on the list', 'shipstatic'),
+            'ldAddMine'          => __('Add my address', 'shipstatic'),
+            'ldMyAddressLabel'   => __('Added from the dashboard', 'shipstatic'),
+            /* translators: 1: the address a proxy reports, 2: the address the server sees. */
+            'ldForwarded'        => __('A proxy or CDN says your address is %1$s, but the server sees %2$s. The site is probably behind a proxy, so the address it sees may be shared or change. Use the unlock link if you get locked out.', 'shipstatic'),
+            'ldStatusOn'         => __('Locked', 'shipstatic'),
+            'ldStatusOff'        => __('Off: anyone can reach this WordPress site.', 'shipstatic'),
+            'ldMethodHtaccess'   => __('Strangers are stopped by .htaccess rules, before any PHP runs.', 'shipstatic'),
+            'ldMethodUserIni'    => __('Strangers are stopped before any PHP file runs (through .user.ini). Changes can take up to 5 minutes to apply; until then WordPress itself blocks them.', 'shipstatic'),
+            'ldMethodWordPress'  => __('Strangers are stopped inside WordPress, before other plugins load. This server offers no way to stop them earlier, so a plugin file opened directly isn’t covered.', 'shipstatic'),
+            'ldBrowserBlockedTitle' => __('Your address isn’t getting in', 'shipstatic'),
+            'ldBrowserBlocked'   => __('A test from this browser without its unlock cookie was turned away. You’re still in for 12 hours thanks to the cookie, but after that you’d be locked out. Add your address, or turn Lockdown off again.', 'shipstatic'),
+            'ldTurnOff'          => __('Turn Lockdown off', 'shipstatic'),
+            'ldProbeServer'      => __('Checked: a stranger is stopped by .htaccess, before PHP runs.', 'shipstatic'),
+            'ldProbeGate'        => __('Checked: a stranger is stopped before any PHP file runs.', 'shipstatic'),
+            'ldProbeWpHtaccess'  => __('Checked: strangers are only being stopped inside WordPress. The .htaccess rules aren’t taking effect: this server may ignore .htaccess, or (OpenLiteSpeed) need a restart to read it.', 'shipstatic'),
+            'ldProbeWpUserIni'   => __('Checked: strangers are only being stopped inside WordPress for now. PHP can take up to 5 minutes to read .user.ini; check again then. If it stays like this, the host ignores .user.ini.', 'shipstatic'),
+            'ldProbeWpOnly'      => __('Checked: strangers are stopped inside WordPress.', 'shipstatic'),
+            /* translators: %s: IP address. */
+            'ldProbeAllowed'     => __('Couldn’t check: the server’s own address (%s) is on the list, so its test request got in.', 'shipstatic'),
+            'ldProbeOpen'        => __('A test request without permission got in, so the site isn’t locked. Write the files again.', 'shipstatic'),
+            /* translators: %s: error message. */
+            'ldProbeError'       => __('Couldn’t check: %s', 'shipstatic'),
+            'ldFilesChanged'     => __('Lockdown’s files are missing or out of date (another plugin may have rewritten .htaccess).', 'shipstatic'),
+            'ldWriteAgain'       => __('Write them again', 'shipstatic'),
+            'ldCheckAgain'       => __('Check again', 'shipstatic'),
+            'ldChecking'         => __('Checking…', 'shipstatic'),
+            'ldListHeading'      => __('Allowed addresses', 'shipstatic'),
+            'ldListHelp'         => __('Single addresses (203.0.113.7) or ranges (203.0.113.0/24, 2001:db8::/64). An address added with the unlock link is added as its /64 for IPv6, which changes within that range every day.', 'shipstatic'),
+            'ldListEmpty'        => __('No addresses yet. Turning Lockdown on adds yours.', 'shipstatic'),
+            'ldColAddress'       => __('Address', 'shipstatic'),
+            'ldColLabel'         => __('Label', 'shipstatic'),
+            'ldColAdded'         => __('Added', 'shipstatic'),
+            'ldLabelPlaceholder' => __('Label, e.g. Office', 'shipstatic'),
+            'ldAdd'              => __('Add', 'shipstatic'),
+            'ldRemove'           => __('Remove', 'shipstatic'),
+            'ldRemoveConfirm'    => __('Remove?', 'shipstatic'),
+            'ldYou'              => __('you', 'shipstatic'),
+            'ldViaEnable'        => __('when turned on', 'shipstatic'),
+            'ldViaKey'           => __('via unlock link', 'shipstatic'),
+            'ldViaManual'        => __('added by hand', 'shipstatic'),
+            'ldViaCli'           => __('via WP-CLI', 'shipstatic'),
+            'ldRedirectHeading'  => __('Send blocked visitors to', 'shipstatic'),
+            'ldRedirectAuto'     => __('The first enabled destination', 'shipstatic'),
+            'ldRedirectNone'     => __('Nowhere: show a 403 page', 'shipstatic'),
+            /* translators: %s: URL. */
+            'ldRedirectTarget'   => __('Blocked visitors go to the same page on %s.', 'shipstatic'),
+            'ldRedirect403'      => __('Blocked visitors see a 403 page (no destination has a Destination URL).', 'shipstatic'),
+            'ldNotify'           => __('Email the site admin when the unlock link adds an address', 'shipstatic'),
+            'ldNginxHeading'     => __('Optional: block in nginx too', 'shipstatic'),
+            'ldNginxHelp'        => __('If you manage this server, paste this into the site’s server { } block and reload nginx. It holds the list as it is now: after any change, including an address added by the unlock link, paste it again. Lockdown works without it.', 'shipstatic'),
+            'ldHelpHeading'      => __('If you’re locked out', 'shipstatic'),
+            'ldHelp1'            => __('Open your <strong>unlock link</strong>. It adds the address you’re on.', 'shipstatic'),
+            'ldHelp2'            => __('With WP-CLI: <code>wp shipstatic lockdown off</code>, or <code>wp shipstatic lockdown allow &lt;address&gt;</code>.', 'shipstatic'),
+            'ldHelp3'            => __('Over FTP or a file manager: replace everything in <code>wp-content/shipstatic-lockdown.php</code> with just <code>&lt;?php</code> (don’t delete it: PHP needs it while <code>.user.ini</code> points to it), then delete the <code># BEGIN ShipStatic Lockdown</code> block from <code>.htaccess</code> and the <code>; BEGIN ShipStatic Lockdown</code> lines from <code>.user.ini</code>. Renaming the plugin folder alone isn’t enough.', 'shipstatic'),
+            'ldHelp4'            => __('Turning ShipStatic off (deactivating it) removes every Lockdown file.', 'shipstatic'),
+        ];
+    }
+
+    /**
      * Header.
      *
      * @return array<string,string>
@@ -176,6 +256,7 @@ final class I18n {
             'tabDestinations'  => __('Destinations', 'shipstatic'),
             'tabServerConfig'  => __('Destination Server Configuration', 'shipstatic'),
             'tabSchedule'      => __('Schedule', 'shipstatic'),
+            'tabLockdown'      => __('Lockdown', 'shipstatic'),
             'schedHeading'     => __('Scheduled sync', 'shipstatic'),
             'schedLead'        => __('Process and Sync automatically on a schedule — the same full sync as the Sync button, to the destinations you pick.', 'shipstatic'),
             'schedEnabled'     => __('Enabled', 'shipstatic'),

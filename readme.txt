@@ -42,6 +42,7 @@ Bricks isn't required. Rendering is builder-agnostic: ShipStatic captures whatev
 * Favicon and asset handling
 * "Sync this page" floating button for single-page pushes
 * **Scheduled sync** — Process and Sync automatically every hour, day, week or month, to all destinations or the ones you pick
+* **Lockdown** — lock the WordPress site to your editors' IP addresses and send everyone else to the static site, with an unlock link for when your address changes
 * WP-CLI command for reliable syncs on any host
 
 = Credits =
@@ -82,6 +83,10 @@ Yes, once you turn on **Site search** in ShipStatic → Settings, then Process a
 = Which connections are supported? =
 
 SFTP, FTP and explicit-TLS FTPS; the Connector (signed HTTPS to a small receiver file you upload once); Cloudflare; and GitHub Pages. SFTP uses a bundled pure-PHP library, so no special server extensions are required.
+
+= What files does Lockdown write? =
+
+Lockdown is off by default. When you turn it on, it writes `wp-content/shipstatic-lockdown.php` (the check that decides who gets in) and `wp-content/mu-plugins/shipstatic-lockdown.php` (which runs that check inside WordPress), plus a marked block at the top of `.htaccess` on Apache and LiteSpeed, or in `.user.ini` on nginx and other FastCGI hosts. Turning Lockdown off or deactivating the plugin removes them all. On hosts using `.user.ini`, the check file is left as an empty stub for 10 minutes first, because PHP keeps reading `.user.ini` from its cache for up to 5 minutes.
 
 = Why does the plugin run shell commands? =
 

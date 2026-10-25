@@ -462,3 +462,41 @@ export interface ScheduleSettings {
   last: ScheduleLastRun | null;
   cronDisabled: boolean;
 }
+
+/** Lockdown (GET/POST /lockdown) — see docs/LOCKDOWN_PLAN.md. */
+export interface LockdownEntry {
+  cidr: string;
+  label: string;
+  added: number;
+  via: 'enable' | 'key' | 'manual' | 'cli';
+}
+
+export type LockdownLayerState = 'ok' | 'missing' | 'notFirst' | 'old' | 'na';
+
+export interface LockdownSettings {
+  enabled: boolean;
+  entries: LockdownEntry[];
+  /** '' = first enabled destination with a URL, 'none' = 403, else a destination id. */
+  redirect: string;
+  /** Resolved redirect base URL ('' = 403). */
+  redirectTarget: string;
+  notify: boolean;
+  link: string;
+  /** Home URL the browser check requests (with ?shipstatic_lockdown_check=). */
+  checkUrl: string;
+  yourIp: string;
+  yourIpAllowed: boolean;
+  /** An address a proxy reports for this browser, when it differs from yourIp. */
+  forwarded: string;
+  server: '' | 'apache' | 'litespeed' | 'nginx' | 'iis' | 'other';
+  method: 'htaccess' | 'userIni' | 'wordpress';
+  layers: { gate: LockdownLayerState; mu: LockdownLayerState; htaccess: LockdownLayerState; userIni: LockdownLayerState; version: LockdownLayerState };
+  nginxSnippet: string;
+  errors?: string[];
+}
+
+export interface LockdownProbe {
+  result: 'server' | 'gate' | 'wordpress' | 'allowed' | 'open' | 'error' | 'off';
+  address: string;
+  message: string;
+}
