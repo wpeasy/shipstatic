@@ -44,8 +44,8 @@ final class MediaReplacer {
             '#<img\b[^>]*>#i',
             static function (array $m) use ($swaps): string {
                 $tag  = $m[0];
-                $src  = self::attr($tag, 'src');
-                $data = self::attr($tag, 'data-src');
+                $src  = TagAttr::get($tag, 'src');
+                $data = TagAttr::get($tag, 'data-src');
 
                 $swap = $swaps[$src] ?? $swaps[$data] ?? null;
                 if ($swap === null) {
@@ -53,29 +53,29 @@ final class MediaReplacer {
                 }
 
                 if ($src !== '' && isset($swaps[$src])) {
-                    $tag = self::set_attr($tag, 'src', $swap['to']);
+                    $tag = TagAttr::set($tag, 'src', $swap['to']);
                 }
                 if ($data !== '' && isset($swaps[$data])) {
-                    $tag = self::set_attr($tag, 'data-src', $swap['to']);
+                    $tag = TagAttr::set($tag, 'data-src', $swap['to']);
                 }
 
                 // Regenerate (or drop) every responsive set — real and lazy.
                 foreach (['srcset', 'data-srcset'] as $attr) {
-                    if (self::attr($tag, $attr) === '') {
+                    if (TagAttr::get($tag, $attr) === '') {
                         continue;
                     }
                     $tag = $swap['srcset'] !== ''
-                        ? self::set_attr($tag, $attr, $swap['srcset'])
-                        : self::remove_attr($tag, $attr);
+                        ? TagAttr::set($tag, $attr, $swap['srcset'])
+                        : TagAttr::remove($tag, $attr);
                 }
 
                 // Keep intrinsic dimensions in step so a cross-aspect swap isn't
                 // stretched by width/height attributes (only when known + present).
-                if ((int) ($swap['width'] ?? 0) > 0 && self::attr($tag, 'width') !== '') {
-                    $tag = self::set_attr($tag, 'width', (string) (int) $swap['width']);
+                if ((int) ($swap['width'] ?? 0) > 0 && TagAttr::get($tag, 'width') !== '') {
+                    $tag = TagAttr::set($tag, 'width', (string) (int) $swap['width']);
                 }
-                if ((int) ($swap['height'] ?? 0) > 0 && self::attr($tag, 'height') !== '') {
-                    $tag = self::set_attr($tag, 'height', (string) (int) $swap['height']);
+                if ((int) ($swap['height'] ?? 0) > 0 && TagAttr::get($tag, 'height') !== '') {
+                    $tag = TagAttr::set($tag, 'height', (string) (int) $swap['height']);
                 }
 
                 return $tag;
@@ -90,39 +90,5 @@ final class MediaReplacer {
         $tos   = array_map(static fn(array $s): string => $s['to'], $swaps);
 
         return str_replace($froms, $tos, $html);
-    }
-
-    /**
-     * Read an attribute value (raw, as in the HTML). The negative lookbehind stops
-     * `src` matching `data-src` (and `srcset` matching `data-srcset`).
-     */
-    private static function attr(string $tag, string $name): string {
-        if (preg_match('#(?<![\w-])' . preg_quote($name, '#') . '\s*=\s*("([^"]*)"|\'([^\']*)\')#i', $tag, $m)) {
-            return $m[2] !== '' ? $m[2] : ($m[3] ?? '');
-        }
-
-        return '';
-    }
-
-    /**
-     * Set (replace, or add if missing) a double-quoted attribute.
-     */
-    private static function set_attr(string $tag, string $name, string $value): string {
-        $value   = esc_attr($value);
-        $pattern = '#(?<![\w-])' . preg_quote($name, '#') . '\s*=\s*("[^"]*"|\'[^\']*\')#i';
-
-        if (preg_match($pattern, $tag)) {
-            return (string) preg_replace($pattern, $name . '="' . $value . '"', $tag, 1);
-        }
-
-        // Insert before the closing > (or />).
-        return (string) preg_replace('#\s*/?>$#', ' ' . $name . '="' . $value . '"$0', $tag, 1);
-    }
-
-    /**
-     * Remove an attribute.
-     */
-    private static function remove_attr(string $tag, string $name): string {
-        return (string) preg_replace('#\s+(?<![\w-])' . preg_quote($name, '#') . '\s*=\s*("[^"]*"|\'[^\']*\')#i', '', $tag);
     }
 }

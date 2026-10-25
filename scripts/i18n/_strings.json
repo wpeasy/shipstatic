@@ -1263,6 +1263,9 @@
     "msgid": "<code>fastcgi_read_timeout 300s;</code> in that PHP location: unpacking a large site can take longer than the 60-second default."
   },
   {
+    "msgid": "Cache rules, so browsers recheck pages after a sync. Without a <code>Cache-Control</code> header, browsers guess how long a page stays fresh and can keep showing an old copy for a long time. The nginx snippet on the <strong>Destination Server Configuration</strong> tab sets HTML to always revalidate and caches assets for a year."
+  },
+  {
     "msgid": "Block public access to <code>.htaccess</code> files and the connector’s in-progress uploads. The nginx snippet on the <strong>Destination Server Configuration</strong> tab includes the rules."
   },
   {

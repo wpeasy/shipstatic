@@ -174,7 +174,7 @@ The only DOM-HTML sink is `{@html row.replace}` in `dashboard/TextReplacements.s
 
 - **Safety rests on the server:** `Settings\Destination::sanitize_replacements()` runs **`wp_kses_post()`** on every `rich` replacement on write (and `sanitize_text_field()` on plain). Keep that sanitisation **unconditional** — the client does not re-escape at render time.
 - Authorship is `manage_options`-only, so this is not a low-privilege stored-XSS vector today; it would become one if replacement editing were ever opened to a lower capability. Re-evaluate this sink if that happens.
-- No other `innerHTML`/`{@html}`/`document.write` exists. There are **no** `postMessage` listeners and **no** `BroadcastChannel` — if you add either, validate `event.origin` AND `event.source` for postMessage, and authenticate BroadcastChannel messages with a per-session nonce (a same-origin channel is not a security boundary). Never `postMessage(payload, '*')`.
+- The only other HTML sinks are `{@html __('…')}` / `{@html __f(…)}` with the **trusted PHP i18n dictionary** (`Support\I18n`, translations included) — never REST data — and constant strings assigned to `innerHTML` in `editor/ListController.svelte`. Anything interpolated into a dictionary string with `__f()` must be plugin-generated (e.g. the connector id), never page content or a remote response. No `document.write` exists. There are **no** `postMessage` listeners and **no** `BroadcastChannel` — if you add either, validate `event.origin` AND `event.source` for postMessage, and authenticate BroadcastChannel messages with a per-session nonce (a same-origin channel is not a security boundary). Never `postMessage(payload, '*')`.
 - The `wp_rest` nonce lives only in `shipStaticData.nonce` (sent as `X-WP-Nonce`); never render it to the DOM and never put secrets in localStorage.
 
 ---
@@ -260,6 +260,15 @@ Lockdown turns settings into `.htaccess` rules, a `.user.ini` line, a generated 
 
 ---
 
+## 12. Lessons from the 2.3.0 security review
+
+- **An escaped value is not safe as a regex replacement string.** `esc_attr()` leaves `$` and `\` alone, so a value containing `$0` given to `preg_replace()` expands to the matched text and breaks out of the attribute (found: stored XSS on exported pages through a YouTube embed's `hl=`). Insert values with `preg_replace_callback()` — `Render\TagAttr` does this for every replacer; use it, don't reintroduce private `set_attr()` copies. Attribute patterns start with `(?<![\w-])` so `src` never matches `data-src`.
+- **Never decide visibility from a lookup made in an anonymous request.** `url_to_postid()` returns 0 for private/draft posts when the current user is 0, which made the live search index keep pages it was meant to drop. Record what was rendered at render time (`PageRenderer::OBJECT_HEADER` → `LiveIndex::OBJECTS_OPTION`) and fail closed on anything unknown.
+- **Generated server config is code.** nginx's `$uri` is decoded — use `$request_uri` in a redirect, or `%0d%0a` becomes a header; give every regex that runs on each request a form that can't backtrack (each segment starts with its separator); and remember mod_rewrite rules don't reach a sub-folder with its own `RewriteEngine On` (Lockdown adds `RewriteOptions InheritDownBefore` only after a test folder proves the server accepts it — an unknown option is a 500 for the whole site).
+- **Never write or delete beside a source file.** Theme/plugin/core files are read in place; anything derived from them (an export's `.gz`) goes in the plugin's own folders. Files in the plugin's cache folder are never site assets (`Paths::source_file()` refuses them), and nothing written there carries absolute server paths.
+
+---
+
 ## Audit checklist for new code
 
 - New REST route → `manage_options` unless justified (the only public one is `/search-index`, §0 — don't widen it); nonce intact; ownership check if it touches a request-supplied object id.
@@ -272,6 +281,7 @@ Lockdown turns settings into `.htaccess` rules, a `.user.ini` line, a generated 
 - New `{@html}` / `innerHTML` → server-sanitise the source with `wp_kses_post`, or escape client-side.
 - New code mapping a URL to a file (local or remote) → `Url::is_unsafe_path()` / `has_traversal()` first, `realpath` containment for local reads, static-extension allow-list (rule 10).
 - Touching Lockdown → values validated before any generated file (ranges via `Cidr::parse()`, no labels in files, `var_export()` for PHP); hashes not secrets in the gate; forwarding headers never trusted; token only to the own host; the gate never deleted while `.user.ini` may point at it (rule 11).
+- Inserting a value with a regex → `preg_replace_callback()` / `Render\TagAttr`, never the value as a replacement string; generated server config → no decoded variables in headers, no backtracking regexes on every request (rule 12).
 - New `$wpdb` query → `prepare()` with placeholders.
 - New `error_log` of content → gate behind `WP_DEBUG`.
 - New AI ability → `manage_options` via `register()`; `'permission' => 'changes'|'sync'` for any state change (registered *and* re-checked behind its opt-in); no secrets returned; annotations honest.

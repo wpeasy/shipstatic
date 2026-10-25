@@ -29,6 +29,7 @@ use WPEasy\ShipStatic\Transport\SnapshotCapableTransport;
 use WPEasy\ShipStatic\Transport\TransportFactory;
 use WPEasy\ShipStatic\Transport\TransportInterface;
 use WPEasy\ShipStatic\Search\IndexBuilder;
+use WPEasy\ShipStatic\Search\LiveIndex;
 
 defined('ABSPATH') || exit;
 
@@ -633,6 +634,7 @@ final class Runner {
                 }
 
                 self::cache_file($job, $relative, UrlRewriter::rewrite(HeadCleaner::clean($result['body'])));
+                $job->data['objects'][$relative] = (string) ($result['object'] ?? '');
                 $job->data['counts']['pagesDone']++;
 
                 $compat = CompatibilityScanner::scan($result['body']);
@@ -780,6 +782,7 @@ final class Runner {
 
         Manifest::save(Manifest::RENDER_OPTION, $manifest);
         self::write_manifest_file($job, $manifest);
+        LiveIndex::save_objects((array) ($job->data['objects'] ?? []), !empty($job->data['singlePage']));
 
         // A full render reflects current content under the current mode — clear
         // the "content changed" flag and record the mode it was built under.
@@ -1669,7 +1672,8 @@ final class Runner {
                 'size'   => $meta['size'],
                 'hash'   => $meta['hash'],
                 'origin' => strpos($meta['src'], $cache_root) === 0 ? 'cache' : 'source',
-                'src'    => $meta['src'],
+                // No 'src': absolute server paths (they reveal the account name)
+                // don't belong in a file that can end up public.
             ];
         }
 

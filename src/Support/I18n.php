@@ -433,6 +433,7 @@ final class I18n {
             'connectorNginx1'  => __('PHP runs for <code>.php</code> files in the folder the connector is in (a <code>location ~ \.php$</code> block passing to PHP-FPM, as for any PHP site). Without it, Test reports HTTP 405 or 404.', 'shipstatic'),
             'connectorNginx2'  => __('<code>client_max_body_size</code> of at least <code>2m</code>. ShipStatic uploads in pieces under 1 MB and retries smaller ones if refused, so nginx’s <code>1m</code> default works unless it has been lowered.', 'shipstatic'),
             'connectorNginx3'  => __('<code>fastcgi_read_timeout 300s;</code> in that PHP location: unpacking a large site can take longer than the 60-second default.', 'shipstatic'),
+            'connectorNginx5'  => __('Cache rules, so browsers recheck pages after a sync. Without a <code>Cache-Control</code> header, browsers guess how long a page stays fresh and can keep showing an old copy for a long time. The nginx snippet on the <strong>Destination Server Configuration</strong> tab sets HTML to always revalidate and caches assets for a year.', 'shipstatic'),
             'connectorNginx4'  => __('Block public access to <code>.htaccess</code> files and the connector’s in-progress uploads. The nginx snippet on the <strong>Destination Server Configuration</strong> tab includes the rules.', 'shipstatic'),
             'connectorUnpaired'=> __('Not paired yet.', 'shipstatic'),
             /* translators: %s: connector filename */

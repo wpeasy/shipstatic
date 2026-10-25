@@ -248,6 +248,7 @@
           <li><code>client_max_body_size 2m;</code> or more. ShipStatic uploads in pieces under 1 MB and retries smaller pieces if they’re refused, so the 1 MB default works unless it has been lowered.</li>
           <li><code>fastcgi_read_timeout 300s;</code> in that PHP location, so unpacking a large site doesn’t hit the 60-second default.</li>
           <li>Rules that stop nginx serving <code>.htaccess</code> files and the connector’s in-progress uploads. The nginx snippet on the <strong>Destination Server Configuration</strong> tab includes them.</li>
+          <li><strong>Cache rules.</strong> Without a <code>Cache-Control</code> header, browsers guess how long a page stays fresh and can keep showing an old copy for a long time after a sync. The same snippet sets HTML to always revalidate and caches assets for a year.</li>
         </ul>
 
         <h3>Managing a pairing</h3>

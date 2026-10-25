@@ -40,6 +40,15 @@ final class PageRenderer {
     public const TOKEN_HEADER = 'X-BS-Render-Token';
 
     /**
+     * Response header naming what a render request rendered ("post:<id>",
+     * "term:<id>", "home", "archive" or "none"), sent only on trusted render
+     * requests ({@see Plugin::announce_render_object()}). Lets the live-site
+     * search index check each page's CURRENT status without resolving URLs in
+     * a visitor's request, where private posts can't be resolved.
+     */
+    public const OBJECT_HEADER = 'X-ShipStatic-Object';
+
+    /**
      * Option holding that shared secret (not autoloaded).
      */
     private const TOKEN_OPTION = 'shipstatic_render_token';
@@ -97,7 +106,7 @@ final class PageRenderer {
      * Fetch a page URL and return its rendered HTML.
      *
      * @param string $url Absolute URL.
-     * @return array{code:int,body:string,contentType:string}
+     * @return array{code:int,body:string,contentType:string,object:string}
      * @throws \RuntimeException On transport error.
      */
     public static function render(string $url): array {
@@ -112,6 +121,7 @@ final class PageRenderer {
             'code'        => (int) wp_remote_retrieve_response_code($response),
             'body'        => (string) wp_remote_retrieve_body($response),
             'contentType' => (string) wp_remote_retrieve_header($response, 'content-type'),
+            'object'      => (string) wp_remote_retrieve_header($response, self::OBJECT_HEADER),
         ];
     }
 
