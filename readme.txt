@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,13 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.3.1 =
+* Process changes: re-render only the content you added, edited or unpublished since the last Process all (Process all remains the safe choice, and the dashboard says when it's needed).
+* Sync now reuses an up-to-date render instead of rendering every page again, with an option to re-render.
+* Filterable page picker in the Images and Videos replacers, showing pages that aren't in the export.
+* Connector: works on nginx out of the box, with a "Using nginx?" setup notice.
+* Fixes: external URLs are no longer changed in exported pages; the setup wizard explains Process before running it; several security hardening fixes.
 
 = 2.3.0 =
 * First public release.

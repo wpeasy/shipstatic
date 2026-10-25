@@ -1,12 +1,18 @@
 <h1>Changelog</h1>
-<h2>v2.3.0 (2026-10-24)</h2>
+<h2>v2.3.1 (2026-10-26)</h2>
 <h3>New</h3>
-<p>ShipStatic&#39;s first public release. It turns your WordPress site, built with Bricks or anything else, into a fast static site and publishes it wherever you like: your own host over SFTP, FTP or FTPS, the Connector (no FTP account needed), Cloudflare, GitHub Pages, or a downloadable ZIP.</p>
+<p><strong>Process changes</strong>: when you&#x27;ve added, edited or unpublished a few posts, re-render just those, the lists that show them and any new pages they link to, in seconds instead of re-rendering the whole site. <strong>Process all</strong> is still there and is always the safe choice; the dashboard tells you when only Process all will do, such as after changing a menu or a Bricks template.</p>
 <h3>New</h3>
-<p>Publish one site to as many destinations as you want, each with its own address and its own text, image, link and video changes.</p>
+<p><strong>Sync no longer renders the site a second time.</strong> When the render is up to date, Sync uploads it straight away. Tick <strong>Re-render before syncing</strong> after plugin or theme updates. Scheduled syncs always render everything.</p>
 <h3>New</h3>
-<p>Site search that works on the static site, with a <strong>ShipStatic Search</strong> element for Bricks you can style down to the last detail, and a <code>[shipstatic_search]</code> shortcode for everything else. If you like, the element can search as you type on your WordPress site too.</p>
+<p>The page picker in the Images and Videos replacers can be <strong>filtered by typing</strong>, and shows pages that aren&#x27;t in the export greyed out, with a note on why.</p>
 <h3>New</h3>
-<p>Scheduled syncs (hourly, daily, weekly or monthly), and one-click syncing of a single page from the pages list, the front end or the Bricks builder.</p>
-<h3>New</h3>
-<p>Lockdown: once your visitors use the static site, lock the WordPress site to your editors&#39; IP addresses and send everyone else to the same page on the static site. An unlock link gets you back in if your address changes.</p>
+<p>Connector on nginx: a <strong>Using nginx?</strong> notice lists the minimum server setup, and the nginx snippet now blocks server config files and unfinished uploads from public view.</p>
+<h3>Fixed</h3>
+<p>Links to other sites (share buttons, archived pages, look-alike addresses) are no longer changed in your exported pages.</p>
+<h3>Fixed</h3>
+<p>The setup wizard now explains Process before running it, lets you skip it, and closes straight away.</p>
+<h3>Fixed</h3>
+<p>The Connector now works on nginx servers with their default upload limit, with clear messages if the server refuses something.</p>
+<h3>Fixed</h3>
+<p>Several security hardening fixes.</p>

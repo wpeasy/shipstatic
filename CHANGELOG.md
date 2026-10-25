@@ -5,6 +5,20 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-10-26
+
+### Added
+- **Process changes**: re-renders only the content recorded as changed since the last Process all — added, edited, unpublished or deleted posts, the listing pages that show them (blog/home, post-type and term archives), new pages they link to — removes pages whose post left the export and rebuilds the sitemap. Site-wide changes (menus, Bricks templates/design options, widgets, site settings, permalinks, theme) are tracked separately and the toolbar says when only **Process all** (the renamed full Process, still the safe choice) will do; it also says when a new page isn't linked from the export yet. Documentation section "Process all vs Process changes". WP-CLI: `wp shipstatic sync --check --changes`.
+- **Sync reuses an up-to-date render** instead of rendering every page again; the progress panel says which render it used. A **Re-render before syncing** option (and `wp shipstatic sync --rerender`) forces a full render; scheduled syncs always re-render.
+- The Images and Videos replacers' page picker is **filterable**, and lists published pages that aren't in the export greyed out, with why.
+- Connector: a **"Using nginx?"** notice with the minimum nginx setup (opens when Test detects nginx); the nginx snippet now also blocks `.htaccess` files and in-progress Connector uploads.
+
+### Fixed
+- External URLs were changed by the URL rewriter: share links carrying the site URL in a query string, look-alike hosts, other ports and `ftp://` links are now left alone; non-http(s) links are never crawled; `srcset` values with commas in a URL are parsed correctly; page fetches no longer follow redirects to other sites.
+- The setup wizard ran a full Process without saying so: its new last step explains Process and lets you skip it, and Finish closes the wizard straight away.
+- The Connector failed on nginx (requests over nginx's default 1 MB limit): uploads go in pieces under 1 MB, shrink automatically if refused, and 413/405/502–504 errors get clear messages.
+- Security review fixes: values inserted into exported HTML attributes can no longer break out of them (a crafted video URL); the live-site search index no longer keeps pages unpublished since the last Process; Lockdown's nginx snippet can't be used for header injection, its `.htaccess` rules also cover sub-folders with their own rewrite rules and avoid a slow pattern; the plugin's cache folder is never published; Export ZIP no longer writes `.gz` files next to theme, plugin or core files.
+
 ## [2.3.0] - 2026-10-24
 
 First public release.
