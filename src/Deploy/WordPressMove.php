@@ -242,6 +242,7 @@ final class WordPressMove {
         if (!@mkdir($dir, 0755)) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- reported below.
             $error = 'Could not create ' . $dir;
         } else {
+            @chmod($dir, 0755); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- not left to the umask: the web server must enter it.
             foreach ((array) $record['entries'] as $entry) {
                 if (!@rename($root . '/' . $entry, $dir . '/' . $entry)) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- reported below.
                     $error = 'Could not move ' . $entry;

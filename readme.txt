@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,9 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.1 =
+* Fix: with "This server", pages in sub-folders returned 404 on cPanel hosts (folders were created with the parent folder's permissions, which the web server can't enter). Test now checks a sub-folder too.
 
 = 2.4.0 =
 * New deploy method "This server": publish the static site into a folder on the same server as WordPress, written directly (no FTP, Connector or outside service), with a setup wizard that checks the folder and that its address serves it.

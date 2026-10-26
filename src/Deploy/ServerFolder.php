@@ -264,10 +264,14 @@ final class ServerFolder {
         if (trim($url) === '') {
             return __('Enter the address the folder is served at (Destination URL) so Test can check it.', 'shipstatic');
         }
-        $name  = '.shipstatic-probe-' . bin2hex(random_bytes(6)) . '.txt';
+        // In a new sub-folder, made the way Sync makes them: a folder the web
+        // server can't enter would otherwise pass here and 404 every page.
+        $sub   = 'shipstatic-probe-' . bin2hex(random_bytes(6));
+        $name  = $sub . '/probe.txt';
         $token = bin2hex(random_bytes(16));
         $fs    = self::fs();
-        if (!$fs->put_contents($folder . '/' . $name, $token, self::file_mode())) {
+        if (!$fs->mkdir($folder . '/' . $sub, self::dir_mode()) || !$fs->put_contents($folder . '/' . $name, $token, self::file_mode())) {
+            $fs->rmdir($folder . '/' . $sub, true);
             return __('Couldn’t write a test file into the folder.', 'shipstatic');
         }
         $target   = rtrim($url, '/') . '/' . $name;
@@ -277,6 +281,7 @@ final class ServerFolder {
             'limit_response_size' => 4096,
         ]);
         wp_delete_file($folder . '/' . $name);
+        $fs->rmdir($folder . '/' . $sub);
 
         if (is_wp_error($response)) {
             /* translators: 1: Destination URL, 2: error. */

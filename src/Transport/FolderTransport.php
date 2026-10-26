@@ -294,9 +294,20 @@ final class FolderTransport implements TransportInterface {
         if (is_dir($dir)) {
             return;
         }
-        if (!wp_mkdir_p($dir)) {
-            /* translators: %s: folder path. */
-            throw new \RuntimeException(sprintf(__('Couldn’t create the folder %s.', 'shipstatic'), $dir));
+        // Not wp_mkdir_p(): it copies the parent's permissions, and cPanel's
+        // public_html is 0750 (group nobody), so folders made inside it would
+        // be unreadable to the web server — every page but the home page 404s.
+        // Static folders must be world-readable.
+        $missing = [];
+        for ($d = $dir; !is_dir($d) && $d !== $this->root && strlen($d) > strlen($this->root); $d = dirname($d)) {
+            $missing[] = $d;
+        }
+        $fs = ServerFolder::fs();
+        foreach (array_reverse($missing) as $d) {
+            if (!$fs->mkdir($d, ServerFolder::dir_mode()) && !is_dir($d)) {
+                /* translators: %s: folder path. */
+                throw new \RuntimeException(sprintf(__('Couldn’t create the folder %s.', 'shipstatic'), $dir));
+            }
         }
     }
 }

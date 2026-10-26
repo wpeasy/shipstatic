@@ -1,6 +1,4 @@
 <h1>Changelog</h1>
-<h2>v2.4.0 (2026-10-26)</h2>
-<h3>New</h3>
-<p><strong>Publish on this server.</strong> A new deploy method, <strong>This server</strong>, writes your static site straight into a folder on the same server as WordPress: no FTP account, Connector or outside service. A short wizard picks the folder, checks it, and tests that its address really serves it.</p>
-<h3>New</h3>
-<p><strong>One domain, set up for you.</strong> If WordPress is installed at the root of your domain, the wizard can move it into a <code>/wp</code> folder. Your static site then lives at the root, WordPress at <code>/wp</code> (lock it to your editors with Lockdown), and the move can be undone from the dashboard.</p>
+<h2>v2.4.1 (2026-10-26)</h2>
+<h3>Fixed</h3>
+<p><strong>Pages publish correctly with &quot;This server&quot; on cPanel.</strong> Every page except the home page could show &quot;Not found&quot;, because the folders ShipStatic created couldn&#x27;t be opened by the web server. They&#x27;re now created so the web server can read them, and <strong>Test</strong> checks this too. If you already synced, Sync again after updating.</p>

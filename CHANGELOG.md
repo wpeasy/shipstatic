@@ -5,6 +5,11 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.1] - 2026-10-26
+
+### Fixed
+- "This server": every page except the home page returned 404 on cPanel. Folders were made with `wp_mkdir_p()`, which copies the parent's permissions — cPanel's `public_html` is 0750 (group `nobody`), so the web server couldn't enter them. `FolderTransport` now creates each folder 0755 (`ServerFolder::dir_mode()`), the moved `/wp` folder is set to 0755, and Test's probe file goes in a new sub-folder so a folder the web server can't read fails Test instead of every page.
+
 ## [2.4.0] - 2026-10-26
 
 ### Added
