@@ -157,7 +157,7 @@ final class LockdownController {
 
         return [
             'enabled'        => $settings['enabled'],
-            'entries'        => $settings['entries'],
+            'entries'        => array_map(static fn(array $e): array => $e + ['display' => Cidr::display((string) $e['cidr'])], $settings['entries']),
             'redirect'       => $settings['redirect'],
             'redirectTarget' => Settings::redirect_base(),
             'notify'         => $settings['notify'],

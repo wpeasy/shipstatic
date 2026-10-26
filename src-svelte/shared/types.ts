@@ -487,6 +487,8 @@ export interface ScheduleSettings {
 /** Lockdown (GET/POST /lockdown) — see docs/LOCKDOWN_PLAN.md. */
 export interface LockdownEntry {
   cidr: string;
+  /** The address alone for a single address (no /32 or /128), else the range. */
+  display: string;
   label: string;
   added: number;
   via: 'enable' | 'key' | 'manual' | 'cli';

@@ -5,6 +5,15 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2] - 2026-10-26
+
+### Changed
+- **Lockdown adds a single address**: turning Lockdown on and the unlock link now add only the visitor's own address — `/32` for IPv4 and now `/128` for IPv6 (the unlock link used to add an IPv6 visitor's whole `/64`). Ranges are only ever added by hand; the list's help suggests adding your `/64` if your IPv6 address changes daily.
+- Single addresses are shown without their `/32` or `/128` suffix in the Lockdown list, `wp shipstatic lockdown status` and the "address added" email; ranges keep theirs.
+
+### Fixed
+- Lockdown on nginx didn't say what it leaves open: without the optional nginx snippet only pages and PHP files are locked, and nginx still serves uploads, CSS and JavaScript to anyone with their address. The snippet's help text (which said "Lockdown works without it") and Docs → Lockdown now explain this.
+
 ## [2.3.1] - 2026-10-26
 
 ### Added

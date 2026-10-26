@@ -568,7 +568,7 @@ final class SyncCommand {
                 $s = LockdownSettings::get();
                 \WP_CLI::log('Lockdown: ' . ($s['enabled'] ? 'on' : 'off'));
                 foreach ($s['entries'] as $e) {
-                    \WP_CLI::log(sprintf('  %-24s %-8s %s', $e['cidr'], $e['via'], $e['label']));
+                    \WP_CLI::log(sprintf('  %-24s %-8s %s', \WPEasy\ShipStatic\Lockdown\Cidr::display($e['cidr']), $e['via'], $e['label']));
                 }
                 foreach (LockdownWriter::layers() as $layer => $state) {
                     \WP_CLI::log(sprintf('  %-9s %s', $layer, $state));

@@ -774,7 +774,7 @@
     "msgid": "Allowed addresses"
   },
   {
-    "msgid": "Single addresses (203.0.113.7) or ranges (203.0.113.0/24, 2001:db8::/64). An address added with the unlock link is added as its /64 for IPv6, which changes within that range every day."
+    "msgid": "Single addresses (203.0.113.7) or ranges (203.0.113.0/24, 2001:db8::/64). Turning Lockdown on and the unlock link add only the one address in use. IPv6 addresses often change every day, so add your /64 range if you need it."
   },
   {
     "msgid": "No addresses yet. Turning Lockdown on adds yours."
@@ -834,7 +834,7 @@
     "msgid": "Optional: block in nginx too"
   },
   {
-    "msgid": "If you manage this server, paste this into the site’s server { } block and reload nginx. It holds the list as it is now: after any change, including an address added by the unlock link, paste it again. Lockdown works without it."
+    "msgid": "Without this, Lockdown covers pages and PHP files only: nginx serves uploaded files (images, PDFs), CSS and JavaScript without running PHP, so anyone with a file’s address can still open it. Most of those are public on your static site anyway, but files uploaded for drafts or private pages are not. If you manage this server, paste this into the site’s server { } block and reload nginx. It holds the list as it is now: after any change, including an address added by the unlock link, paste it again."
   },
   {
     "msgid": "If you’re locked out"

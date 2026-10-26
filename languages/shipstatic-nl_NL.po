@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shipstatic\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shipstatic\n"
-"POT-Creation-Date: 2026-10-25T23:05:19+00:00\n"
+"POT-Creation-Date: 2026-10-26T02:27:21+00:00\n"
 "PO-Revision-Date: 2026-06-22 00:00+0000\n"
 "Last-Translator: Claude Code (machine translation)\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1399,13 +1399,14 @@ msgstr "Toegestane adressen"
 
 #: src/Support/I18n.php:191
 msgid ""
-"Single addresses (203.0.113.7) or ranges (203.0.113.0/24, 2001:db8::/64). An"
-" address added with the unlock link is added as its /64 for IPv6, which "
-"changes within that range every day."
+"Single addresses (203.0.113.7) or ranges (203.0.113.0/24, 2001:db8::/64). "
+"Turning Lockdown on and the unlock link add only the one address in use. "
+"IPv6 addresses often change every day, so add your /64 range if you need it."
 msgstr ""
 "Losse adressen (203.0.113.7) of bereiken (203.0.113.0/24, 2001:db8::/64). "
-"Een IPv6-adres dat met de ontgrendellink wordt toegevoegd, wordt als zijn "
-"/64 toegevoegd, omdat het binnen dat bereik elke dag verandert."
+"Lockdown inschakelen en de ontgrendellink voegen alleen het adres in gebruik"
+" toe. IPv6-adressen veranderen vaak elke dag; voeg zo nodig je /64-bereik "
+"toe."
 
 #: src/Support/I18n.php:192
 msgid "No addresses yet. Turning Lockdown on adds yours."
@@ -1491,15 +1492,22 @@ msgstr "Optioneel: ook in nginx blokkeren"
 
 #: src/Support/I18n.php:213
 msgid ""
-"If you manage this server, paste this into the site’s server { } block and "
-"reload nginx. It holds the list as it is now: after any change, including an"
-" address added by the unlock link, paste it again. Lockdown works without "
-"it."
+"Without this, Lockdown covers pages and PHP files only: nginx serves "
+"uploaded files (images, PDFs), CSS and JavaScript without running PHP, so "
+"anyone with a file’s address can still open it. Most of those are public on "
+"your static site anyway, but files uploaded for drafts or private pages are "
+"not. If you manage this server, paste this into the site’s server { } block "
+"and reload nginx. It holds the list as it is now: after any change, "
+"including an address added by the unlock link, paste it again."
 msgstr ""
-"Beheer je deze server zelf, plak dit dan in het server { }-blok van de site "
-"en herlaad nginx. Het bevat de lijst zoals die nu is: plak het na elke "
-"wijziging opnieuw, ook na een adres dat de ontgrendellink heeft toegevoegd. "
-"Lockdown werkt ook zonder."
+"Zonder dit beschermt Lockdown alleen pagina’s en PHP-bestanden: nginx levert"
+" geüploade bestanden (afbeeldingen, pdf’s), CSS en JavaScript zonder PHP uit"
+" te voeren, dus iedereen die het adres van een bestand kent, kan het nog "
+"openen. De meeste zijn op je statische site toch al openbaar, maar bestanden"
+" die voor concepten of privépagina’s zijn geüpload niet. Als je deze server "
+"beheert, plak dit in het server { }-blok van de site en herlaad nginx. Het "
+"bevat de lijst zoals die nu is: plak het na elke wijziging, ook een adres "
+"dat met de ontgrendellink is toegevoegd, opnieuw."
 
 #: src/Support/I18n.php:214
 msgid "If you’re locked out"
@@ -3781,14 +3789,14 @@ msgstr ""
 "Er loopt momenteel een ZIP-export — wacht tot die klaar is en probeer het "
 "dan opnieuw."
 
-#: src/Sync/Runner.php:267
+#: src/Sync/Runner.php:269
 msgid ""
 "There is no up-to-date full render to add changes to yet. Use Process all."
 msgstr ""
 "Er is nog geen actuele volledige render om wijzigingen aan toe te voegen. "
 "Gebruik ‘Alles verwerken’."
 
-#: src/Sync/Runner.php:270
+#: src/Sync/Runner.php:272
 msgid ""
 "Pages to include has changed since the last Process all, which affects the "
 "whole export. Use Process all."
@@ -3797,7 +3805,7 @@ msgstr ""
 "hele export raakt. Gebruik ‘Alles verwerken’."
 
 #. translators: %s: page title(s).
-#: src/Sync/Runner.php:277
+#: src/Sync/Runner.php:279
 #, php-format
 msgid ""
 "Nothing to process yet: %s isn’t linked from any page in the export, and "
@@ -3810,7 +3818,7 @@ msgstr ""
 "de export. Link ernaar vanaf een geëxporteerde pagina en gebruik dan "
 "‘Wijzigingen verwerken’ (of ‘Alles verwerken’)."
 
-#: src/Sync/Runner.php:281
+#: src/Sync/Runner.php:283
 msgid ""
 "No content changes are recorded since the last Process. Site-wide changes "
 "(menus, templates, settings) need Process all."
@@ -3819,19 +3827,19 @@ msgstr ""
 "Sitebrede wijzigingen (menu’s, templates, instellingen) hebben ‘Alles "
 "verwerken’ nodig."
 
-#: src/Sync/Runner.php:682
+#: src/Sync/Runner.php:684
 msgid "site is in maintenance mode, or temporarily unavailable"
 msgstr "site staat in onderhoudsmodus of is tijdelijk niet beschikbaar"
 
-#: src/Sync/Runner.php:683
+#: src/Sync/Runner.php:685
 msgid "blocked — maintenance mode, a security plugin, or a firewall"
 msgstr "geblokkeerd — onderhoudsmodus, een beveiligingsplugin of een firewall"
 
-#: src/Sync/Runner.php:684
+#: src/Sync/Runner.php:686
 msgid "password protected, or behind HTTP authentication"
 msgstr "met wachtwoord beveiligd, of achter HTTP-authenticatie"
 
-#: src/Sync/Runner.php:1284
+#: src/Sync/Runner.php:1286
 msgid ""
 "The page list has changed since the last render. Click Process to refresh "
 "it, then Check again."
@@ -3839,13 +3847,13 @@ msgstr ""
 "De paginalijst is gewijzigd sinds de laatste render. Klik op Verwerken om "
 "hem te verversen en controleer daarna opnieuw."
 
-#: src/Sync/Runner.php:1285
+#: src/Sync/Runner.php:1287
 msgid "Nothing has been rendered yet. Click Process first, then Check."
 msgstr ""
 "Er is nog niets gerenderd. Klik eerst op Verwerken en daarna op Controleren."
 
 #. translators: %d: number of published pages not in the static export.
-#: src/Sync/Runner.php:1359
+#: src/Sync/Runner.php:1361
 #, php-format
 msgid "%d published page isn’t in the export — see View list."
 msgid_plural "%d published pages aren’t in the export — see View list."

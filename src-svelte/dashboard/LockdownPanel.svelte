@@ -308,8 +308,8 @@
 
 {#snippet cell(row: Record<string, any>, col: { key: string })}
   {#if col.key === 'cidr'}
-    <code>{row.cidr}</code>
-    {#if row.cidr === `${ld?.yourIp}/32` || row.cidr === `${ld?.yourIp}/128`}
+    <code>{row.display ?? row.cidr}</code>
+    {#if row.display === ld?.yourIp}
       <Tag size="sm" tone="primary" variant="soft" label={__('ldYou')} />
     {/if}
   {:else if col.key === 'label'}

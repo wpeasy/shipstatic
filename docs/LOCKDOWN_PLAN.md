@@ -187,7 +187,7 @@ deliberate recovery path (§9).
 - **What a key request does.** The web server layers just let it through. `Lockdown\Guard` (inside
   WordPress, on `init`) then:
   1. compares the key with `hash_equals()`;
-  2. adds `REMOTE_ADDR` to the list — an IPv6 address as its /64 — labelled "Added with unlock link",
+  2. adds `REMOTE_ADDR` to the list — that one address (/32 or /128), never a range — labelled "Added with unlock link",
      with the time and `via: key` (no duplicates);
   3. rewrites every layer;
   4. sets the unlock cookie;
@@ -397,7 +397,7 @@ generated PHP. Injection here means server-config injection or code execution, s
       upload. The query string is dropped.
 - [ ] "Show a 403 page" gives a 403 instead.
 - [ ] The unlock link from the phone:
-  - [ ] adds its IP (an IPv6 address as /64), sets the cookie, emails the admin, and redirects without
+  - [ ] adds its IP (the single address), sets the cookie, emails the admin, and redirects without
         the key;
   - [ ] the site then works on the phone;
   - [ ] a wrong key is just redirected.

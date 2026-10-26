@@ -198,7 +198,7 @@ final class Guard {
             sprintf(
                 /* translators: 1: IP address or range, 2: date and time, 3: dashboard URL. */
                 __("%1\$s was added to the Lockdown list with the unlock link on %2\$s.\n\nIf that wasn’t you or your team, remove it and generate a new unlock link:\n%3\$s", 'shipstatic'),
-                $cidr,
+                Cidr::display($cidr),
                 wp_date((string) get_option('date_format') . ' ' . (string) get_option('time_format')),
                 admin_url('admin.php?page=shipstatic')
             )

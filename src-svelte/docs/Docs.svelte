@@ -243,6 +243,9 @@
           ShipStatic picks the strongest method your server allows, and the tab says which one is working. On Apache and LiteSpeed it adds rules to the top of <code>.htaccess</code>, so strangers are stopped before any PHP runs. On nginx it adds a line to <code>.user.ini</code> that runs a small check before every PHP file (PHP can take up to 5 minutes to notice a change). Everywhere, a small file in <code>wp-content/mu-plugins</code> stops strangers inside WordPress too, before other plugins load.
         </p>
         <p class="bs-docs__muted">
+          <strong>On nginx, that covers pages and PHP files only.</strong> nginx serves uploaded files (images, PDFs), CSS and JavaScript itself, without running PHP, so anyone who has a file’s address can still open it. Most of those are public on your static site anyway, but files uploaded for drafts or private pages are not. To lock those too, paste the snippet from the Lockdown tab (<em>Optional: block in nginx too</em>) into the site’s <code>server {'{'} {'}'}</code> block and reload nginx, and paste it again whenever the list changes.
+        </p>
+        <p class="bs-docs__muted">
           The site’s own requests still get through, so Process, Sync, scheduled syncs, WP-Cron and Site Health keep working, and so do certificate renewals (<code>/.well-known/</code>). WP-CLI is never affected.
         </p>
         <h3>If you’re locked out</h3>

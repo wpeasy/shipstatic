@@ -46,18 +46,26 @@ final class Cidr {
     }
 
     /**
-     * The range an unlock-link visitor is added as: the address itself for
-     * IPv4, its /64 for IPv6 (IPv6 addresses change within a /64 every day).
+     * The entry a visitor is added as (turning Lockdown on, the unlock link):
+     * that one address only — /32 for IPv4, /128 for IPv6. A wider range is
+     * only ever added by hand.
      *
      * @param string $ip Remote address.
      */
     public static function for_visitor(string $ip): ?string {
-        $bin = self::to_binary($ip);
-        if ($bin === null) {
-            return null;
-        }
+        return self::parse($ip);
+    }
 
-        return self::parse(inet_ntop($bin) . (strlen($bin) === 4 ? '/32' : '/64'));
+    /**
+     * How a range is shown: a single address without its /32 or /128.
+     *
+     * @param string $cidr From parse().
+     */
+    public static function display(string $cidr): string {
+        [$net, $prefix] = explode('/', $cidr) + ['', ''];
+        $bin            = self::to_binary($net);
+
+        return $bin !== null && (int) $prefix === strlen($bin) * 8 ? $net : $cidr;
     }
 
     /**
