@@ -38,7 +38,7 @@ final class Schema {
      */
     public static function fields(): array {
         return [
-            'transport'      => ['type' => 'enum',   'default' => 'ftps',          'constant' => 'SHIPSTATIC_TRANSPORT',       'options' => ['sftp', 'ftps', 'ftp', 'connector', 'cloudflare', 'github']],
+            'transport'      => ['type' => 'enum',   'default' => 'ftps',          'constant' => 'SHIPSTATIC_TRANSPORT',       'options' => ['sftp', 'ftps', 'ftp', 'connector', 'cloudflare', 'github', 'folder']],
             'host'           => ['type' => 'string', 'default' => '',              'constant' => 'SHIPSTATIC_HOST'],
             'port'           => ['type' => 'int',    'default' => 0,               'constant' => 'SHIPSTATIC_PORT'],
             'username'       => ['type' => 'string', 'default' => '',              'constant' => 'SHIPSTATIC_USERNAME'],
@@ -50,6 +50,10 @@ final class Schema {
             'connectorId'     => ['type' => 'string', 'default' => '',             'constant' => 'SHIPSTATIC_CONNECTOR_ID',     'internal' => true],
             'connectorSecret' => ['type' => 'string', 'default' => '',             'constant' => 'SHIPSTATIC_CONNECTOR_SECRET', 'internal' => true, 'secret' => true],
             'connectorVersion'=> ['type' => 'int',    'default' => 0,              'constant' => '',                    'internal' => true],
+            // This server (folder) — set by Destinations::set_folder() after
+            // Deploy\ServerFolder validated it, never by REST input (it says where
+            // on this server's disk Sync writes). See docs/SERVER_FOLDER_PLAN.md.
+            'folderPath'     => ['type' => 'string', 'default' => '',              'constant' => '',                    'internal' => true],
             // Cloudflare (Workers static assets) — see docs/CLOUDFLARE_PLAN.md.
             'cfAccountId'    => ['type' => 'cf_account', 'default' => '',          'constant' => 'SHIPSTATIC_CF_ACCOUNT_ID'],
             'cfWorker'       => ['type' => 'cf_worker',  'default' => '',          'constant' => 'SHIPSTATIC_CF_WORKER'],

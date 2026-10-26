@@ -5,6 +5,14 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-10-26
+
+### Added
+- **"This server" deploy method** (`Transport\FolderTransport`, transport id `folder`): writes the export straight into a folder on the WordPress server. Two layouts: the folder WordPress sits in (one domain, WordPress at `/wp`, its folder protected) or a folder beside WordPress that another domain serves. Every write is confined to the folder (no dot segments, no symlinks out, never WordPress's folder, `cgi-bin` or `.well-known`, never a PHP file or `.user.ini`); an ownership marker (`.shipstatic-folder`) is required; prune touches only files ShipStatic published. The static `.htaccess` keeps a host's other lines (cPanel's PHP handler) and keeps its cache headers off the WordPress folder below it.
+- **Setup wizard** ("Set up the folder"): suggests the domain's folder or a sibling that already holds a site, checks the folder, creates it or takes over an existing static site without rewriting matching files, and tests that the Destination URL serves it (probe file). REST `POST /server-folder/check`, `POST /destinations/{id}/folder`; WP-CLI `wp shipstatic folder suggest|check|setup|test`.
+- **Move WordPress into /wp**: for a site installed at the domain root, the wizard moves WordPress's own files into `/wp`, gives its address and content links `/wp` (serialized-data aware), switches the destination to "This server" at the root and shows a holding page until the first Sync. Pre-flight checks, a dashboard notice with **Undo the move**, REST `POST /wordpress-move[/undo|/forget]`, WP-CLI `wp shipstatic move-wordpress check|run|undo`.
+- Documentation: "Publish on this server".
+
 ## [2.3.3] - 2026-10-26
 
 ### Fixed

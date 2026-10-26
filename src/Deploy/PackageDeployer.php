@@ -107,6 +107,11 @@ final class PackageDeployer {
         if ($dest !== null && $dest->is_snapshot()) {
             return false;
         }
+        // A folder on this server is written directly — copying is already
+        // fast, and there is no point unzipping through HTTP.
+        if ($dest !== null && $dest->is_folder()) {
+            return false;
+        }
 
         return self::base_url($dest) !== ''
             && !get_option(self::OFF_PREFIX . $dest_id);

@@ -149,6 +149,30 @@ The GitHub Pages transport (`Transport\GitHubTransport`, `docs/GITHUB_PAGES_PLAN
 
 ---
 
+## 3e. The server folder (`Deploy\ServerFolder`, `Transport\FolderTransport`) — writes inside a public PHP docroot
+
+The "This server" deploy method writes files on the WordPress server's own disk, into a folder that is public and usually runs PHP (docs/SERVER_FOLDER_PLAN.md). Rules:
+
+- **The folder is never REST input.** `folderPath` is an `internal` Schema field written only by `Destinations::set_folder()` after `ServerFolder::prepare()` (via `ServerFolderController::run()`, shared with WP-CLI). `ServerFolder::inspect()` runs again in every `FolderTransport::connect()`, so a stored path that has since become unsafe is refused.
+- **Allowed folders:** inside the account (`account_root()`: the PHP user's home when WordPress is in it, else two levels above WordPress, never `/`); never WordPress's folder or inside it; may be the folder WordPress is *directly* in (layout `domainRoot`, WordPress's folder then protected) or a folder not containing WordPress; never one holding another WordPress (checked by PHP files — the export's copied `wp-includes/` assets don't count).
+- **Ownership marker:** `.shipstatic-folder` holds the destination id; the transport refuses a folder without the matching marker, and setup refuses a folder another existing destination owns. Prune deletes only pushed-manifest files, so hosting files and hand-added files survive.
+- **Every key is confined** (`FolderTransport::path()`): plain segments only (no `.`/`..`/empty/NUL/backslash); first segment not protected (WordPress's folder, `cgi-bin`, `.well-known`, case-insensitive); never a PHP-ish file (`.php*`, `.phtml`, `.phar`, `.phps`, `.pht`) or `.user.ini`; `.htaccess*` only at the top; never the marker; the deepest existing parent's `realpath()` must be inside the folder and the target must not be a symlink. Writes go to a temp file then rename (no half-written page).
+- **The static `.htaccess` sits above WordPress in layout `domainRoot`:** `HtaccessBuilder::merge()` keeps every other line (cPanel's MultiPHP handler, which WordPress needs) and gates our cache headers with `SetEnvIf Request_URI "^/(wp)(/|$)" SHIPSTATIC_SKIP` + `env=!SHIPSTATIC_SKIP`, so WordPress's assets never get a year-long immutable cache. Our rewrite rules don't reach WordPress (its own `.htaccess` turns the engine on).
+- **Probe:** Test writes a random file, fetches it through the Destination URL with `UrlSafety::guarded_get()` (rule 1), compares a random token, deletes it.
+
+### 3f. Moving WordPress into /wp (`Deploy\WordPressMove`, `Support\SerializedReplace`)
+
+Renames WordPress's own files and rewrites the database — the most destructive thing the plugin does. Rules:
+
+- **Admin-only and explicit:** REST `POST /wordpress-move` needs `manage_options` **and** `confirm: true` (the "I have a backup" box); WP-CLI asks unless `--yes`. Offered only when WordPress's folder is the request's document root and its address has no path.
+- **Pre-flight refuses** multisite, "WordPress in its own directory", an existing `wp` entry or a top-level post using `/wp/`, `wp-config.php` outside the folder or defining `WP_HOME`/`WP_SITEURL`/`WP_CONTENT_*`/`WP_PLUGIN_*`/`UPLOADS` (read from the file — core defines most of them itself, so never test `defined()`), Lockdown on, no current render, unwritable entries.
+- **Only WordPress's own entries move** (`wp-admin`, `wp-includes`, `wp-content`, `wp-config.php`, `index.php`, `wp-*.php`, `xmlrpc.php`, `license.txt`, `readme.html`); `.htaccess`/`php.ini` are copied; everything else at the root stays.
+- **Nothing may load a moved file:** the files move in the request's last shutdown function after `fastcgi_finish_request()`/`litespeed_finish_request()` (WP-CLI: inline), with every class it needs preloaded and everything it writes afterwards (root `.htaccess`, holding page) prepared before the move — the plugin's own templates move with `wp-content`.
+- **Reversible:** the record (`shipstatic_wp_move`, in the database, which doesn't move) holds the entry list, old URLs and the original root `.htaccess`. A failed rename puts back what moved and reverts the database; Undo removes only the root destination's pushed files (then the folders that leaves empty — an empty `about/` would 403 WordPress's `/about/`), renames back, restores `.htaccess` and the database.
+- **The database rewrite** (`SerializedReplace`) descends into serialized values and re-serializes only what changed; objects are left alone (`allowed_classes => false`). The URL rule matches the host exactly (not `host.au`, not `sub.host`), handles `\/` JSON escaping, and never adds `/wp` twice. ShipStatic's own options keep their URLs (a destination's address is the static site). It never runs without a recorded root and host.
+
+---
+
 ## 4. Credential storage (`Support\Crypto`)
 
 FTP/SFTP passwords are encrypted at rest with **AES-256-GCM** (random 12-byte IV, 16-byte tag verified on decrypt). The key derives from the WordPress salts (`AUTH_KEY` etc.), falling back to `wp_salt('auth')`.

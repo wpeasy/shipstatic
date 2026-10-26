@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.3.3
+Stable tag: 2.4.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,7 @@ Bricks isn't required. Rendering is builder-agnostic: ShipStatic captures whatev
 * **Connector (HTTPS)** — no FTP account needed: upload one small PHP receiver to the destination once, then every sync goes up as a single signed, chunked package
 * **Cloudflare** — publish to Cloudflare's global network (as a static Worker) with an account ID, an API token and a Worker name; no web host needed
 * **GitHub Pages** — publish to a branch of your GitHub repository; each sync is one commit containing only the files that changed
+* **This server** — publish into a folder on the same server as WordPress, written directly (no FTP or Connector). On cPanel the easiest setup is one domain: the static site at the root and WordPress in `/wp`, locked to editors with Lockdown
 * **Export ZIP** — download the current render as a zip instead of uploading it, for manual deploys (no FTP/SFTP needed)
 * Automatic `.htaccess` generation **plus** a copy-paste nginx snippet
 * Favicon and asset handling
@@ -82,7 +83,7 @@ Yes, once you turn on **Site search** in ShipStatic → Settings, then Process a
 
 = Which connections are supported? =
 
-SFTP, FTP and explicit-TLS FTPS; the Connector (signed HTTPS to a small receiver file you upload once); Cloudflare; and GitHub Pages. SFTP uses a bundled pure-PHP library, so no special server extensions are required.
+SFTP, FTP and explicit-TLS FTPS; the Connector (signed HTTPS to a small receiver file you upload once); Cloudflare; GitHub Pages; and a folder on this same server. SFTP uses a bundled pure-PHP library, so no special server extensions are required.
 
 = What files does Lockdown write? =
 
@@ -115,6 +116,11 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.0 =
+* New deploy method "This server": publish the static site into a folder on the same server as WordPress, written directly (no FTP, Connector or outside service), with a setup wizard that checks the folder and that its address serves it.
+* The wizard can move a WordPress site installed at the domain root into /wp, so the root becomes the static site and WordPress (locked with Lockdown) lives at /wp. It can be undone from the dashboard.
+* WP-CLI: wp shipstatic folder and wp shipstatic move-wordpress.
 
 = 2.3.3 =
 * Fix: Connector, FTP package deploy and the server check now work with a destination on your own computer (Herd or Valet *.test, Local *.local, localhost on any port), which WordPress used to refuse with "A valid URL was not provided".

@@ -11,6 +11,7 @@
     { id: 'search', label: 'Site search' },
     { id: 'schedule', label: 'Scheduled sync' },
     { id: 'lockdown', label: 'Lockdown' },
+    { id: 'server-folder', label: 'Publish on this server' },
     { id: 'connector', label: 'Connector' },
     { id: 'cloudflare', label: 'Cloudflare' },
     { id: 'github', label: 'GitHub Pages' },
@@ -224,6 +225,39 @@
         <p class="bs-docs__muted">
           Schedules use WP-Cron, which fires when someone visits the site, so on a quiet site a sync may start a little late. For exact timing, have your host’s cron call <code>wp-cron.php</code> every few minutes. With WP-CLI available the sync runs in the background; otherwise WordPress runs it in short steps until it’s done.
         </p>
+      </section>
+
+      <!-- Publish on this server -->
+      <section id="server-folder" class="bs-docs__section bs-stack bs-stack--sm">
+        <h2>Publish on this server</h2>
+        <p class="bs-docs__muted">
+          The <strong>This server</strong> deploy method writes the static site straight into a folder on the same server as WordPress: no FTP account, Connector or outside service. With <strong>Lockdown</strong> on, WordPress is reachable only by your editors and the static site next to it is what the public sees. Choose <strong>This server</strong> in a destination and click <strong>Set up the folder</strong>; the wizard checks the folder, creates it if needed, and tests that its address really serves it.
+        </p>
+        <h3>The easiest setup: one domain, WordPress in /wp</h3>
+        <ol class="bs-docs__muted">
+          <li>In cPanel, install WordPress with Softaculous or WP Toolkit and type <code>wp</code> in the <em>Directory</em> field. WordPress is then at <code>https://example.com/wp/</code>, in <code>public_html/wp</code>.</li>
+          <li>Install ShipStatic, add a destination, choose <strong>This server</strong> and <strong>Set up the folder</strong>. The wizard offers <em>Publish at https://example.com/</em>: the folder the domain serves (<code>public_html</code>). WordPress’s folder inside it is never written to.</li>
+          <li>Run <strong>Sync</strong>, then turn on <strong>Lockdown</strong>. Its rules stay in WordPress’s folder, so the static site is never blocked.</li>
+        </ol>
+        <p class="bs-docs__muted">
+          Nothing to change in cPanel, and one SSL certificate covers it all. The trade-off: the public site and wp-admin share one domain, so a third-party script on your public pages (an embed, analytics, a chat widget) runs on the same domain as wp-admin. On <strong>nginx</strong>, which ignores <code>.htaccess</code>, the server configuration must serve the folder at the root and pass <code>/wp/</code> to PHP, for example <code>location /wp/ {'{'} try_files $uri $uri/ /wp/index.php?$args; {'}'}</code>; ask your host.
+        </p>
+        <h3>WordPress already at the root? The wizard moves it into /wp</h3>
+        <p class="bs-docs__muted">
+          Most sites start with WordPress installed at the root of the domain. Run <strong>Process all</strong>, turn Lockdown off, then open the wizard (<strong>This server</strong> → <strong>Set up the folder</strong>): it checks the site and offers <strong>Move WordPress into /wp</strong>. WordPress’s own files (<code>wp-admin</code>, <code>wp-includes</code>, <code>wp-content</code>, <code>wp-config.php</code> and the core PHP files) move into <code>/wp</code>, its address and the links in your content get <code>/wp</code>, and anything else at the root (<code>ads.txt</code>, verification files, <code>.well-known</code>) stays. You log in again at <code>https://example.com/wp/</code> and run <strong>Sync</strong>; a holding page shows at the root until then. The dashboard offers <strong>Undo the move</strong> until you choose <strong>Keep it</strong>. It refuses to start when <code>wp-config.php</code> pins the site’s address or folders, a page already uses <code>/wp</code>, or the site is multisite, and warns about plugins that keep the old folder (security firewalls loaded from <code>.user.ini</code>, cache drop-ins). Take a backup first. WP-CLI: <code>wp shipstatic move-wordpress check|run|undo</code>.
+        </p>
+        <h3>The most separated setup: WordPress on a subdomain</h3>
+        <p class="bs-docs__muted">
+          Point the main domain at one folder (for example <code>public_html/static</code>) and a subdomain such as <code>wp.example.com</code> at WordPress’s folder (<code>public_html/wp</code>). In the wizard choose the folder beside WordPress. The two are then separate sites to the browser. Already publishing that folder over FTP or the Connector? Choose <em>It’s my static site already</em>: files that already match aren’t written again.
+        </p>
+        <h3>What it never does</h3>
+        <ul class="bs-docs__muted">
+          <li>Write or delete anything in WordPress’s folder, <code>cgi-bin</code> or <code>.well-known</code>.</li>
+          <li>Write a PHP file, or follow a link out of the folder.</li>
+          <li>Remove files it didn’t publish: files you or your host added stay.</li>
+          <li>Use a folder that isn’t marked as this destination’s (the <code>.shipstatic-folder</code> file the wizard creates).</li>
+        </ul>
+        <p class="bs-docs__muted">WP-CLI: <code>wp shipstatic folder suggest</code>, <code>check --folder=…</code>, <code>setup &lt;dest&gt; --folder=… --dest-url=… [--adopt]</code>, <code>test &lt;dest&gt;</code>.</p>
       </section>
 
       <!-- Lockdown -->

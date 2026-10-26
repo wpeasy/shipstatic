@@ -114,6 +114,9 @@ final class Destination {
             'connectorId'     => (string) $this->get('connectorId'),
             'connectorSecret' => (string) $this->get('connectorSecret'),
             'connectorVersion'=> (int) $this->get('connectorVersion'),
+            // This server (folder) transport.
+            'folderPath'      => (string) $this->get('folderPath'),
+            'destId'          => $this->id(),
             // Cloudflare transport.
             'cfAccountId'     => (string) $this->get('cfAccountId'),
             'cfWorker'        => (string) $this->get('cfWorker'),
@@ -164,6 +167,26 @@ final class Destination {
      */
     public function is_primary(): bool {
         return $this->is_primary;
+    }
+
+    /**
+     * Whether this destination publishes into a folder on this server.
+     */
+    public function is_folder(): bool {
+        return (string) $this->get('transport') === 'folder';
+    }
+
+    /**
+     * Record the folder this destination publishes into (validated by
+     * Deploy\ServerFolder first). The only writer for `folderPath`.
+     *
+     * @param string $path Folder's real path.
+     * @return array<string,mixed> Updated stored data.
+     */
+    public function set_folder(string $path): array {
+        $this->data['folderPath'] = $path;
+
+        return $this->data;
     }
 
     /**

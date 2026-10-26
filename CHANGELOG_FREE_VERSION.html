@@ -1,4 +1,6 @@
 <h1>Changelog</h1>
-<h2>v2.3.3 (2026-10-26)</h2>
-<h3>Fixed</h3>
-<p><strong>Destinations on your own computer work again.</strong> A Connector destination on a local development address, such as a Herd or Valet <code>.test</code> site, a Local <code>.local</code> site or <code>localhost</code> on any port, failed Test with &quot;A valid URL was not provided&quot;. It now connects. Addresses on your network and other private addresses are still blocked.</p>
+<h2>v2.4.0 (2026-10-26)</h2>
+<h3>New</h3>
+<p><strong>Publish on this server.</strong> A new deploy method, <strong>This server</strong>, writes your static site straight into a folder on the same server as WordPress: no FTP account, Connector or outside service. A short wizard picks the folder, checks it, and tests that its address really serves it.</p>
+<h3>New</h3>
+<p><strong>One domain, set up for you.</strong> If WordPress is installed at the root of your domain, the wizard can move it into a <code>/wp</code> folder. Your static site then lives at the root, WordPress at <code>/wp</code> (lock it to your editors with Lockdown), and the move can be undone from the dashboard.</p>

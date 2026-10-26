@@ -354,6 +354,117 @@
     "msgid": "Border radius"
   },
   {
+    "msgid": "Enter the full path of a folder on this server, for example /home/you/public_html."
+  },
+  {
+    "msgid": "Its parent folder doesn’t exist. Create the folders above it first, or pick an existing folder."
+  },
+  {
+    "msgid": "Use letters, digits, dots, dashes and underscores for the new folder’s name."
+  },
+  {
+    "msgid": "Pick a folder inside this hosting account (%s)."
+  },
+  {
+    "msgid": "That is WordPress’s own folder. The static site needs a folder of its own."
+  },
+  {
+    "msgid": "That folder is inside WordPress. Pick the folder WordPress is in, or a folder beside it."
+  },
+  {
+    "msgid": "WordPress is several folders below that one. Pick the folder WordPress is directly in, or a folder beside it."
+  },
+  {
+    "msgid": "That folder holds another WordPress site."
+  },
+  {
+    "msgid": "Another destination already publishes into that folder."
+  },
+  {
+    "msgid": "PHP can’t write to that folder. Check its permissions, or ask your host."
+  },
+  {
+    "msgid": "Couldn’t create the folder."
+  },
+  {
+    "msgid": "Couldn’t write to the folder."
+  },
+  {
+    "msgid": "Enter the address the folder is served at (Destination URL) so Test can check it."
+  },
+  {
+    "msgid": "Couldn’t write a test file into the folder."
+  },
+  {
+    "msgid": "Couldn’t open %1$s: %2$s"
+  },
+  {
+    "msgid": "%1$s doesn’t serve this folder yet (a test file came back as HTTP %2$d). Point the domain at the folder in your hosting panel, or correct the Destination URL."
+  },
+  {
+    "msgid": "This is a multisite network, which can’t be moved this way."
+  },
+  {
+    "msgid": "WordPress has already been moved. Undo that move first."
+  },
+  {
+    "msgid": "WordPress is installed in its own directory (its files and its address are in different folders). Move it by hand instead."
+  },
+  {
+    "msgid": "WordPress isn’t at the root of its domain."
+  },
+  {
+    "msgid": "WordPress’s folder isn’t the folder this domain serves."
+  },
+  {
+    "msgid": "A file or folder named “%s” already exists next to WordPress."
+  },
+  {
+    "msgid": "A page or post uses the address /%s/, which WordPress would need."
+  },
+  {
+    "msgid": "wp-config.php isn’t in WordPress’s folder (it’s one level up). Move it in first, or move WordPress by hand."
+  },
+  {
+    "msgid": "wp-config.php sets %s, which would point to the old place. Remove it first."
+  },
+  {
+    "msgid": "Turn Lockdown off first (it keeps paths that change). Turn it back on after the move."
+  },
+  {
+    "msgid": "Process all first, so the static site can go live straight after the move."
+  },
+  {
+    "msgid": "PHP can’t write to WordPress’s folder."
+  },
+  {
+    "msgid": "PHP can’t move %s (check its permissions)."
+  },
+  {
+    "msgid": "%s loads a file from WordPress’s folder before every request (a firewall such as Wordfence). After the move, re-run that plugin’s setup so it uses the new place."
+  },
+  {
+    "msgid": "A caching plugin installed %s. Purge and re-save that plugin’s settings after the move."
+  },
+  {
+    "msgid": "WordPress can’t be moved yet."
+  },
+  {
+    "msgid": "WordPress moved into /wp."
+  },
+  {
+    "msgid": "Moving WordPress to %s. Log in there to continue."
+  },
+  {
+    "msgid": "There is no move to undo."
+  },
+  {
+    "msgid": "%s already exists at the root, so WordPress can’t move back."
+  },
+  {
+    "msgid": "Moving WordPress back to %s. Log in there again."
+  },
+  {
     "msgid": "Missing download token."
   },
   {
@@ -492,6 +603,9 @@
     "msgid": "Connector reached — %s."
   },
   {
+    "msgid": "Folder ready — %s."
+  },
+  {
     "msgid": "Cloudflare token accepted — %s."
   },
   {
@@ -499,6 +613,27 @@
   },
   {
     "msgid": "Site search is not available."
+  },
+  {
+    "msgid": "Confirm that you have a backup first."
+  },
+  {
+    "msgid": "The address must start with https:// (or http://)."
+  },
+  {
+    "msgid": "That folder already has an index.html. Confirm that your home page may replace it, or choose “It’s my static site already”."
+  },
+  {
+    "msgid": "Folder ready."
+  },
+  {
+    "msgid": "Folder ready. All %d files of your site are already there and match, so it’s in sync."
+  },
+  {
+    "msgid": "Folder ready. %1$d files already match; %2$d will be written on the next Sync."
+  },
+  {
+    "msgid": "Process the pages first and set it up again to skip rewriting files that are already there. Otherwise the first Sync rewrites them (same content, nothing lost)."
   },
   {
     "msgid": "(no title)"
@@ -1389,6 +1524,165 @@
     "msgid": "GitHub Pages"
   },
   {
+    "msgid": "This server"
+  },
+  {
+    "msgid": "Publishes into a folder on this same server by writing the files directly: no FTP account, Connector or outside service. Use the folder your domain serves (WordPress then lives in a sub-folder such as /wp), or a folder beside WordPress that another domain points at."
+  },
+  {
+    "msgid": "Publishing into"
+  },
+  {
+    "msgid": "No folder set up yet."
+  },
+  {
+    "msgid": "Set up the folder"
+  },
+  {
+    "msgid": "Change folder"
+  },
+  {
+    "msgid": "Publish on this server"
+  },
+  {
+    "msgid": "Sets up a folder on this server for the static site, checks that its address serves it, and switches this destination to it."
+  },
+  {
+    "msgid": "Where"
+  },
+  {
+    "msgid": "Check"
+  },
+  {
+    "msgid": "Create and test"
+  },
+  {
+    "msgid": "Where should the static site go?"
+  },
+  {
+    "msgid": "Publish at %s (the folder this domain serves; WordPress stays in its sub-folder)"
+  },
+  {
+    "msgid": "The folder beside WordPress: %s"
+  },
+  {
+    "msgid": "Another folder on this server"
+  },
+  {
+    "msgid": "Folder (full path)"
+  },
+  {
+    "msgid": "WordPress is in %s. Pick the folder it sits in, or a folder beside it."
+  },
+  {
+    "msgid": "The address visitors use for the static site. It becomes this destination’s Destination URL."
+  },
+  {
+    "msgid": "The static site and WordPress will share one domain. That’s the easiest setup, but any third-party script on your public pages (an embed, analytics, a chat widget) then runs on the same domain as wp-admin. If you can set up a subdomain for WordPress, that keeps them apart."
+  },
+  {
+    "msgid": "This server runs nginx, which ignores .htaccess. Its configuration must serve this folder at the domain root and pass the WordPress sub-folder to PHP. Ask your host, or use a folder that another domain points at."
+  },
+  {
+    "msgid": "A domain or subdomain must point at this folder (in cPanel: Domains, then set its document root). Test checks that it does."
+  },
+  {
+    "msgid": "The folder is empty."
+  },
+  {
+    "msgid": "The folder already has files. ShipStatic only ever replaces or removes files it published itself."
+  },
+  {
+    "msgid": "The folder will be created."
+  },
+  {
+    "msgid": "WordPress’s folder %s is inside it and is never written to or removed."
+  },
+  {
+    "msgid": "PHP files are never written into the folder."
+  },
+  {
+    "msgid": "There is already an index.html in the folder."
+  },
+  {
+    "msgid": "It’s my static site already (keep matching files instead of rewriting them)"
+  },
+  {
+    "msgid": "Replace it with my home page"
+  },
+  {
+    "msgid": "Lockdown, if you turn it on, stays inside WordPress’s folder, so the static site is never blocked."
+  },
+  {
+    "msgid": "Creates the folder if needed, marks it as this destination’s, saves the destination and checks that its address serves the folder."
+  },
+  {
+    "msgid": "Setting up…"
+  },
+  {
+    "msgid": "This destination now publishes into the folder."
+  },
+  {
+    "msgid": "Run Sync to publish the site there."
+  },
+  {
+    "msgid": "Turn on Lockdown (Lockdown tab) so only your editors can reach WordPress."
+  },
+  {
+    "msgid": "Close"
+  },
+  {
+    "msgid": "WordPress is installed at the root of %1$s, so the static site has nowhere to go there yet. ShipStatic can move WordPress into a /wp folder: WordPress will then be at %2$s, and the static site at the root."
+  },
+  {
+    "msgid": "WordPress’s files move into /wp and its address becomes %s. Links in your content follow."
+  },
+  {
+    "msgid": "This destination switches to “This server” and will publish the static site at %s. A holding page shows there until your first Sync."
+  },
+  {
+    "msgid": "You log in again at the new address (login cookies belong to the old one), then run Sync."
+  },
+  {
+    "msgid": "It can be undone from the dashboard while the notice about the move is shown."
+  },
+  {
+    "msgid": "I have a backup of this site’s files and database"
+  },
+  {
+    "msgid": "Move WordPress into /wp"
+  },
+  {
+    "msgid": "Moving…"
+  },
+  {
+    "msgid": "WordPress moved into /wp"
+  },
+  {
+    "msgid": "WordPress is now at %1$s and this server publishes the static site at %2$s. Run Sync to put the site live, then turn on Lockdown so only your editors reach WordPress."
+  },
+  {
+    "msgid": "Keep it"
+  },
+  {
+    "msgid": "Undo the move"
+  },
+  {
+    "msgid": "Move WordPress back?"
+  },
+  {
+    "msgid": "WordPress couldn’t be moved"
+  },
+  {
+    "msgid": "Nothing was changed: everything was put back. The server said: %s"
+  },
+  {
+    "msgid": "Dismiss"
+  },
+  {
+    "msgid": "WordPress is being moved. Reload this page in a moment."
+  },
+  {
     "msgid": "Taken from the Destination URL."
   },
   {
@@ -1540,9 +1834,6 @@
   },
   {
     "msgid": "In sync"
-  },
-  {
-    "msgid": "Check"
   },
   {
     "msgid": "Preview what a sync would change on this destination — compares the last render, uploads nothing."
@@ -2067,12 +2358,6 @@
     "msgid": "Testing…"
   },
   {
-    "msgid": "Dismiss"
-  },
-  {
-    "msgid": "Close"
-  },
-  {
     "msgid": "That URL resolves to a private or reserved network address (cloud metadata, LAN, loopback proxy, etc.) and cannot be used. Use a public HTTP(S) URL."
   },
   {
@@ -2159,6 +2444,39 @@
   },
   {
     "msgid": "%s detected — the cache policy is not in effect. On Apache/LiteSpeed the .htaccess is uploaded automatically; on nginx, apply the snippet below."
+  },
+  {
+    "msgid": "No folder is set up for this destination yet. Use “Set up the folder”."
+  },
+  {
+    "msgid": "This folder isn’t set up for this destination (its .shipstatic-folder file is missing or belongs to another one). Use “Set up the folder” again."
+  },
+  {
+    "msgid": "WordPress folder %s is left alone"
+  },
+  {
+    "msgid": "%s free"
+  },
+  {
+    "msgid": "Refused an empty or invalid file name."
+  },
+  {
+    "msgid": "Refused %s: not a plain path."
+  },
+  {
+    "msgid": "Refused %s: that folder belongs to WordPress or the hosting account."
+  },
+  {
+    "msgid": "Refused %s."
+  },
+  {
+    "msgid": "Refused %s: PHP files are never published."
+  },
+  {
+    "msgid": "Refused %s: it leads outside the folder."
+  },
+  {
+    "msgid": "Couldn’t create the folder %s."
   },
   {
     "msgid": "ShipStatic documentation requires JavaScript."

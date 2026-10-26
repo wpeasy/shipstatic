@@ -35,23 +35,28 @@ final class HtaccessBuilder {
      * Static block and the WordPress rewrite block (which conflicts with static
      * serving), then prepend our fresh block. All other custom rules are kept.
      *
-     * @param string $existing Current remote .htaccess contents ('' if none).
+     * @param string            $existing Current remote .htaccess contents ('' if none).
+     * @param array<int,string> $wp_dirs  WordPress folders below this one (a folder
+     *                                    destination above WordPress): our cache
+     *                                    rules must not reach them.
      */
-    public static function merge(string $existing): string {
+    public static function merge(string $existing, array $wp_dirs = []): string {
         $existing = self::strip_block($existing, self::MARKER);
         $existing = self::strip_block($existing, 'WordPress');
         $existing = trim($existing);
 
-        $block = self::block();
+        $block = self::block($wp_dirs);
 
         return $existing === '' ? $block . "\n" : $block . "\n\n" . $existing . "\n";
     }
 
     /**
      * Our managed block, wrapped in BEGIN/END markers for idempotent merging.
+     *
+     * @param array<int,string> $wp_dirs See merge().
      */
-    public static function block(): string {
-        return "# BEGIN " . self::MARKER . "\n" . self::rules() . "\n# END " . self::MARKER . "\n";
+    public static function block(array $wp_dirs = []): string {
+        return "# BEGIN " . self::MARKER . "\n" . self::rules($wp_dirs) . "\n# END " . self::MARKER . "\n";
     }
 
     /**
@@ -145,8 +150,10 @@ final class HtaccessBuilder {
     /**
      * The rule body (without markers). The pre-compressed gzip rules are emitted
      * only when the host can actually produce .gz siblings.
+     *
+     * @param array<int,string> $wp_dirs See merge().
      */
-    private static function rules(): string {
+    private static function rules(array $wp_dirs = []): string {
         $assets = self::ASSET_EXT;
 
         $rewrite = '';
@@ -164,7 +171,23 @@ final class HtaccessBuilder {
         // subdomain docroot is a common layout) would otherwise lose its own
         // DirectoryIndex and 403. Static output never contains an index.php, so
         // index.html still wins wherever we actually deploy.
+        // A folder destination above WordPress (one domain, WordPress in
+        // /wp/): .htaccess applies to every folder below, so WordPress's own
+        // CSS/JS would get a year-long immutable cache. Mark its requests and
+        // keep the cache headers off them. (Our rewrite rules don't reach it:
+        // WordPress's own .htaccess turns its rewrite engine on.)
+        $skip = '';
+        $env  = '';
+        $dirs = array_values(array_filter($wp_dirs, static fn(string $d): bool => (bool) preg_match('/^[A-Za-z0-9._-]+$/', $d)));
+        if ($dirs !== []) {
+            $skip = "<IfModule mod_setenvif.c>\n    # WordPress lives below this folder: keep the cache rules off it.\n"
+                . '    SetEnvIf Request_URI "^/(' . implode('|', array_map(static fn(string $d): string => preg_quote($d, '/'), $dirs)) . ')(/|$)" SHIPSTATIC_SKIP' . "\n</IfModule>\n";
+            $env  = ' env=!SHIPSTATIC_SKIP';
+        }
+
         return strtr(self::template('htaccess.txt'), [
+            '__BS_SKIP__'          => $skip,
+            '__BS_ENV__'           => $env,
             '__BS_REWRITE__'       => $rewrite,
             '__BS_PRECOMPRESSED__' => $precompressed,
             '__BS_ASSETS__'        => $assets,

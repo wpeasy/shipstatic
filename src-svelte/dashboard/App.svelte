@@ -21,6 +21,7 @@
   import SettingsDrawer from './SettingsDrawer.svelte';
   import SetupWizard from './SetupWizard.svelte';
   import { uiPrefs, themeAttr, accentAttr } from '../shared/uiPrefs.svelte';
+  import WpMoveBanner from './WpMoveBanner.svelte';
   import { Alert, Badge, Button, ConfirmButton, Tabs, Tooltip, fadeUp, autoContrast } from '@wpeasy/ab-ui';
 
   const freeVersion = (window as unknown as { shipStaticData?: { version?: string } }).shipStaticData?.version ?? '';
@@ -455,6 +456,10 @@
         <p><a href="options-permalink.php">{__('permalinksAction')}</a></p>
       </div>
     </Alert>
+  {/if}
+
+  {#if status?.wpMove}
+    <WpMoveBanner move={status.wpMove} onChanged={() => void loadStatus()} />
   {/if}
 
   {#if status}

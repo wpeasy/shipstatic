@@ -1,6 +1,6 @@
 // Shared types mirroring the REST payloads (src/REST/*Controller.php).
 
-export type Transport = 'sftp' | 'ftps' | 'ftp' | 'connector' | 'cloudflare' | 'github';
+export type Transport = 'sftp' | 'ftps' | 'ftp' | 'connector' | 'cloudflare' | 'github' | 'folder';
 
 export interface ValueField<T> {
   value: T;
@@ -23,6 +23,8 @@ export interface SettingsDisplay {
   destinationUrl: ValueField<string>;
   /** Connector pairing (plugin-managed; never sent from the client). */
   connectorId: ValueField<string>;
+  /** This server (folder): where Sync writes. Set only by the folder wizard. */
+  folderPath: ValueField<string>;
   connectorSecret: SecretField;
   connectorVersion: ValueField<number>;
   /** Cloudflare (Workers static assets) — see docs/CLOUDFLARE_PLAN.md. */
@@ -44,6 +46,7 @@ export interface Capabilities {
   connector: boolean;
   cloudflare: boolean;
   github: boolean;
+  folder: boolean;
 }
 
 /** POST /destinations/{id}/connector/pair */
@@ -207,7 +210,29 @@ export interface LastTest {
 
 export type DiscoveryMode = 'linked' | 'all' | 'manual';
 
+/** Deploy\WordPressMove::status() */
+export interface WpMoveStatus {
+  state: 'database' | 'files' | 'moved' | 'failed' | 'undoing' | string;
+  from: string;
+  to: string;
+  error: string;
+  time: number;
+}
+
+/** Deploy\WordPressMove::check() */
+export interface WpMoveCheck {
+  ok: boolean;
+  problems: string[];
+  warnings: string[];
+  root: string;
+  from: string;
+  to: string;
+  entries: string[];
+}
+
 export interface Status {
+  /** A move of WordPress into /wp that can still be undone. */
+  wpMove?: WpMoveStatus | null;
   connected: boolean;
   hasPushed: boolean;
   inSync: boolean;
@@ -272,6 +297,43 @@ export interface Preflight {
   ok: boolean;
   ms: number;
   message: string;
+}
+
+/** Deploy\ServerFolder::inspect() */
+export interface FolderInfo {
+  ok: boolean;
+  error: string;
+  path: string;
+  exists: boolean;
+  /** domainRoot = the folder WordPress sits in (one domain); separate = beside it. */
+  layout: 'domainRoot' | 'separate';
+  /** WordPress folder(s) inside it, never written to. */
+  protected: string[];
+  marker: 'none' | 'ours' | 'other';
+  empty: boolean;
+  hasIndex: boolean;
+  writable: boolean;
+}
+
+/** POST /server-folder/check */
+export interface FolderCheck {
+  suggestions: { path: string; url: string; layout: 'domainRoot' | 'separate' }[];
+  account: string;
+  wordpress: string;
+  server: string;
+  folder: FolderInfo | null;
+  /** Set when WordPress is at the root of its domain: can it move into /wp? */
+  move: WpMoveCheck | null;
+  moveStatus: WpMoveStatus | null;
+}
+
+/** POST /destinations/{id}/folder */
+export interface FolderSetupResult {
+  ok: boolean;
+  message: string;
+  needsConfirm?: boolean;
+  warnings?: string[];
+  path?: string;
 }
 
 export interface TestResult {

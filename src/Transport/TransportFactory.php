@@ -47,6 +47,8 @@ final class TransportFactory {
                 return new GitHubTransport($config);
             case 'connector':
                 return new ConnectorTransport($config);
+            case 'folder':
+                return new FolderTransport($config);
             case 'ftps':
                 return new FtpTransport($config, true);
             case 'ftp':
@@ -60,7 +62,7 @@ final class TransportFactory {
     /**
      * Which transports are usable on this server.
      *
-     * @return array{sftp:bool,ftps:bool,ftp:bool,connector:bool,cloudflare:bool,github:bool}
+     * @return array{sftp:bool,ftps:bool,ftp:bool,connector:bool,cloudflare:bool,github:bool,folder:bool}
      */
     public static function capabilities(): array {
         return [
@@ -70,6 +72,7 @@ final class TransportFactory {
             'connector'  => ConnectorTransport::is_available(),
             'cloudflare' => CloudflareTransport::is_available(),
             'github'     => GitHubTransport::is_available(),
+            'folder'     => FolderTransport::is_available(),
         ];
     }
 
@@ -87,13 +90,14 @@ final class TransportFactory {
     /**
      * Whether a destination's upload root IS the path it serves the site from
      * — a GitHub project site's repository root is https://owner.github.io/repo/
-     * — so its files are not moved into a sub-path folder at deploy. Every
-     * other transport uploads to a web root that the sub-path sits under.
+     * — so its files are not moved into a sub-path folder at deploy. So is a
+     * folder on this server: the folder IS what the Destination URL serves.
+     * Every other transport uploads to a web root that the sub-path sits under.
      *
      * @param string $transport Transport id.
      */
     public static function root_is_served_path(string $transport): bool {
-        return $transport === 'github';
+        return in_array($transport, ['github', 'folder'], true);
     }
 
     /**

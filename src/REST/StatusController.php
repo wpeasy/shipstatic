@@ -98,6 +98,8 @@ final class StatusController {
                 'message' => isset($state['message']) ? (string) $state['message'] : '',
             ] : null,
             'method'    => MethodResolver::resolve(),
+            // A "Move WordPress into /wp" that can still be undone (dashboard banner).
+            'wpMove'    => \WPEasy\ShipStatic\Deploy\WordPressMove::status(),
             'isLocal'   => Environment::is_local(),
             // Plain permalinks put every page on the site root as a query string,
             // so nothing can be mapped to a file. The dashboard blocks-warns on it.

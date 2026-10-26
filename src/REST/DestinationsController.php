@@ -22,6 +22,7 @@ use WPEasy\ShipStatic\Sync\Runner;
 use WPEasy\ShipStatic\Transport\CloudflareTransport;
 use WPEasy\ShipStatic\Transport\GitHubTransport;
 use WPEasy\ShipStatic\Transport\ConnectorTransport;
+use WPEasy\ShipStatic\Transport\FolderTransport;
 use WPEasy\ShipStatic\Transport\TransportFactory;
 
 defined('ABSPATH') || exit;
@@ -419,6 +420,14 @@ final class DestinationsController {
                 if ($transport instanceof ConnectorTransport) {
                     /* translators: %s: receiver summary (PHP version, zip support, free space) */
                     $message = sprintf(__('Connector reached — %s.', 'shipstatic'), $transport->describe());
+                } elseif ($transport instanceof FolderTransport) {
+                    /* translators: %s: folder summary (path, free space) */
+                    $message = sprintf(__('Folder ready — %s.', 'shipstatic'), $transport->describe());
+                    // Does the Destination URL actually serve this folder?
+                    $problem = \WPEasy\ShipStatic\Deploy\ServerFolder::probe($transport->root(), (string) $dest->get('destinationUrl'));
+                    if ($problem !== '') {
+                        $warnings[] = $problem;
+                    }
                 } elseif ($transport instanceof CloudflareTransport) {
                     /* translators: %s: Worker summary (name + workers.dev address) */
                     $message   = sprintf(__('Cloudflare token accepted — %s.', 'shipstatic'), $transport->describe());

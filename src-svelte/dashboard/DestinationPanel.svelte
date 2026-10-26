@@ -4,6 +4,7 @@
   import { api, connectorDownloadUrl } from '../shared/api';
   import type { Capabilities, ConnectionInput, DestinationDisplay, Transport } from '../shared/types';
   import { __, __f } from '../shared/i18n';
+  import FolderWizard from './FolderWizard.svelte';
 
   let {
     destination,
@@ -26,7 +27,7 @@
     onExport: (id: string) => void;
   } = $props();
 
-  type FtpTransport = Exclude<Transport, 'connector' | 'cloudflare' | 'github'>;
+  type FtpTransport = Exclude<Transport, 'connector' | 'cloudflare' | 'github' | 'folder'>;
   const DEFAULT_PORTS: Record<FtpTransport, number> = { sftp: 22, ftps: 21, ftp: 21 };
   const KNOWN_DEFAULT_PORTS = [0, 21, 22];
 
@@ -77,8 +78,8 @@
   // ---- Deploy method: FTP/SFTP vs Connector vs Cloudflare vs GitHub — ONE per
   // destination (it IS the saved `transport`), so a Segmented choice rather
   // than tabs. The FTP protocol picker lives inside the FTP branch.
-  type Method = 'ftp' | 'connector' | 'cloudflare' | 'github';
-  const isFtp = (t: Transport): t is FtpTransport => t !== 'connector' && t !== 'cloudflare' && t !== 'github';
+  type Method = 'ftp' | 'connector' | 'cloudflare' | 'github' | 'folder';
+  const isFtp = (t: Transport): t is FtpTransport => t !== 'connector' && t !== 'cloudflare' && t !== 'github' && t !== 'folder';
   let method = $derived<Method>(isFtp(transport) ? 'ftp' : transport);
   let lastFtp: FtpTransport = isFtp(d.transport.value) ? d.transport.value : 'ftps';
   let methodOptions = $derived([
@@ -86,6 +87,7 @@
     { value: 'connector', label: __('optConnector'), disabled: !capabilities.connector },
     { value: 'cloudflare', label: __('optCloudflare'), disabled: !capabilities.cloudflare },
     { value: 'github', label: __('optGitHub'), disabled: !capabilities.github },
+    { value: 'folder', label: __('optFolder'), disabled: !capabilities.folder },
   ]);
   function selectMethod(value: string): void {
     if (isFtp(transport)) lastFtp = transport;
@@ -221,7 +223,9 @@
 
   // Test needs whatever the chosen method connects with.
   let canTest = $derived(
-    method === 'ftp'
+    method === 'folder'
+      ? !!destination.folderPath.value
+      : method === 'ftp'
       ? !!host
       : method === 'connector'
         ? paired
@@ -294,6 +298,7 @@
     }
   }
 
+  let folderWizardOpen = $state(false);
   let zipHelpOpen = $state(false);
   let cfHelpOpen = $state(!d.cfApiToken.hasValue);
   let ghHelpOpen = $state(!d.ghToken.hasValue);
@@ -364,6 +369,22 @@
             {#if retestMsg}<span class="bs-deploy__result"> — {retestMsg}</span>{/if}
           </p>
         {/if}
+      {:else if method === 'folder'}
+        <p class="bs-lead">{__('folderLead')}</p>
+        {#if destination.folderPath.value && d.transport.value === 'folder'}
+          <Status status={destination.status.connected ? 'ok' : 'warn'}>
+            {#snippet label()}
+              <span>{__('folderIn')} <code>{destination.folderPath.value}</code></span>
+            {/snippet}
+          </Status>
+        {:else}
+          <Status status="unknown" label={__('folderNotSet')} />
+        {/if}
+        <div class="bs-row">
+          <Button variant={destination.folderPath.value ? 'secondary' : 'primary'} size="sm" onclick={() => (folderWizardOpen = true)} disabled={busy}>
+            {destination.folderPath.value ? __('folderChange') : __('folderSetUp')}
+          </Button>
+        </div>
       {:else if method === 'cloudflare'}
         <p class="bs-lead">{__('cfLead')}</p>
         <div class="bs-grid">
@@ -528,6 +549,18 @@
     <!-- eslint-enable svelte/no-at-html-tags -->
   </div>
 </section>
+
+<FolderWizard
+  bind:open={folderWizardOpen}
+  destId={d.id}
+  destUrl={destinationUrl}
+  onDone={(u) => {
+    // The wizard saved the address; keep this form in step so Save can't undo it.
+    if (u && !d.destinationUrl.fromConstant) destinationUrl = u;
+    transport = 'folder';
+    onSaved();
+  }}
+/>
 
 <style>
   .bs-card {

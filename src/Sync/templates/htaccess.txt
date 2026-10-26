@@ -1,13 +1,13 @@
 DirectoryIndex index.html index.php
-__BS_REWRITE__
+__BS_SKIP____BS_REWRITE__
 
 <IfModule mod_headers.c>
 __BS_PRECOMPRESSED__
     # Cache policy: assets immutable for a year, HTML always revalidated.
     <FilesMatch "\.(__BS_ASSETS__)$">
-        Header set Cache-Control "public, max-age=31536000, immutable"
+        Header set Cache-Control "public, max-age=31536000, immutable"__BS_ENV__
     </FilesMatch>
     <FilesMatch "\.html$">
-        Header set Cache-Control "public, max-age=0, must-revalidate"
+        Header set Cache-Control "public, max-age=0, must-revalidate"__BS_ENV__
     </FilesMatch>
 </IfModule>

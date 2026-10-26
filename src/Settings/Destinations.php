@@ -274,6 +274,33 @@ final class Destinations {
     }
 
     /**
+     * Point a destination at a folder on this server and switch it to the
+     * folder deploy method. The path must come from Deploy\ServerFolder::prepare().
+     *
+     * @param string $id   Destination id.
+     * @param string $path Folder's real path.
+     * @param string $url  Destination URL ('' keeps the current one).
+     */
+    public static function set_folder(string $id, string $path, string $url = ''): ?Destination {
+        $list = self::all();
+        foreach ($list as $i => $data) {
+            if ((string) ($data['id'] ?? '') !== $id) {
+                continue;
+            }
+            $dest     = new Destination($data, $i === 0);
+            $input    = ['transport' => 'folder'] + ($url !== '' ? ['destinationUrl' => $url] : []);
+            $dest->set_folder($path);
+            $list[$i] = $dest->apply($input);
+            update_option(self::OPTION, $list, false);
+            delete_option(\WPEasy\ShipStatic\REST\DestinationsController::conn_state_option($id));
+
+            return new Destination($list[$i], $i === 0);
+        }
+
+        return null;
+    }
+
+    /**
      * Revoke a destination's Connector pairing. The receiver file on the
      * destination then refuses every request until a new one is uploaded.
      *

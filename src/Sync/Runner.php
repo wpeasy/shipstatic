@@ -24,6 +24,7 @@ use WPEasy\ShipStatic\Render\StableHash;
 use WPEasy\ShipStatic\Render\UrlRewriter;
 use WPEasy\ShipStatic\Support\Paths;
 use WPEasy\ShipStatic\Support\Url;
+use WPEasy\ShipStatic\Transport\FolderTransport;
 use WPEasy\ShipStatic\Transport\ResumableSnapshotTransport;
 use WPEasy\ShipStatic\Transport\SnapshotCapableTransport;
 use WPEasy\ShipStatic\Transport\TransportFactory;
@@ -2511,6 +2512,14 @@ final class Runner {
      * Minimal, self-contained holding page shown at the destination home during
      * a push. Auto-refreshes so visitors land on the real site once it's live.
      */
+    /**
+     * The holding page, for Deploy\WordPressMove (a root left without a page
+     * between moving WordPress and the first Sync).
+     */
+    public static function holding_page(): string {
+        return self::holding_html();
+    }
+
     private static function holding_html(): string {
         return <<<'HTML'
 <!doctype html>
@@ -2565,7 +2574,7 @@ HTML;
         }
 
         $tmp = self::worker_tmp('htaccess.out');
-        file_put_contents($tmp, HtaccessBuilder::merge($existing));
+        file_put_contents($tmp, HtaccessBuilder::merge($existing, $transport instanceof FolderTransport ? $transport->wordpress_dirs() : []));
         self::put_retry($transport, $tmp, '.htaccess');
         wp_delete_file($tmp);
     }

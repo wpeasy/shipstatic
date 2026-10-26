@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\CLI;
 
 use WPEasy\ShipStatic\Deploy\ConnectorScript;
+use WPEasy\ShipStatic\Deploy\ServerFolder;
+use WPEasy\ShipStatic\Deploy\WordPressMove;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\Settings\Destinations;
@@ -18,6 +20,7 @@ use WPEasy\ShipStatic\Sync\Runner;
 use WPEasy\ShipStatic\Transport\CloudflareTransport;
 use WPEasy\ShipStatic\Transport\GitHubTransport;
 use WPEasy\ShipStatic\Transport\ConnectorTransport;
+use WPEasy\ShipStatic\Transport\FolderTransport;
 use WPEasy\ShipStatic\Transport\TransportFactory;
 
 defined('ABSPATH') || exit;
@@ -404,6 +407,173 @@ final class SyncCommand {
         }
 
         \WP_CLI::error('Unknown action: ' . $action);
+    }
+
+    /**
+     * Move a WordPress site installed at the domain root into /wp, so the root
+     * can hold the static site (or move it back).
+     *
+     * ## OPTIONS
+     *
+     * <action>
+     * : What to do.
+     * ---
+     * options:
+     *   - check
+     *   - run
+     *   - undo
+     * ---
+     *
+     * [<dest>]
+     * : For `run`: the destination that publishes the static site at the root. Defaults to the primary destination.
+     *
+     * [--yes]
+     * : For `run` / `undo`: you have a backup; go ahead without asking.
+     *
+     * ## EXAMPLES
+     *
+     *     wp shipstatic move-wordpress check
+     *     wp shipstatic move-wordpress run ab12cd34ef56 --yes
+     *     wp shipstatic move-wordpress undo --yes
+     *
+     * @subcommand move-wordpress
+     * @param array<int,string>    $args       [action, dest].
+     * @param array<string,string> $assoc_args Flags.
+     * @when after_wp_load
+     */
+    public function move_wordpress(array $args, array $assoc_args): void {
+        $action = (string) ($args[0] ?? 'check');
+
+        if ($action === 'check') {
+            // WP-CLI has no document root: the folder-serves-the-domain check is skipped here.
+            $c = WordPressMove::check('');
+            foreach ($c['warnings'] as $w) {
+                \WP_CLI::warning($w);
+            }
+            foreach ($c['problems'] as $p) {
+                \WP_CLI::log('  ✗ ' . $p);
+            }
+            $c['ok']
+                ? \WP_CLI::success(sprintf('Ready: %s → %s (%d entries move).', $c['from'], $c['to'], count($c['entries'])))
+                : \WP_CLI::error('Not ready to move.');
+            return;
+        }
+
+        \WP_CLI::confirm($action === 'run' ? 'Move WordPress into /wp? Make sure you have a backup.' : 'Move WordPress back to the root?', $assoc_args);
+        $r = $action === 'run'
+            ? WordPressMove::run('', (string) ($args[1] ?? Destinations::primary()->id()))
+            : WordPressMove::undo();
+        foreach ($r['problems'] ?? [] as $p) {
+            \WP_CLI::log('  ✗ ' . $p);
+        }
+        $r['ok'] ? \WP_CLI::success($r['message']) : \WP_CLI::error($r['message']);
+    }
+
+    /**
+     * Publish into a folder on this server ("This server" deploy method).
+     *
+     * ## OPTIONS
+     *
+     * <action>
+     * : What to do.
+     * ---
+     * options:
+     *   - suggest
+     *   - check
+     *   - setup
+     *   - test
+     * ---
+     *
+     * [<dest>]
+     * : Destination id (see `wp shipstatic connector status`). Defaults to the primary destination.
+     *
+     * [--folder=<path>]
+     * : For `check` / `setup`: the folder's full path. (`--path` is WP-CLI's own flag, hence the name.)
+     *
+     * [--dest-url=<url>]
+     * : For `setup`: the address the folder is served at. (`--url` is WP-CLI's own flag, hence the name.)
+     *
+     * [--adopt]
+     * : For `setup`: the folder already holds this static site — keep matching files instead of rewriting them.
+     *
+     * [--replace-index]
+     * : For `setup`: an existing index.html may be replaced by the home page.
+     *
+     * ## EXAMPLES
+     *
+     *     wp shipstatic folder suggest
+     *     wp shipstatic folder check --folder=/home/me/public_html
+     *     wp shipstatic folder setup ab12cd34ef56 --folder=/home/me/public_html/static --dest-url=https://example.com/ --adopt
+     *     wp shipstatic folder test ab12cd34ef56
+     *
+     * @param array<int,string>    $args       [action, dest].
+     * @param array<string,string> $assoc_args Flags.
+     * @when after_wp_load
+     */
+    public function folder(array $args, array $assoc_args): void {
+        $action  = (string) ($args[0] ?? 'suggest');
+        $dest_id = (string) ($args[1] ?? Destinations::primary()->id());
+        $path    = (string) ($assoc_args['folder'] ?? '');
+
+        switch ($action) {
+            case 'suggest':
+                \WP_CLI::log('WordPress: ' . (ServerFolder::wp_roots()[0] ?? '?') . '   account: ' . ServerFolder::account_root());
+                // WP-CLI has no document root, so the one-domain layout is only
+                // suggested from the dashboard; folders beside WordPress are listed here.
+                foreach (ServerFolder::suggestions() as $s) {
+                    \WP_CLI::log(sprintf('  %-10s %s %s', $s['layout'], $s['path'], $s['url']));
+                }
+                return;
+
+            case 'check':
+                $info = ServerFolder::inspect($path, $dest_id);
+                if (!$info['ok']) {
+                    \WP_CLI::error($info['error']);
+                }
+                \WP_CLI::success(sprintf(
+                    '%s — %s%s%s',
+                    $info['path'],
+                    $info['exists'] ? ($info['empty'] ? 'empty' : 'has files') : 'will be created',
+                    $info['protected'] !== [] ? ', protects ' . implode(', ', $info['protected']) . '/' : '',
+                    $info['hasIndex'] ? ', has index.html' : ''
+                ));
+                return;
+
+            case 'setup':
+                if (Destinations::get($dest_id) === null) {
+                    \WP_CLI::error('Unknown destination: ' . $dest_id);
+                }
+                $r = \WPEasy\ShipStatic\REST\ServerFolderController::run(
+                    $dest_id,
+                    $path,
+                    esc_url_raw((string) ($assoc_args['dest-url'] ?? '')),
+                    isset($assoc_args['adopt']),
+                    isset($assoc_args['replace-index'])
+                );
+                foreach ($r['warnings'] ?? [] as $w) {
+                    \WP_CLI::warning($w);
+                }
+                $r['ok'] ? \WP_CLI::success($r['message']) : \WP_CLI::error($r['message'] . (!empty($r['needsConfirm']) ? ' (--adopt or --replace-index)' : ''));
+                return;
+
+            case 'test':
+                $dest = Destinations::get($dest_id);
+                if ($dest === null || !$dest->is_folder()) {
+                    \WP_CLI::error('Not a "This server" destination: ' . $dest_id);
+                }
+                $transport = TransportFactory::make($dest->connection_config());
+                try {
+                    $transport->connect();
+                } catch (\Throwable $e) {
+                    \WP_CLI::error($e->getMessage());
+                }
+                $problem = $transport instanceof FolderTransport ? ServerFolder::probe($transport->root(), (string) $dest->get('destinationUrl')) : '';
+                if ($problem !== '') {
+                    \WP_CLI::warning($problem);
+                }
+                \WP_CLI::success('Folder ready — ' . ($transport instanceof FolderTransport ? $transport->describe() : '') . '.');
+                return;
+        }
     }
 
     /**

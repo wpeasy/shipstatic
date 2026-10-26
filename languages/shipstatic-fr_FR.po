@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shipstatic\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shipstatic\n"
-"POT-Creation-Date: 2026-10-26T02:27:21+00:00\n"
+"POT-Creation-Date: 2026-10-26T04:32:17+00:00\n"
 "PO-Revision-Date: 2026-06-22 00:00+0000\n"
 "Last-Translator: Claude Code (machine translation)\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -203,7 +203,7 @@ msgstr ""
 "rien envoyer vers une destination."
 
 #: src/Abilities/AbilityRegistry.php:224 src/Support/I18n.php:255
-#: src/Support/I18n.php:562
+#: src/Support/I18n.php:618
 msgid "Sync"
 msgstr "Synchroniser"
 
@@ -491,7 +491,7 @@ msgid "Hide button"
 msgstr "Masquer le bouton"
 
 #: src/Bricks/SearchElement.php:174 src/Bricks/SearchElement.php:191
-#: src/Support/I18n.php:686
+#: src/Support/I18n.php:742
 msgid "Text"
 msgstr "Texte"
 
@@ -607,6 +607,245 @@ msgstr "Correspondance surlignée"
 #: src/Bricks/SearchElement.php:237
 msgid "Border radius"
 msgstr "Arrondi des angles"
+
+#: src/Deploy/ServerFolder.php:72
+msgid ""
+"Enter the full path of a folder on this server, for example "
+"/home/you/public_html."
+msgstr ""
+"Saisissez le chemin complet d’un dossier de ce serveur, par exemple "
+"/home/you/public_html."
+
+#: src/Deploy/ServerFolder.php:84
+msgid ""
+"Its parent folder doesn’t exist. Create the folders above it first, or pick "
+"an existing folder."
+msgstr ""
+"Son dossier parent n’existe pas. Créez d’abord les dossiers au-dessus, ou "
+"choisissez un dossier existant."
+
+#: src/Deploy/ServerFolder.php:88
+msgid ""
+"Use letters, digits, dots, dashes and underscores for the new folder’s name."
+msgstr ""
+"Utilisez des lettres, des chiffres, des points, des tirets et des tirets bas"
+" pour le nom du nouveau dossier."
+
+#. translators: %s: folder path the site's account lives in.
+#: src/Deploy/ServerFolder.php:98
+#, php-format
+msgid "Pick a folder inside this hosting account (%s)."
+msgstr "Choisissez un dossier de ce compte d’hébergement (%s)."
+
+#: src/Deploy/ServerFolder.php:104
+msgid ""
+"That is WordPress’s own folder. The static site needs a folder of its own."
+msgstr ""
+"C’est le dossier de WordPress lui-même. Le site statique a besoin de son "
+"propre dossier."
+
+#: src/Deploy/ServerFolder.php:108
+msgid ""
+"That folder is inside WordPress. Pick the folder WordPress is in, or a "
+"folder beside it."
+msgstr ""
+"Ce dossier se trouve dans WordPress. Choisissez le dossier qui contient "
+"WordPress, ou un dossier à côté."
+
+#: src/Deploy/ServerFolder.php:113
+msgid ""
+"WordPress is several folders below that one. Pick the folder WordPress is "
+"directly in, or a folder beside it."
+msgstr ""
+"WordPress se trouve plusieurs niveaux sous ce dossier. Choisissez le dossier"
+" qui contient directement WordPress, ou un dossier à côté."
+
+#: src/Deploy/ServerFolder.php:126
+msgid "That folder holds another WordPress site."
+msgstr "Ce dossier contient un autre site WordPress."
+
+#: src/Deploy/ServerFolder.php:134
+msgid "Another destination already publishes into that folder."
+msgstr "Une autre destination publie déjà dans ce dossier."
+
+#: src/Deploy/ServerFolder.php:144
+msgid ""
+"PHP can’t write to that folder. Check its permissions, or ask your host."
+msgstr ""
+"PHP ne peut pas écrire dans ce dossier. Vérifiez ses droits, ou demandez à "
+"votre hébergeur."
+
+#: src/Deploy/ServerFolder.php:215
+msgid "Couldn’t create the folder."
+msgstr "Impossible de créer le dossier."
+
+#: src/Deploy/ServerFolder.php:218
+msgid "Couldn’t write to the folder."
+msgstr "Impossible d’écrire dans le dossier."
+
+#: src/Deploy/ServerFolder.php:256
+msgid ""
+"Enter the address the folder is served at (Destination URL) so Test can "
+"check it."
+msgstr ""
+"Saisissez l’adresse à laquelle le dossier est servi (URL de destination) "
+"pour que le test puisse la vérifier."
+
+#: src/Deploy/ServerFolder.php:262
+msgid "Couldn’t write a test file into the folder."
+msgstr "Impossible d’écrire un fichier de test dans le dossier."
+
+#. translators: 1: Destination URL, 2: error.
+#: src/Deploy/ServerFolder.php:274
+#, php-format
+msgid "Couldn’t open %1$s: %2$s"
+msgstr "Impossible d’ouvrir %1$s : %2$s"
+
+#. translators: 1: Destination URL, 2: HTTP status code.
+#: src/Deploy/ServerFolder.php:278
+#, php-format
+msgid ""
+"%1$s doesn’t serve this folder yet (a test file came back as HTTP %2$d). "
+"Point the domain at the folder in your hosting panel, or correct the "
+"Destination URL."
+msgstr ""
+"%1$s ne sert pas encore ce dossier (un fichier de test a renvoyé HTTP %2$d)."
+" Faites pointer le domaine vers le dossier dans votre panneau d’hébergement,"
+" ou corrigez l’URL de destination."
+
+#: src/Deploy/WordPressMove.php:65
+msgid "This is a multisite network, which can’t be moved this way."
+msgstr ""
+"C’est un réseau multisite, qui ne peut pas être déplacé de cette façon."
+
+#: src/Deploy/WordPressMove.php:68
+msgid "WordPress has already been moved. Undo that move first."
+msgstr "WordPress a déjà été déplacé. Annulez d’abord ce déplacement."
+
+#: src/Deploy/WordPressMove.php:74
+msgid ""
+"WordPress is installed in its own directory (its files and its address are "
+"in different folders). Move it by hand instead."
+msgstr ""
+"WordPress est installé dans son propre répertoire (ses fichiers et son "
+"adresse sont dans des dossiers différents). Déplacez-le plutôt à la main."
+
+#: src/Deploy/WordPressMove.php:77
+msgid "WordPress isn’t at the root of its domain."
+msgstr "WordPress n’est pas à la racine de son domaine."
+
+#: src/Deploy/WordPressMove.php:81
+msgid "WordPress’s folder isn’t the folder this domain serves."
+msgstr "Le dossier de WordPress n’est pas le dossier servi par ce domaine."
+
+#. translators: %s: folder name.
+#: src/Deploy/WordPressMove.php:85
+#, php-format
+msgid "A file or folder named “%s” already exists next to WordPress."
+msgstr "Un fichier ou dossier nommé « %s » existe déjà à côté de WordPress."
+
+#. translators: %s: slug.
+#: src/Deploy/WordPressMove.php:89
+#, php-format
+msgid "A page or post uses the address /%s/, which WordPress would need."
+msgstr ""
+"Une page ou un article utilise l’adresse /%s/, dont WordPress aurait besoin."
+
+#: src/Deploy/WordPressMove.php:93
+msgid ""
+"wp-config.php isn’t in WordPress’s folder (it’s one level up). Move it in "
+"first, or move WordPress by hand."
+msgstr ""
+"wp-config.php n’est pas dans le dossier de WordPress (il est un niveau au-"
+"dessus). Placez-le d’abord dedans, ou déplacez WordPress à la main."
+
+#. translators: %s: constant name.
+#: src/Deploy/WordPressMove.php:99
+#, php-format
+msgid ""
+"wp-config.php sets %s, which would point to the old place. Remove it first."
+msgstr ""
+"wp-config.php définit %s, qui pointerait vers l’ancien emplacement. "
+"Supprimez-le d’abord."
+
+#: src/Deploy/WordPressMove.php:103
+msgid ""
+"Turn Lockdown off first (it keeps paths that change). Turn it back on after "
+"the move."
+msgstr ""
+"Désactivez d’abord le verrouillage (il conserve des chemins qui changent). "
+"Réactivez-le après le déplacement."
+
+#: src/Deploy/WordPressMove.php:106
+msgid ""
+"Process all first, so the static site can go live straight after the move."
+msgstr ""
+"Lancez d’abord « Tout traiter », pour que le site statique puisse être mis "
+"en ligne juste après le déplacement."
+
+#: src/Deploy/WordPressMove.php:111
+msgid "PHP can’t write to WordPress’s folder."
+msgstr "PHP ne peut pas écrire dans le dossier de WordPress."
+
+#. translators: %s: folder name.
+#: src/Deploy/WordPressMove.php:116
+#, php-format
+msgid "PHP can’t move %s (check its permissions)."
+msgstr "PHP ne peut pas déplacer %s (vérifiez ses droits)."
+
+#. translators: %s: file name.
+#: src/Deploy/WordPressMove.php:124
+#, php-format
+msgid ""
+"%s loads a file from WordPress’s folder before every request (a firewall "
+"such as Wordfence). After the move, re-run that plugin’s setup so it uses "
+"the new place."
+msgstr ""
+"%s charge un fichier du dossier de WordPress avant chaque requête (un pare-"
+"feu comme Wordfence). Après le déplacement, relancez la configuration de "
+"cette extension pour qu’elle utilise le nouvel emplacement."
+
+#. translators: %s: file name.
+#: src/Deploy/WordPressMove.php:130
+#, php-format
+msgid ""
+"A caching plugin installed %s. Purge and re-save that plugin’s settings "
+"after the move."
+msgstr ""
+"Une extension de cache a installé %s. Videz le cache et réenregistrez les "
+"réglages de cette extension après le déplacement."
+
+#: src/Deploy/WordPressMove.php:156
+msgid "WordPress can’t be moved yet."
+msgstr "WordPress ne peut pas encore être déplacé."
+
+#: src/Deploy/WordPressMove.php:200
+msgid "WordPress moved into /wp."
+msgstr "WordPress a été déplacé dans /wp."
+
+#. translators: %s: new WordPress address.
+#: src/Deploy/WordPressMove.php:214
+#, php-format
+msgid "Moving WordPress to %s. Log in there to continue."
+msgstr ""
+"Déplacement de WordPress vers %s. Connectez-vous à cette adresse pour "
+"continuer."
+
+#: src/Deploy/WordPressMove.php:304
+msgid "There is no move to undo."
+msgstr "Il n’y a aucun déplacement à annuler."
+
+#. translators: %s: file name.
+#: src/Deploy/WordPressMove.php:314
+#, php-format
+msgid "%s already exists at the root, so WordPress can’t move back."
+msgstr "%s existe déjà à la racine, WordPress ne peut donc pas y revenir."
+
+#. translators: %s: WordPress address.
+#: src/Deploy/WordPressMove.php:385
+#, php-format
+msgid "Moving WordPress back to %s. Log in there again."
+msgstr "Retour de WordPress vers %s. Reconnectez-vous à cette adresse."
 
 #: src/Export/ExportDownload.php:67
 msgid "Missing download token."
@@ -765,6 +1004,7 @@ msgstr ""
 #. translators: %s: file path.
 #: src/Lockdown/Writer.php:137 src/Lockdown/Writer.php:144
 #: src/Lockdown/Writer.php:150 src/Lockdown/Writer.php:159
+#: src/Transport/FolderTransport.php:148 src/Transport/FolderTransport.php:153
 #, php-format
 msgid "Couldn’t write %s."
 msgstr "Impossible d’écrire %s."
@@ -781,7 +1021,7 @@ msgstr "Impossible de retirer les lignes de verrouillage de %s."
 msgid "Couldn’t delete %s."
 msgstr "Impossible de supprimer %s."
 
-#: src/REST/DestinationsController.php:132
+#: src/REST/DestinationsController.php:133
 msgid ""
 "Enter and save the Destination URL first — the connector is called at that "
 "address."
@@ -789,7 +1029,7 @@ msgstr ""
 "Saisissez et enregistrez d'abord l'URL de destination — le connecteur est "
 "appelé à cette adresse."
 
-#: src/REST/DestinationsController.php:135
+#: src/REST/DestinationsController.php:136
 msgid ""
 "The connector needs an HTTPS Destination URL (the pairing secret travels in "
 "each request)."
@@ -797,7 +1037,7 @@ msgstr ""
 "Le connecteur nécessite une URL de destination en HTTPS (le secret "
 "d'appairage voyage dans chaque requête)."
 
-#: src/REST/DestinationsController.php:138
+#: src/REST/DestinationsController.php:139
 msgid ""
 "That Destination URL resolves to a private or reserved network address and "
 "cannot be used."
@@ -805,7 +1045,7 @@ msgstr ""
 "Cette URL de destination pointe vers une adresse réseau privée ou réservée "
 "et ne peut pas être utilisée."
 
-#: src/REST/DestinationsController.php:154
+#: src/REST/DestinationsController.php:155
 msgid ""
 "Paired. Download the connector file and upload it to the folder served at "
 "the Destination URL."
@@ -813,18 +1053,18 @@ msgstr ""
 "Appairé. Téléchargez le fichier connecteur et envoyez-le dans le dossier "
 "servi à l'URL de destination."
 
-#: src/REST/DestinationsController.php:167
+#: src/REST/DestinationsController.php:168
 msgid ""
 "Connector revoked. Delete the file from the destination when convenient."
 msgstr ""
 "Connecteur révoqué. Supprimez le fichier de la destination quand vous le "
 "souhaitez."
 
-#: src/REST/DestinationsController.php:184
+#: src/REST/DestinationsController.php:185
 msgid "Only a Connector destination can report its files."
 msgstr "Seule une destination de type Connecteur peut lister ses fichiers."
 
-#: src/REST/DestinationsController.php:187
+#: src/REST/DestinationsController.php:188
 msgid ""
 "Process the pages first — the push record is rebuilt against the current "
 "render."
@@ -833,7 +1073,7 @@ msgstr ""
 " rendu courant."
 
 #. translators: %d: number of files found on the destination
-#: src/REST/DestinationsController.php:205
+#: src/REST/DestinationsController.php:206
 #, php-format
 msgid ""
 "Push record rebuilt — all %d files are already on the destination and match."
@@ -843,7 +1083,7 @@ msgstr ""
 "destination et correspondent. Synchronisé."
 
 #. translators: 1: matching files, 2: differing/missing files
-#: src/REST/DestinationsController.php:207
+#: src/REST/DestinationsController.php:208
 #, php-format
 msgid ""
 "Push record rebuilt — %1$d files match, %2$d will upload on the next Sync."
@@ -853,30 +1093,30 @@ msgstr ""
 
 #. translators: %d: number of files on the destination the plugin doesn't
 #. manage
-#: src/REST/DestinationsController.php:210
+#: src/REST/DestinationsController.php:211
 #, php-format
 msgid "(%d other files there are left alone.)"
 msgstr "(%d autres fichiers présents sont laissés intacts.)"
 
-#: src/REST/DestinationsController.php:227
+#: src/REST/DestinationsController.php:228
 msgid ""
 "This download link has expired — pair again to get a new connector file."
 msgstr ""
 "Ce lien de téléchargement a expiré — appairez à nouveau pour obtenir un "
 "nouveau fichier connecteur."
 
-#: src/REST/DestinationsController.php:234
+#: src/REST/DestinationsController.php:235
 msgid "This pairing is no longer current — pair again."
 msgstr "Cet appairage n'est plus valide — appairez à nouveau."
 
-#: src/REST/DestinationsController.php:260
+#: src/REST/DestinationsController.php:261
 msgid ""
 "This destination publishes whole snapshots — package deploy does not apply."
 msgstr ""
 "Cette destination publie des instantanés complets — le déploiement par "
 "paquet ne s’applique pas."
 
-#: src/REST/DestinationsController.php:392
+#: src/REST/DestinationsController.php:393
 msgid ""
 "This is a different server from the saved one — enter its password to test "
 "it."
@@ -885,13 +1125,19 @@ msgstr ""
 "pour le tester."
 
 #. translators: %s: receiver summary (PHP version, zip support, free space)
-#: src/REST/DestinationsController.php:421
+#: src/REST/DestinationsController.php:422
 #, php-format
 msgid "Connector reached — %s."
 msgstr "Connecteur joint — %s."
 
+#. translators: %s: folder summary (path, free space)
+#: src/REST/DestinationsController.php:425
+#, php-format
+msgid "Folder ready — %s."
+msgstr "Dossier prêt — %s."
+
 #. translators: %s: Worker summary (name + workers.dev address)
-#: src/REST/DestinationsController.php:424
+#: src/REST/DestinationsController.php:433
 #, php-format
 msgid "Cloudflare token accepted — %s."
 msgstr "Jeton Cloudflare accepté — %s."
@@ -904,17 +1150,67 @@ msgstr "Vous (à l’activation du verrouillage)"
 msgid "Site search is not available."
 msgstr "La recherche du site n’est pas disponible."
 
-#: src/REST/StatusController.php:168
+#: src/REST/ServerFolderController.php:100
+msgid "Confirm that you have a backup first."
+msgstr "Confirmez d’abord que vous disposez d’une sauvegarde."
+
+#: src/REST/ServerFolderController.php:171
+msgid "The address must start with https:// (or http://)."
+msgstr "L’adresse doit commencer par https:// (ou http://)."
+
+#: src/REST/ServerFolderController.php:178
+msgid ""
+"That folder already has an index.html. Confirm that your home page may "
+"replace it, or choose “It’s my static site already”."
+msgstr ""
+"Ce dossier contient déjà un index.html. Confirmez que votre page d’accueil "
+"peut le remplacer, ou choisissez « C’est déjà mon site statique »."
+
+#: src/REST/ServerFolderController.php:192
+msgid "Folder ready."
+msgstr "Dossier prêt."
+
+#. translators: %d: number of files.
+#: src/REST/ServerFolderController.php:198
+#, php-format
+msgid ""
+"Folder ready. All %d files of your site are already there and match, so it’s"
+" in sync."
+msgstr ""
+"Dossier prêt. Les %d fichiers de votre site sont déjà présents et identiques"
+" : tout est synchronisé."
+
+#. translators: 1: matching files, 2: files to write.
+#: src/REST/ServerFolderController.php:200
+#, php-format
+msgid ""
+"Folder ready. %1$d files already match; %2$d will be written on the next "
+"Sync."
+msgstr ""
+"Dossier prêt. %1$d fichiers sont déjà identiques ; %2$d seront écrits à la "
+"prochaine synchronisation."
+
+#: src/REST/ServerFolderController.php:202
+msgid ""
+"Process the pages first and set it up again to skip rewriting files that are"
+" already there. Otherwise the first Sync rewrites them (same content, "
+"nothing lost)."
+msgstr ""
+"Traitez d’abord les pages, puis refaites la configuration pour éviter de "
+"réécrire les fichiers déjà présents. Sinon, la première synchronisation les "
+"réécrit (même contenu, rien n’est perdu)."
+
+#: src/REST/StatusController.php:170
 msgid "(no title)"
 msgstr "(sans titre)"
 
-#: src/REST/StatusController.php:217
+#: src/REST/StatusController.php:219
 msgid "Form submit action points to this site (PHP/REST callback won’t work)"
 msgstr ""
 "L'action d'envoi du formulaire pointe vers ce site (le rappel PHP/REST ne "
 "fonctionnera pas)"
 
-#: src/REST/StatusController.php:218
+#: src/REST/StatusController.php:220
 msgid ""
 "Search form posts back to this site — turn on Site search in Settings to "
 "make it work statically"
@@ -922,27 +1218,27 @@ msgstr ""
 "Le formulaire de recherche renvoie vers ce site — activez Recherche sur le "
 "site dans les Réglages pour qu’il fonctionne en statique"
 
-#: src/REST/StatusController.php:219
+#: src/REST/StatusController.php:221
 msgid "Links to a PHP script on this site"
 msgstr "Renvoie vers un script PHP sur ce site"
 
-#: src/REST/StatusController.php:244
+#: src/REST/StatusController.php:246
 msgid "Not published"
 msgstr "Non publiée"
 
-#: src/REST/StatusController.php:251
+#: src/REST/StatusController.php:253
 msgid "Plain permalinks"
 msgstr "Permaliens « simples »"
 
-#: src/REST/StatusController.php:256
+#: src/REST/StatusController.php:258
 msgid "Not included"
 msgstr "Non incluse"
 
-#: src/REST/StatusController.php:258 src/REST/StatusController.php:264
+#: src/REST/StatusController.php:260 src/REST/StatusController.php:266
 msgid "Not rendered"
 msgstr "Non rendue"
 
-#: src/REST/StatusController.php:268
+#: src/REST/StatusController.php:270
 msgid "Not linked"
 msgstr "Sans lien"
 
@@ -1111,11 +1407,11 @@ msgstr "Préparation…"
 msgid "Creating gzip files…"
 msgstr "Création des fichiers gzip…"
 
-#: src/Support/I18n.php:109 src/Support/I18n.php:740
+#: src/Support/I18n.php:109 src/Support/I18n.php:796
 msgid "Packaging…"
 msgstr "Empaquetage…"
 
-#: src/Support/I18n.php:110 src/Support/I18n.php:908
+#: src/Support/I18n.php:110 src/Support/I18n.php:964
 msgid "Saving…"
 msgstr "Enregistrement…"
 
@@ -1123,7 +1419,7 @@ msgstr "Enregistrement…"
 msgid "Export ready"
 msgstr "Export prêt"
 
-#: src/Support/I18n.php:113 src/Support/I18n.php:906
+#: src/Support/I18n.php:113 src/Support/I18n.php:962
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1151,7 +1447,7 @@ msgstr "Publiez cette page pour la synchroniser."
 msgid "Enable a destination to sync this page."
 msgstr "Activez une destination pour synchroniser cette page."
 
-#: src/Support/I18n.php:130 src/Support/I18n.php:709
+#: src/Support/I18n.php:130 src/Support/I18n.php:765
 msgid "Not pushed"
 msgstr "Non envoyé"
 
@@ -1219,11 +1515,11 @@ msgstr ""
 "gardez-le privé et enregistrez-le en favori plutôt que de le partager "
 "publiquement."
 
-#: src/Support/I18n.php:154 src/Support/I18n.php:910
+#: src/Support/I18n.php:154 src/Support/I18n.php:966
 msgid "Copy"
 msgstr "Copier"
 
-#: src/Support/I18n.php:155 src/Support/I18n.php:911
+#: src/Support/I18n.php:155 src/Support/I18n.php:967
 msgid "Copied"
 msgstr "Copié"
 
@@ -1396,11 +1692,11 @@ msgstr ""
 msgid "Write them again"
 msgstr "Les réécrire"
 
-#: src/Support/I18n.php:188 src/Support/I18n.php:814
+#: src/Support/I18n.php:188 src/Support/I18n.php:870
 msgid "Check again"
 msgstr "Vérifier à nouveau"
 
-#: src/Support/I18n.php:189 src/Support/I18n.php:560 src/Support/I18n.php:815
+#: src/Support/I18n.php:189 src/Support/I18n.php:616 src/Support/I18n.php:871
 msgid "Checking…"
 msgstr "Vérification…"
 
@@ -1436,11 +1732,11 @@ msgstr "Ajoutée"
 msgid "Label, e.g. Office"
 msgstr "Libellé, p. ex. Bureau"
 
-#: src/Support/I18n.php:197 src/Support/I18n.php:867
+#: src/Support/I18n.php:197 src/Support/I18n.php:923
 msgid "Add"
 msgstr "Ajouter"
 
-#: src/Support/I18n.php:198 src/Support/I18n.php:617
+#: src/Support/I18n.php:198 src/Support/I18n.php:673
 msgid "Remove"
 msgstr "Supprimer"
 
@@ -1699,7 +1995,7 @@ msgstr ""
 "synchronisation complète que le bouton Synchroniser, vers les destinations "
 "choisies."
 
-#: src/Support/I18n.php:268 src/Support/I18n.php:558
+#: src/Support/I18n.php:268 src/Support/I18n.php:614
 msgid "Enabled"
 msgstr "Activé"
 
@@ -1723,7 +2019,7 @@ msgstr "Toutes les semaines"
 msgid "Monthly"
 msgstr "Tous les mois"
 
-#: src/Support/I18n.php:275 src/Support/I18n.php:704
+#: src/Support/I18n.php:275 src/Support/I18n.php:760
 msgid "All destinations"
 msgstr "Toutes les destinations"
 
@@ -1732,7 +2028,7 @@ msgid "Every enabled destination, including ones you add later."
 msgstr ""
 "Toutes les destinations activées, y compris celles ajoutées plus tard."
 
-#: src/Support/I18n.php:277 src/Support/I18n.php:706
+#: src/Support/I18n.php:277 src/Support/I18n.php:762
 msgid "disabled"
 msgstr "désactivé"
 
@@ -1757,11 +2053,12 @@ msgstr "Dernière synchronisation planifiée : %1$s — %2$s. %3$s"
 msgid "In progress"
 msgstr "En cours"
 
-#: src/Support/I18n.php:284 src/Support/I18n.php:735 src/Support/I18n.php:736
+#: src/Support/I18n.php:284 src/Support/I18n.php:496 src/Support/I18n.php:519
+#: src/Support/I18n.php:791 src/Support/I18n.php:792
 msgid "Done"
 msgstr "Terminé"
 
-#: src/Support/I18n.php:285 src/Support/I18n.php:737
+#: src/Support/I18n.php:285 src/Support/I18n.php:793
 msgid "Failed"
 msgstr "Échec"
 
@@ -1769,7 +2066,7 @@ msgstr "Échec"
 msgid "Skipped"
 msgstr "Ignorée"
 
-#: src/Support/I18n.php:287 src/Support/I18n.php:738 src/Support/I18n.php:745
+#: src/Support/I18n.php:287 src/Support/I18n.php:794 src/Support/I18n.php:801
 msgid "Cancelled"
 msgstr "Annulé"
 
@@ -1812,7 +2109,7 @@ msgstr "Confirmer la synchronisation ?"
 msgid "Sync all destinations?"
 msgstr "Synchroniser toutes les destinations ?"
 
-#: src/Support/I18n.php:306 src/Support/I18n.php:816
+#: src/Support/I18n.php:306 src/Support/I18n.php:872
 msgid "Destination"
 msgstr "Destination"
 
@@ -2077,7 +2374,7 @@ msgstr "Incluses"
 msgid "Excluded"
 msgstr "Exclues"
 
-#: src/Support/I18n.php:368 src/Support/I18n.php:905
+#: src/Support/I18n.php:368 src/Support/I18n.php:961
 #: templates/admin/docs.php:23 templates/admin/page.php:23
 msgid "Loading…"
 msgstr "Chargement…"
@@ -2090,7 +2387,7 @@ msgstr "Aucune page n'est encore dans l'export."
 msgid "Every published page is in the export."
 msgstr "Toutes les pages publiées sont dans l'export."
 
-#: src/Support/I18n.php:371 src/Support/I18n.php:594 src/Support/I18n.php:660
+#: src/Support/I18n.php:371 src/Support/I18n.php:650 src/Support/I18n.php:716
 msgid "Page"
 msgstr "Page"
 
@@ -2200,7 +2497,7 @@ msgstr "Seules les pages que vous marquez « Inclure » (par publication)."
 msgid "Transport"
 msgstr "Transport"
 
-#: src/Support/I18n.php:411 src/Support/I18n.php:820
+#: src/Support/I18n.php:411 src/Support/I18n.php:876
 msgid "Compression"
 msgstr "Compression"
 
@@ -2208,7 +2505,7 @@ msgstr "Compression"
 msgid "Server target"
 msgstr "Serveur cible"
 
-#: src/Support/I18n.php:413 src/Support/I18n.php:688
+#: src/Support/I18n.php:413 src/Support/I18n.php:744
 msgid "Links"
 msgstr "Liens"
 
@@ -2584,10 +2881,325 @@ msgid "GitHub Pages"
 msgstr "GitHub Pages"
 
 #: src/Support/I18n.php:485
+msgid "This server"
+msgstr "Ce serveur"
+
+#: src/Support/I18n.php:486
+msgid ""
+"Publishes into a folder on this same server by writing the files directly: "
+"no FTP account, Connector or outside service. Use the folder your domain "
+"serves (WordPress then lives in a sub-folder such as /wp), or a folder "
+"beside WordPress that another domain points at."
+msgstr ""
+"Publie dans un dossier de ce même serveur en écrivant directement les "
+"fichiers : pas de compte FTP, de Connecteur ni de service externe. Utilisez "
+"le dossier servi par votre domaine (WordPress se trouve alors dans un sous-"
+"dossier comme /wp), ou un dossier à côté de WordPress vers lequel pointe un "
+"autre domaine."
+
+#: src/Support/I18n.php:487
+msgid "Publishing into"
+msgstr "Publication dans"
+
+#: src/Support/I18n.php:488
+msgid "No folder set up yet."
+msgstr "Aucun dossier configuré pour l’instant."
+
+#: src/Support/I18n.php:489
+msgid "Set up the folder"
+msgstr "Configurer le dossier"
+
+#: src/Support/I18n.php:490
+msgid "Change folder"
+msgstr "Changer de dossier"
+
+#: src/Support/I18n.php:491
+msgid "Publish on this server"
+msgstr "Publier sur ce serveur"
+
+#: src/Support/I18n.php:492
+msgid ""
+"Sets up a folder on this server for the static site, checks that its address"
+" serves it, and switches this destination to it."
+msgstr ""
+"Configure un dossier de ce serveur pour le site statique, vérifie que son "
+"adresse le sert, puis bascule cette destination dessus."
+
+#: src/Support/I18n.php:493
+msgid "Where"
+msgstr "Emplacement"
+
+#: src/Support/I18n.php:494 src/Support/I18n.php:615
+msgid "Check"
+msgstr "Vérifier"
+
+#: src/Support/I18n.php:495 src/Support/I18n.php:517
+msgid "Create and test"
+msgstr "Créer et tester"
+
+#: src/Support/I18n.php:497
+msgid "Where should the static site go?"
+msgstr "Où placer le site statique ?"
+
+#: src/Support/I18n.php:498
+#, php-format
+msgid ""
+"Publish at %s (the folder this domain serves; WordPress stays in its sub-"
+"folder)"
+msgstr ""
+"Publier à %s (le dossier servi par ce domaine ; WordPress reste dans son "
+"sous-dossier)"
+
+#: src/Support/I18n.php:499
+#, php-format
+msgid "The folder beside WordPress: %s"
+msgstr "Le dossier à côté de WordPress : %s"
+
+#: src/Support/I18n.php:500
+msgid "Another folder on this server"
+msgstr "Un autre dossier de ce serveur"
+
+#: src/Support/I18n.php:501
+msgid "Folder (full path)"
+msgstr "Dossier (chemin complet)"
+
+#: src/Support/I18n.php:502
+#, php-format
+msgid "WordPress is in %s. Pick the folder it sits in, or a folder beside it."
+msgstr ""
+"WordPress se trouve dans %s. Choisissez le dossier qui le contient, ou un "
+"dossier à côté."
+
+#: src/Support/I18n.php:503
+msgid ""
+"The address visitors use for the static site. It becomes this destination’s "
+"Destination URL."
+msgstr ""
+"L’adresse qu’utilisent les visiteurs pour le site statique. Elle devient "
+"l’URL de destination de cette destination."
+
+#: src/Support/I18n.php:504
+msgid ""
+"The static site and WordPress will share one domain. That’s the easiest "
+"setup, but any third-party script on your public pages (an embed, analytics,"
+" a chat widget) then runs on the same domain as wp-admin. If you can set up "
+"a subdomain for WordPress, that keeps them apart."
+msgstr ""
+"Le site statique et WordPress partageront un même domaine. C’est la "
+"configuration la plus simple, mais tout script tiers de vos pages publiques "
+"(une intégration, des statistiques, un widget de chat) s’exécute alors sur "
+"le même domaine que wp-admin. Si vous pouvez créer un sous-domaine pour "
+"WordPress, les deux restent séparés."
+
+#: src/Support/I18n.php:505
+msgid ""
+"This server runs nginx, which ignores .htaccess. Its configuration must "
+"serve this folder at the domain root and pass the WordPress sub-folder to "
+"PHP. Ask your host, or use a folder that another domain points at."
+msgstr ""
+"Ce serveur utilise nginx, qui ignore .htaccess. Sa configuration doit servir"
+" ce dossier à la racine du domaine et transmettre le sous-dossier WordPress "
+"à PHP. Demandez à votre hébergeur, ou utilisez un dossier vers lequel pointe"
+" un autre domaine."
+
+#: src/Support/I18n.php:506
+msgid ""
+"A domain or subdomain must point at this folder (in cPanel: Domains, then "
+"set its document root). Test checks that it does."
+msgstr ""
+"Un domaine ou sous-domaine doit pointer vers ce dossier (dans cPanel : "
+"Domaines, puis définissez sa racine de documents). Le test vérifie que c’est"
+" le cas."
+
+#: src/Support/I18n.php:507
+msgid "The folder is empty."
+msgstr "Le dossier est vide."
+
+#: src/Support/I18n.php:508
+msgid ""
+"The folder already has files. ShipStatic only ever replaces or removes files"
+" it published itself."
+msgstr ""
+"Le dossier contient déjà des fichiers. ShipStatic ne remplace ou ne supprime"
+" jamais que les fichiers qu’il a lui-même publiés."
+
+#: src/Support/I18n.php:509
+msgid "The folder will be created."
+msgstr "Le dossier sera créé."
+
+#: src/Support/I18n.php:510
+#, php-format
+msgid "WordPress’s folder %s is inside it and is never written to or removed."
+msgstr ""
+"Le dossier de WordPress %s se trouve à l’intérieur ; il n’est jamais modifié"
+" ni supprimé."
+
+#: src/Support/I18n.php:511
+msgid "PHP files are never written into the folder."
+msgstr "Aucun fichier PHP n’est jamais écrit dans le dossier."
+
+#: src/Support/I18n.php:512
+msgid "There is already an index.html in the folder."
+msgstr "Le dossier contient déjà un index.html."
+
+#: src/Support/I18n.php:513
+msgid ""
+"It’s my static site already (keep matching files instead of rewriting them)"
+msgstr ""
+"C’est déjà mon site statique (conserver les fichiers identiques au lieu de "
+"les réécrire)"
+
+#: src/Support/I18n.php:514
+msgid "Replace it with my home page"
+msgstr "Le remplacer par ma page d’accueil"
+
+#: src/Support/I18n.php:515
+msgid ""
+"Lockdown, if you turn it on, stays inside WordPress’s folder, so the static "
+"site is never blocked."
+msgstr ""
+"Le Verrouillage, si vous l’activez, reste limité au dossier de WordPress : "
+"le site statique n’est jamais bloqué."
+
+#: src/Support/I18n.php:516
+msgid ""
+"Creates the folder if needed, marks it as this destination’s, saves the "
+"destination and checks that its address serves the folder."
+msgstr ""
+"Crée le dossier si besoin, le marque comme celui de cette destination, "
+"enregistre la destination et vérifie que son adresse sert le dossier."
+
+#: src/Support/I18n.php:518
+msgid "Setting up…"
+msgstr "Configuration…"
+
+#: src/Support/I18n.php:520
+msgid "This destination now publishes into the folder."
+msgstr "Cette destination publie désormais dans le dossier."
+
+#: src/Support/I18n.php:521
+msgid "Run Sync to publish the site there."
+msgstr "Lancez une synchronisation pour y publier le site."
+
+#: src/Support/I18n.php:522
+msgid ""
+"Turn on Lockdown (Lockdown tab) so only your editors can reach WordPress."
+msgstr ""
+"Activez le Verrouillage (onglet Verrouillage) pour que seuls vos éditeurs "
+"puissent accéder à WordPress."
+
+#: src/Support/I18n.php:523 src/Support/I18n.php:969
+msgid "Close"
+msgstr "Fermer"
+
+#: src/Support/I18n.php:524
+#, php-format
+msgid ""
+"WordPress is installed at the root of %1$s, so the static site has nowhere "
+"to go there yet. ShipStatic can move WordPress into a /wp folder: WordPress "
+"will then be at %2$s, and the static site at the root."
+msgstr ""
+"WordPress est installé à la racine de %1$s, le site statique n’a donc pas "
+"encore de place à cet endroit. ShipStatic peut déplacer WordPress dans un "
+"dossier /wp : WordPress sera alors à %2$s, et le site statique à la racine."
+
+#: src/Support/I18n.php:525
+#, php-format
+msgid ""
+"WordPress’s files move into /wp and its address becomes %s. Links in your "
+"content follow."
+msgstr ""
+"Les fichiers de WordPress sont déplacés dans /wp et son adresse devient %s. "
+"Les liens de votre contenu suivent."
+
+#: src/Support/I18n.php:526
+#, php-format
+msgid ""
+"This destination switches to “This server” and will publish the static site "
+"at %s. A holding page shows there until your first Sync."
+msgstr ""
+"Cette destination passe à « Ce serveur » et publiera le site statique à %s. "
+"Une page d’attente s’y affiche jusqu’à votre première synchronisation."
+
+#: src/Support/I18n.php:527
+msgid ""
+"You log in again at the new address (login cookies belong to the old one), "
+"then run Sync."
+msgstr ""
+"Vous vous reconnectez à la nouvelle adresse (les cookies de connexion "
+"appartiennent à l’ancienne), puis lancez une synchronisation."
+
+#: src/Support/I18n.php:528
+msgid ""
+"It can be undone from the dashboard while the notice about the move is "
+"shown."
+msgstr ""
+"Le déplacement peut être annulé depuis le tableau de bord tant que la notice"
+" qui le concerne est affichée."
+
+#: src/Support/I18n.php:529
+msgid "I have a backup of this site’s files and database"
+msgstr "J’ai une sauvegarde des fichiers et de la base de données de ce site"
+
+#: src/Support/I18n.php:530
+msgid "Move WordPress into /wp"
+msgstr "Déplacer WordPress dans /wp"
+
+#: src/Support/I18n.php:531
+msgid "Moving…"
+msgstr "Déplacement…"
+
+#: src/Support/I18n.php:532
+msgid "WordPress moved into /wp"
+msgstr "WordPress a été déplacé dans /wp"
+
+#: src/Support/I18n.php:533
+#, php-format
+msgid ""
+"WordPress is now at %1$s and this server publishes the static site at %2$s. "
+"Run Sync to put the site live, then turn on Lockdown so only your editors "
+"reach WordPress."
+msgstr ""
+"WordPress est désormais à %1$s et ce serveur publie le site statique à %2$s."
+" Lancez une synchronisation pour mettre le site en ligne, puis activez le "
+"verrouillage pour que seuls vos rédacteurs accèdent à WordPress."
+
+#: src/Support/I18n.php:534
+msgid "Keep it"
+msgstr "Le conserver"
+
+#: src/Support/I18n.php:535
+msgid "Undo the move"
+msgstr "Annuler le déplacement"
+
+#: src/Support/I18n.php:536
+msgid "Move WordPress back?"
+msgstr "Remettre WordPress à sa place ?"
+
+#: src/Support/I18n.php:537
+msgid "WordPress couldn’t be moved"
+msgstr "WordPress n’a pas pu être déplacé"
+
+#: src/Support/I18n.php:538
+#, php-format
+msgid "Nothing was changed: everything was put back. The server said: %s"
+msgstr ""
+"Rien n’a été modifié : tout a été remis en place. Le serveur a répondu : %s"
+
+#: src/Support/I18n.php:539 src/Support/I18n.php:968
+msgid "Dismiss"
+msgstr "Ignorer"
+
+#: src/Support/I18n.php:540
+msgid "WordPress is being moved. Reload this page in a moment."
+msgstr ""
+"WordPress est en cours de déplacement. Rechargez cette page dans un instant."
+
+#: src/Support/I18n.php:541
 msgid "Taken from the Destination URL."
 msgstr "Déduit de l’URL de destination."
 
-#: src/Support/I18n.php:486
+#: src/Support/I18n.php:542
 msgid ""
 "Publishes the site to GitHub Pages by committing it to a branch of your "
 "repository — no web host, PHP or FTP account needed. Each sync is one commit"
@@ -2597,38 +3209,38 @@ msgstr ""
 "votre dépôt — sans hébergeur, PHP ni compte FTP. Chaque synchronisation est "
 "un seul commit contenant uniquement les fichiers modifiés."
 
-#: src/Support/I18n.php:487
+#: src/Support/I18n.php:543
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: src/Support/I18n.php:488
+#: src/Support/I18n.php:544
 msgid "Repository"
 msgstr "Dépôt"
 
-#: src/Support/I18n.php:489
+#: src/Support/I18n.php:545
 msgid "Branch"
 msgstr "Branche"
 
-#: src/Support/I18n.php:490
+#: src/Support/I18n.php:546
 msgid "Folder"
 msgstr "Dossier"
 
-#: src/Support/I18n.php:491
+#: src/Support/I18n.php:547
 msgid "Whole branch (/)"
 msgstr "Toute la branche (/)"
 
-#: src/Support/I18n.php:492
+#: src/Support/I18n.php:548
 msgid "The /docs folder"
 msgstr "Le dossier /docs"
 
 #. translators: 1: Git branch name (e.g. gh-pages), 2: folder ("/" or
 #. "/docs").
-#: src/Support/I18n.php:494
+#: src/Support/I18n.php:550
 #, php-format
 msgid "Advanced: branch %1$s, %2$s"
 msgstr "Avancé : branche %1$s, %2$s"
 
-#: src/Support/I18n.php:495
+#: src/Support/I18n.php:551
 msgid ""
 "Most sites keep <code>gh-pages</code> and the whole branch. Change them when"
 " the site should live next to your code — for example <code>main</code> with"
@@ -2646,11 +3258,11 @@ msgstr ""
 "généralement depuis <code>main</code>. Choisissez la même branche et le même"
 " dossier dans <strong>Settings → Pages</strong> du dépôt."
 
-#: src/Support/I18n.php:496
+#: src/Support/I18n.php:552
 msgid "Access token"
 msgstr "Jeton d’accès"
 
-#: src/Support/I18n.php:497
+#: src/Support/I18n.php:553
 msgid ""
 "Everything in this folder of the branch is replaced by the site on each "
 "sync, except CNAME, README, LICENSE and .github/."
@@ -2658,7 +3270,7 @@ msgstr ""
 "À chaque synchronisation, tout le contenu de ce dossier de la branche est "
 "remplacé par le site, sauf CNAME, README, LICENSE et .github/."
 
-#: src/Support/I18n.php:498
+#: src/Support/I18n.php:554
 msgid ""
 "Create a repository on GitHub with at least one commit (tick <strong>Add a "
 "README</strong>). Make it public — GitHub Pages on a private repository "
@@ -2668,7 +3280,7 @@ msgstr ""
 "README</strong>). Rendez-le public — GitHub Pages sur un dépôt privé "
 "nécessite une offre GitHub payante."
 
-#: src/Support/I18n.php:499
+#: src/Support/I18n.php:555
 msgid ""
 "Create a fine-grained token (<strong>Settings → Developer settings → Fine-"
 "grained tokens → Generate new token</strong>): <strong>Only select "
@@ -2682,7 +3294,7 @@ msgstr ""
 "write</strong>. Ajoutez éventuellement <strong>Pages: Read-only</strong> "
 "pour que le test affiche l’état de Pages."
 
-#: src/Support/I18n.php:500
+#: src/Support/I18n.php:556
 msgid ""
 "Enter the owner, repository and token here. With the default branch "
 "<code>gh-pages</code> GitHub turns Pages on by itself at the first sync; for"
@@ -2696,7 +3308,7 @@ msgstr ""
 "(sous <strong>Avancé</strong>), choisissez-la ensuite dans <strong>Settings "
 "→ Pages → Deploy from a branch</strong> du dépôt."
 
-#: src/Support/I18n.php:501
+#: src/Support/I18n.php:557
 msgid ""
 "Press <strong>Test</strong>. An empty Destination URL is filled with the "
 "Pages address — for a project site "
@@ -2712,7 +3324,7 @@ msgstr ""
 "générés. <strong>Enregistrez</strong>, cliquez sur <strong>Traiter</strong>,"
 " puis Vérifier / Synchroniser comme d’habitude."
 
-#: src/Support/I18n.php:502
+#: src/Support/I18n.php:558
 msgid ""
 "For a custom domain, set it in the repository’s <strong>Settings → "
 "Pages</strong> (or enter it as the Destination URL); the plugin keeps the "
@@ -2722,7 +3334,7 @@ msgstr ""
 "Pages</strong> du dépôt (ou saisissez-le comme URL de destination) ; "
 "l’extension conserve le fichier <code>CNAME</code> utilisé par GitHub."
 
-#: src/Support/I18n.php:503
+#: src/Support/I18n.php:559
 msgid ""
 "<strong>Limits:</strong> 25 MiB per file and 1 GB per site. GitHub allows "
 "about 500 uploads an hour, so a first sync with many images pauses and "
@@ -2738,33 +3350,33 @@ msgstr ""
 "formulaires qui renvoient vers WordPress ne fonctionnent pas sur une copie "
 "statique."
 
-#: src/Support/I18n.php:504
+#: src/Support/I18n.php:560
 msgid "Re-pair (new file)"
 msgstr "Ré-appairer (nouveau fichier)"
 
-#: src/Support/I18n.php:505
+#: src/Support/I18n.php:561
 msgid "Pairing…"
 msgstr "Appairage…"
 
-#: src/Support/I18n.php:506
+#: src/Support/I18n.php:562
 msgid "Revoke"
 msgstr "Révoquer"
 
-#: src/Support/I18n.php:507
+#: src/Support/I18n.php:563
 msgid "Yes, revoke"
 msgstr "Oui, révoquer"
 
 #. translators: %s: connector filename
-#: src/Support/I18n.php:509
+#: src/Support/I18n.php:565
 #, php-format
 msgid "Download %s"
 msgstr "Télécharger %s"
 
-#: src/Support/I18n.php:510
+#: src/Support/I18n.php:566
 msgid "Pair"
 msgstr "Appairer"
 
-#: src/Support/I18n.php:511
+#: src/Support/I18n.php:567
 msgid ""
 "Re-pairing invalidates the file currently on the destination — upload the "
 "new one before the next sync."
@@ -2772,15 +3384,15 @@ msgstr ""
 "Ré-appairer invalide le fichier actuellement sur la destination — envoyez le"
 " nouveau avant la prochaine synchronisation."
 
-#: src/Support/I18n.php:512
+#: src/Support/I18n.php:568
 msgid "Rebuild push record"
 msgstr "Reconstruire l'historique d'envoi"
 
-#: src/Support/I18n.php:513
+#: src/Support/I18n.php:569
 msgid "Rebuilding…"
 msgstr "Reconstruction…"
 
-#: src/Support/I18n.php:514
+#: src/Support/I18n.php:570
 msgid ""
 "Ask the connector what is already on the destination and rebuild the push "
 "record from it — so after a reset or re-pair, files that are already there "
@@ -2791,15 +3403,15 @@ msgstr ""
 "réinitialisation ou un ré-appairage, les fichiers déjà présents et "
 "identiques ne sont pas renvoyés."
 
-#: src/Support/I18n.php:515
+#: src/Support/I18n.php:571
 msgid "Manual deploy"
 msgstr "Déploiement manuel"
 
-#: src/Support/I18n.php:516
+#: src/Support/I18n.php:572
 msgid "How it works"
 msgstr "Comment ça marche"
 
-#: src/Support/I18n.php:517
+#: src/Support/I18n.php:573
 msgid ""
 "No server access needed. <strong>Export ZIP</strong> packages the current "
 "render — with this destination’s replacements applied — into a zip you "
@@ -2812,7 +3424,7 @@ msgstr ""
 "rien et les statistiques de synchronisation de la destination restent "
 "intactes."
 
-#: src/Support/I18n.php:518
+#: src/Support/I18n.php:574
 msgid ""
 "If the pages list is stale, run <strong>Process</strong> first (Export never"
 " renders on its own)."
@@ -2820,13 +3432,13 @@ msgstr ""
 "Si la liste des pages est obsolète, lancez d'abord <strong>Traiter</strong> "
 "(l'export ne fait jamais de rendu lui-même)."
 
-#: src/Support/I18n.php:519
+#: src/Support/I18n.php:575
 msgid "Press <strong>Export ZIP</strong> and download it when it finishes."
 msgstr ""
 "Cliquez sur <strong>Exporter en ZIP</strong> et téléchargez-le une fois "
 "terminé."
 
-#: src/Support/I18n.php:520
+#: src/Support/I18n.php:576
 msgid ""
 "Extract it into the destination web root — the folder served at the "
 "<strong>Destination URL</strong>. If the site lives under a sub-folder, "
@@ -2840,7 +3452,7 @@ msgstr ""
 " de destination, réglez <strong>Servi depuis un sous-chemin</strong>) "
 "<em>avant</em> l’export pour que les liens soient réécrits en conséquence."
 
-#: src/Support/I18n.php:521
+#: src/Support/I18n.php:577
 msgid ""
 "The zip includes the <code>.htaccess</code> (Apache/LiteSpeed), "
 "<code>.gz</code> siblings where supported, <code>sitemap.xml</code> and "
@@ -2854,75 +3466,71 @@ msgstr ""
 "l'onglet <em>Configuration du serveur de destination</em> pour l'extrait "
 "facultatif et <strong>Vérifier le serveur</strong>."
 
-#: src/Support/I18n.php:522
+#: src/Support/I18n.php:578
 msgid "Enable this destination to export."
 msgstr "Activez cette destination pour exporter."
 
-#: src/Support/I18n.php:523
+#: src/Support/I18n.php:579
 msgid "Saved."
 msgstr "Enregistré."
 
-#: src/Support/I18n.php:524
+#: src/Support/I18n.php:580
 msgid "Test"
 msgstr "Tester"
 
-#: src/Support/I18n.php:525
+#: src/Support/I18n.php:581
 msgid "Remove this destination?"
 msgstr "Supprimer cette destination ?"
 
-#: src/Support/I18n.php:526
+#: src/Support/I18n.php:582
 msgid "Yes, remove"
 msgstr "Oui, supprimer"
 
-#: src/Support/I18n.php:527
+#: src/Support/I18n.php:583
 msgid "Remove destination"
 msgstr "Supprimer la destination"
 
-#: src/Support/I18n.php:538
+#: src/Support/I18n.php:594
 msgid "All Destinations"
 msgstr "Toutes les destinations"
 
-#: src/Support/I18n.php:539
+#: src/Support/I18n.php:595
 msgid "Destination name"
 msgstr "Nom de la destination"
 
-#: src/Support/I18n.php:540
+#: src/Support/I18n.php:596
 msgid "Double-click to rename"
 msgstr "Double-cliquer pour renommer"
 
-#: src/Support/I18n.php:541
+#: src/Support/I18n.php:597
 msgid "off"
 msgstr "désactivé"
 
-#: src/Support/I18n.php:542
+#: src/Support/I18n.php:598
 msgid "Add destination"
 msgstr "Ajouter une destination"
 
-#: src/Support/I18n.php:553
+#: src/Support/I18n.php:609
 msgid "Enable this destination first"
 msgstr "Activez d'abord cette destination"
 
-#: src/Support/I18n.php:554
+#: src/Support/I18n.php:610
 msgid "Test the connection first"
 msgstr "Testez d'abord la connexion"
 
-#: src/Support/I18n.php:555
+#: src/Support/I18n.php:611
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/Support/I18n.php:556
+#: src/Support/I18n.php:612
 msgid "Pushed"
 msgstr "Envoyé"
 
-#: src/Support/I18n.php:557
+#: src/Support/I18n.php:613
 msgid "In sync"
 msgstr "Synchronisé"
 
-#: src/Support/I18n.php:559
-msgid "Check"
-msgstr "Vérifier"
-
-#: src/Support/I18n.php:561
+#: src/Support/I18n.php:617
 msgid ""
 "Preview what a sync would change on this destination — compares the last "
 "render, uploads nothing."
@@ -2930,19 +3538,19 @@ msgstr ""
 "Prévisualisez ce qu'une synchronisation modifierait sur cette destination — "
 "compare le dernier rendu, ne téléverse rien."
 
-#: src/Support/I18n.php:563
+#: src/Support/I18n.php:619
 msgid "Visit site ↗"
 msgstr "Visiter le site ↗"
 
-#: src/Support/I18n.php:564
+#: src/Support/I18n.php:620
 msgid "Export ZIP"
 msgstr "Exporter en ZIP"
 
-#: src/Support/I18n.php:565
+#: src/Support/I18n.php:621
 msgid "Exporting…"
 msgstr "Export…"
 
-#: src/Support/I18n.php:566
+#: src/Support/I18n.php:622
 msgid ""
 "Package the current render into a downloadable zip for this destination — an"
 " alternative to Sync for manual deploys. Uploads nothing."
@@ -2951,41 +3559,41 @@ msgstr ""
 "destination — une alternative à Synchroniser pour les déploiements manuels. "
 "N'envoie rien."
 
-#: src/Support/I18n.php:567
+#: src/Support/I18n.php:623
 msgid "Download"
 msgstr "Télécharger"
 
-#: src/Support/I18n.php:578
+#: src/Support/I18n.php:634
 msgid "Replacements"
 msgstr "Remplacements"
 
 #. translators: %s: destination name
-#: src/Support/I18n.php:580
+#: src/Support/I18n.php:636
 #, php-format
 msgid "Replacements for %s"
 msgstr "Remplacements pour %s"
 
-#: src/Support/I18n.php:581
+#: src/Support/I18n.php:637
 msgid "(applied to this destination only · saved automatically)"
 msgstr ""
 "(appliqué à cette destination uniquement · enregistré automatiquement)"
 
-#: src/Support/I18n.php:593
+#: src/Support/I18n.php:649
 msgid "Image Replacer"
 msgstr "Remplacement d'images"
 
-#: src/Support/I18n.php:595
+#: src/Support/I18n.php:651
 msgid "Select a page, or type to filter…"
 msgstr "Choisissez une page ou tapez pour filtrer…"
 
 #. translators: %s: page path, e.g. /about/.
-#: src/Support/I18n.php:597
+#: src/Support/I18n.php:653
 #, php-format
 msgid "%s — not in the export"
 msgstr "%s — absente de l’export"
 
 #. translators: %d: number of pages.
-#: src/Support/I18n.php:599
+#: src/Support/I18n.php:655
 #, php-format
 msgid ""
 "%d published page(s) aren’t in the export, so they can’t be picked (shown "
@@ -2996,62 +3604,62 @@ msgstr ""
 "choisies (grisées). Ajoutez-y un lien depuis une page exportée, ou modifiez "
 "« Pages to include » dans les réglages, puis relancez le traitement."
 
-#: src/Support/I18n.php:600
+#: src/Support/I18n.php:656
 msgid "Select a page above to replace its images."
 msgstr "Sélectionnez une page ci-dessus pour remplacer ses images."
 
-#: src/Support/I18n.php:601
+#: src/Support/I18n.php:657
 msgid "Process the site first, then choose a page to replace its images."
 msgstr ""
 "Traitez d'abord le site, puis choisissez une page pour remplacer ses images."
 
-#: src/Support/I18n.php:602
+#: src/Support/I18n.php:658
 msgid "No replaceable images on this page."
 msgstr "Aucune image remplaçable sur cette page."
 
-#: src/Support/I18n.php:603
+#: src/Support/I18n.php:659
 msgid "Loading images…"
 msgstr "Chargement des images…"
 
-#: src/Support/I18n.php:604
+#: src/Support/I18n.php:660
 msgid "Choose a replacement"
 msgstr "Choisir un remplacement"
 
-#: src/Support/I18n.php:605
+#: src/Support/I18n.php:661
 msgid "Use this image"
 msgstr "Utiliser cette image"
 
-#: src/Support/I18n.php:606
+#: src/Support/I18n.php:662
 msgid "Click to replace"
 msgstr "Cliquer pour remplacer"
 
-#: src/Support/I18n.php:607
+#: src/Support/I18n.php:663
 msgid "— no alt —"
 msgstr "— sans alt —"
 
-#: src/Support/I18n.php:608
+#: src/Support/I18n.php:664
 msgid "↳ replaced with"
 msgstr "↳ remplacé par"
 
-#: src/Support/I18n.php:609
+#: src/Support/I18n.php:665
 msgid "No images match the current filter."
 msgstr "Aucune image ne correspond au filtre actuel."
 
-#: src/Support/I18n.php:610
+#: src/Support/I18n.php:666
 msgid "Pages with replacements:"
 msgstr "Pages avec remplacements :"
 
 #. translators: %d is the number of image sizes.
-#: src/Support/I18n.php:612
+#: src/Support/I18n.php:668
 #, php-format
 msgid "%d sizes"
 msgstr "%d tailles"
 
-#: src/Support/I18n.php:613
+#: src/Support/I18n.php:669
 msgid "not in library"
 msgstr "absente de la médiathèque"
 
-#: src/Support/I18n.php:614
+#: src/Support/I18n.php:670
 msgid ""
 "This image isn’t in the media library, so only this exact URL is swapped — "
 "other responsive sizes may remain."
@@ -3059,53 +3667,53 @@ msgstr ""
 "Cette image n'est pas dans la médiathèque ; seule cette URL exacte est "
 "remplacée — les autres tailles adaptatives peuvent subsister."
 
-#: src/Support/I18n.php:615
+#: src/Support/I18n.php:671
 msgid "The WordPress media library is unavailable on this page."
 msgstr "La médiathèque WordPress n'est pas disponible sur cette page."
 
-#: src/Support/I18n.php:616
+#: src/Support/I18n.php:672
 msgid "Replace…"
 msgstr "Remplacer…"
 
-#: src/Support/I18n.php:618
+#: src/Support/I18n.php:674
 msgid "Filter by page…"
 msgstr "Filtrer par page…"
 
-#: src/Support/I18n.php:619
+#: src/Support/I18n.php:675
 msgid "Filter by page"
 msgstr "Filtrer par page"
 
-#: src/Support/I18n.php:620
+#: src/Support/I18n.php:676
 msgid "Only replacements"
 msgstr "Remplacements uniquement"
 
-#: src/Support/I18n.php:631
+#: src/Support/I18n.php:687
 msgid "Link replacer"
 msgstr "Remplacement de liens"
 
 #. translators: %d is a link count (singular).
-#: src/Support/I18n.php:633
+#: src/Support/I18n.php:689
 #, php-format
 msgid "%d link"
 msgstr "%d lien"
 
 #. translators: %d is a link count (plural).
-#: src/Support/I18n.php:635
+#: src/Support/I18n.php:691
 #, php-format
 msgid "%d links"
 msgstr "%d liens"
 
 #. translators: %d is a count of replaced links.
-#: src/Support/I18n.php:637
+#: src/Support/I18n.php:693
 #, php-format
 msgid ", %d replaced"
 msgstr ", %d remplacé(s)"
 
-#: src/Support/I18n.php:638
+#: src/Support/I18n.php:694
 msgid "Search URL or label…"
 msgstr "Rechercher par URL ou libellé…"
 
-#: src/Support/I18n.php:639
+#: src/Support/I18n.php:695
 msgid ""
 "Replace a link target (<code>&lt;a&gt;</code>/button <code>href</code>) with"
 " another URL for this destination. Leave blank to keep the original."
@@ -3114,70 +3722,70 @@ msgstr ""
 "<code>href</code>) par une autre URL pour cette destination. Laisser vide "
 "pour conserver l'original."
 
-#: src/Support/I18n.php:640
+#: src/Support/I18n.php:696
 msgid "Loading links…"
 msgstr "Chargement des liens…"
 
-#: src/Support/I18n.php:641
+#: src/Support/I18n.php:697
 msgid ""
 "No links found yet — run a Check or Sync first so the pages are rendered."
 msgstr ""
 "Aucun lien trouvé pour l'instant — exécutez d'abord une vérification ou une "
 "synchronisation pour que les pages soient rendues."
 
-#: src/Support/I18n.php:642
+#: src/Support/I18n.php:698
 msgid "— no label —"
 msgstr "— sans libellé —"
 
 #. translators: %d is a page count (singular).
-#: src/Support/I18n.php:644
+#: src/Support/I18n.php:700
 #, php-format
 msgid "%d page"
 msgstr "%d page"
 
 #. translators: %d is a page count (plural).
-#: src/Support/I18n.php:646
+#: src/Support/I18n.php:702
 #, php-format
 msgid "%d pages"
 msgstr "%d pages"
 
-#: src/Support/I18n.php:647
+#: src/Support/I18n.php:703
 msgid "Replacement URL…"
 msgstr "URL de remplacement…"
 
-#: src/Support/I18n.php:648
+#: src/Support/I18n.php:704
 msgid "No links match the current filter."
 msgstr "Aucun lien ne correspond au filtre actuel."
 
-#: src/Support/I18n.php:659
+#: src/Support/I18n.php:715
 msgid "Video replacer"
 msgstr "Remplacement de vidéos"
 
-#: src/Support/I18n.php:661
+#: src/Support/I18n.php:717
 msgid "Select a page above to replace its videos."
 msgstr "Sélectionnez une page ci-dessus pour remplacer ses vidéos."
 
-#: src/Support/I18n.php:662
+#: src/Support/I18n.php:718
 msgid "No replaceable videos on this page."
 msgstr "Aucune vidéo remplaçable sur cette page."
 
 #. translators: %d is a video count (singular).
-#: src/Support/I18n.php:664
+#: src/Support/I18n.php:720
 #, php-format
 msgid "%d video"
 msgstr "%d vidéo"
 
 #. translators: %d is a video count (plural).
-#: src/Support/I18n.php:666
+#: src/Support/I18n.php:722
 #, php-format
 msgid "%d videos"
 msgstr "%d vidéos"
 
-#: src/Support/I18n.php:667
+#: src/Support/I18n.php:723
 msgid "Search URL or title…"
 msgstr "Rechercher par URL ou titre…"
 
-#: src/Support/I18n.php:668
+#: src/Support/I18n.php:724
 msgid ""
 "Local videos swap via the media library; embeds (YouTube, Vimeo, …) take a "
 "URL <em>or</em> a video ID (like Bricks). An embed’s <code>origin=</code> is"
@@ -3189,51 +3797,51 @@ msgstr ""
 "réécrit automatiquement vers cette destination lorsqu'une URL de destination"
 " est définie."
 
-#: src/Support/I18n.php:669
+#: src/Support/I18n.php:725
 msgid "Loading videos…"
 msgstr "Chargement des vidéos…"
 
-#: src/Support/I18n.php:670
+#: src/Support/I18n.php:726
 msgid ""
 "No videos found yet — run a Check or Sync first so the pages are rendered."
 msgstr ""
 "Aucune vidéo trouvée pour l'instant — exécutez d'abord une vérification ou "
 "une synchronisation pour que les pages soient rendues."
 
-#: src/Support/I18n.php:671
+#: src/Support/I18n.php:727
 msgid "local file"
 msgstr "fichier local"
 
-#: src/Support/I18n.php:672
+#: src/Support/I18n.php:728
 msgid "Choose a replacement video"
 msgstr "Choisir une vidéo de remplacement"
 
-#: src/Support/I18n.php:673
+#: src/Support/I18n.php:729
 msgid "Use this video"
 msgstr "Utiliser cette vidéo"
 
-#: src/Support/I18n.php:674
+#: src/Support/I18n.php:730
 msgid "Replacement URL or video ID…"
 msgstr "URL de remplacement ou identifiant de vidéo…"
 
-#: src/Support/I18n.php:675
+#: src/Support/I18n.php:731
 msgid "No videos match the current filter."
 msgstr "Aucune vidéo ne correspond au filtre actuel."
 
-#: src/Support/I18n.php:687
+#: src/Support/I18n.php:743
 msgid "Images"
 msgstr "Images"
 
-#: src/Support/I18n.php:689
+#: src/Support/I18n.php:745
 msgid "Videos"
 msgstr "Vidéos"
 
-#: src/Support/I18n.php:690
+#: src/Support/I18n.php:746
 msgid "Find and replace visible text on this destination only."
 msgstr ""
 "Rechercher et remplacer le texte visible sur cette destination uniquement."
 
-#: src/Support/I18n.php:691
+#: src/Support/I18n.php:747
 msgid ""
 "Pick a page, then swap any of its images for another library item — "
 "responsive variants are rebuilt automatically."
@@ -3242,14 +3850,14 @@ msgstr ""
 "autre élément de la médiathèque — les variantes responsives sont "
 "reconstruites automatiquement."
 
-#: src/Support/I18n.php:692
+#: src/Support/I18n.php:748
 msgid ""
 "Rewrite link and button targets per destination, without touching body text."
 msgstr ""
 "Réécrire les cibles des liens et boutons par destination, sans modifier le "
 "texte du corps."
 
-#: src/Support/I18n.php:693
+#: src/Support/I18n.php:749
 msgid ""
 "Swap local or embedded videos and fix embed origins for the destination "
 "domain."
@@ -3257,82 +3865,82 @@ msgstr ""
 "Remplacer les vidéos locales ou intégrées et corriger les origines "
 "d'intégration pour le domaine de destination."
 
-#: src/Support/I18n.php:705
+#: src/Support/I18n.php:761
 msgid "Render once, then push to every enabled destination in turn."
 msgstr ""
 "Rendu unique, puis envoi vers chaque destination activée à tour de rôle."
 
-#: src/Support/I18n.php:707
+#: src/Support/I18n.php:763
 msgid "Out of date"
 msgstr "Obsolète"
 
-#: src/Support/I18n.php:708
+#: src/Support/I18n.php:764
 msgid "Content changed — Process to check"
 msgstr "Contenu modifié — cliquez sur Traiter pour vérifier"
 
-#: src/Support/I18n.php:710
+#: src/Support/I18n.php:766
 msgid "Remove deleted files from each destination (prune)"
 msgstr "Supprimer les fichiers effacés de chaque destination (élagage)"
 
-#: src/Support/I18n.php:711
+#: src/Support/I18n.php:767
 msgid "Working…"
 msgstr "En cours…"
 
 #. translators: %d is the number of enabled destinations.
-#: src/Support/I18n.php:713
+#: src/Support/I18n.php:769
 #, php-format
 msgid "Sync all (%d enabled)"
 msgstr "Tout synchroniser (%d activées)"
 
-#: src/Support/I18n.php:724
+#: src/Support/I18n.php:780
 msgid "Progress"
 msgstr "Progression"
 
-#: src/Support/I18n.php:725
+#: src/Support/I18n.php:781
 msgid "Last sync"
 msgstr "Dernière synchronisation"
 
-#: src/Support/I18n.php:726
+#: src/Support/I18n.php:782
 msgid "Last Process"
 msgstr "Dernier traitement"
 
-#: src/Support/I18n.php:727
+#: src/Support/I18n.php:783
 msgid "Collecting URLs"
 msgstr "Collecte des URL"
 
-#: src/Support/I18n.php:728
+#: src/Support/I18n.php:784
 msgid "Rendering pages"
 msgstr "Rendu des pages"
 
-#: src/Support/I18n.php:729
+#: src/Support/I18n.php:785
 msgid "Processing assets"
 msgstr "Traitement des ressources"
 
-#: src/Support/I18n.php:730
+#: src/Support/I18n.php:786
 msgid "Finalising"
 msgstr "Finalisation"
 
-#: src/Support/I18n.php:731
+#: src/Support/I18n.php:787
 msgid "Packaging & deploying"
 msgstr "Empaquetage et déploiement"
 
-#: src/Support/I18n.php:732
+#: src/Support/I18n.php:788
 msgid "Uploading"
 msgstr "Téléversement"
 
-#: src/Support/I18n.php:733
+#: src/Support/I18n.php:789
 msgid "Deploying"
 msgstr "Déploiement"
 
-#: src/Support/I18n.php:734
+#: src/Support/I18n.php:790
 msgid "Removing old files"
 msgstr "Suppression des anciens fichiers"
 
-#: src/Support/I18n.php:739
+#: src/Support/I18n.php:795
 msgid "Uploading…"
 msgstr "Envoi…"
 
-#: src/Support/I18n.php:741
+#: src/Support/I18n.php:797
 msgid ""
 "Uploaded file-by-file: the PHP runtime running this sync has no Zip "
 "(ZipArchive) extension, so the faster single-package deploy wasn’t "
@@ -3347,7 +3955,7 @@ msgstr ""
 "hébergeurs de production incluent Zip et empaqueteront automatiquement."
 
 #. translators: %s is the reason package deploy failed.
-#: src/Support/I18n.php:743
+#: src/Support/I18n.php:799
 #, php-format
 msgid ""
 "The faster one-shot package deploy didn’t complete — %s. Files were uploaded"
@@ -3357,129 +3965,129 @@ msgstr ""
 "fichiers ont été envoyés individuellement à la place : même résultat, juste "
 "plus lent."
 
-#: src/Support/I18n.php:744
+#: src/Support/I18n.php:800
 msgid "Error"
 msgstr "Erreur"
 
-#: src/Support/I18n.php:746
+#: src/Support/I18n.php:802
 msgid "View error details"
 msgstr "Voir les détails de l'erreur"
 
-#: src/Support/I18n.php:747
+#: src/Support/I18n.php:803
 msgid "Sync error details"
 msgstr "Détails de l'erreur de synchronisation"
 
-#: src/Support/I18n.php:748
+#: src/Support/I18n.php:804
 msgid "No further detail was recorded for this destination."
 msgstr ""
 "Aucun détail supplémentaire n'a été enregistré pour cette destination."
 
-#: src/Support/I18n.php:749
+#: src/Support/I18n.php:805
 msgid "Pages"
 msgstr "Pages"
 
-#: src/Support/I18n.php:750
+#: src/Support/I18n.php:806
 msgid "Assets"
 msgstr "Ressources"
 
-#: src/Support/I18n.php:751
+#: src/Support/I18n.php:807
 msgid "Deploy"
 msgstr "Déployer"
 
-#: src/Support/I18n.php:752
+#: src/Support/I18n.php:808
 msgid "Uploads"
 msgstr "Téléversements"
 
 #. translators: %d is a file count.
-#: src/Support/I18n.php:754
+#: src/Support/I18n.php:810
 #, php-format
 msgid "%d files"
 msgstr "%d fichiers"
 
 #. translators: %1$d is a file count, %2$s a human size (e.g. "1.2 MB").
-#: src/Support/I18n.php:756
+#: src/Support/I18n.php:812
 #, php-format
 msgid "Site: %1$d files · %2$s"
 msgstr "Site : %1$d fichiers · %2$s"
 
 #. translators: %d is a count of removed files.
-#: src/Support/I18n.php:758
+#: src/Support/I18n.php:814
 #, php-format
 msgid "%d removed"
 msgstr "%d supprimé(s)"
 
 #. translators: %d is a count of skipped pages.
-#: src/Support/I18n.php:760
+#: src/Support/I18n.php:816
 #, php-format
 msgid "%d skipped"
 msgstr "%d ignoré(s)"
 
 #. translators: %d is a count of pages flagged as not static-friendly.
-#: src/Support/I18n.php:762
+#: src/Support/I18n.php:818
 #, php-format
 msgid "%d not static-friendly"
 msgstr "%d non compatible(s) avec le statique"
 
 #. translators: %d is a count of errors.
-#: src/Support/I18n.php:764
+#: src/Support/I18n.php:820
 #, php-format
 msgid "%d errors"
 msgstr "%d erreur(s)"
 
 #. translators: %d is a count of failed uploads (singular).
-#: src/Support/I18n.php:766
+#: src/Support/I18n.php:822
 #, php-format
 msgid "%d failed upload"
 msgstr "%d téléversement échoué"
 
 #. translators: %d is a count of failed uploads (plural).
-#: src/Support/I18n.php:768
+#: src/Support/I18n.php:824
 #, php-format
 msgid "%d failed uploads"
 msgstr "%d téléversements échoués"
 
 #. translators: %d is a count of failed files (singular).
-#: src/Support/I18n.php:770
+#: src/Support/I18n.php:826
 #, php-format
 msgid "%d file failed to upload."
 msgstr "%d fichier n'a pas pu être téléversé."
 
 #. translators: %d is a count of failed files (plural).
-#: src/Support/I18n.php:772
+#: src/Support/I18n.php:828
 #, php-format
 msgid "%d files failed to upload."
 msgstr "%d fichiers n'ont pas pu être téléversés."
 
-#: src/Support/I18n.php:773
+#: src/Support/I18n.php:829
 msgid "Retrying…"
 msgstr "Nouvelle tentative…"
 
 #. translators: %d is a count of uploads to retry (singular).
-#: src/Support/I18n.php:775
+#: src/Support/I18n.php:831
 #, php-format
 msgid "Retry %d upload"
 msgstr "Réessayer %d téléversement"
 
 #. translators: %d is a count of uploads to retry (plural).
-#: src/Support/I18n.php:777
+#: src/Support/I18n.php:833
 #, php-format
 msgid "Retry %d uploads"
 msgstr "Réessayer %d téléversements"
 
 #. translators: %d is the error count.
-#: src/Support/I18n.php:779
+#: src/Support/I18n.php:835
 #, php-format
 msgid "Errors (%d)"
 msgstr "Erreurs (%d)"
 
 #. translators: %d is the skipped count.
-#: src/Support/I18n.php:781
+#: src/Support/I18n.php:837
 #, php-format
 msgid "Skipped (%d)"
 msgstr "Ignorés (%d)"
 
 #. translators: %d is the count of pages that won't work on static.
-#: src/Support/I18n.php:783
+#: src/Support/I18n.php:839
 #, php-format
 msgid ""
 "Won't work on static (%d) — forms / dynamic endpoints (notice only; pages "
@@ -3489,11 +4097,11 @@ msgstr ""
 "dynamiques (avertissement uniquement ; les pages sont quand même "
 "téléversées)"
 
-#: src/Support/I18n.php:794
+#: src/Support/I18n.php:850
 msgid "Run this in your terminal to render & sync"
 msgstr "Exécutez ceci dans votre terminal pour rendre et synchroniser"
 
-#: src/Support/I18n.php:795
+#: src/Support/I18n.php:851
 msgid ""
 "This host serves only a couple of PHP requests at once, so the browser can't"
 " render reliably here. WP-CLI does it without that limit. In Local, right-"
@@ -3504,7 +4112,7 @@ msgstr ""
 "Dans Local, faites un clic droit sur le site → <em>Open site shell</em>, "
 "puis exécutez :"
 
-#: src/Support/I18n.php:796
+#: src/Support/I18n.php:852
 msgid ""
 "Add <code>--check</code> for a dry run, or <code>--prune</code> to remove "
 "deleted files. Progress will appear here automatically once it starts."
@@ -3513,19 +4121,19 @@ msgstr ""
 "pour supprimer les fichiers effacés. La progression s'affichera ici "
 "automatiquement une fois lancée."
 
-#: src/Support/I18n.php:807
+#: src/Support/I18n.php:863
 msgid "Server config"
 msgstr "Configuration serveur"
 
-#: src/Support/I18n.php:808
+#: src/Support/I18n.php:864
 msgid "Hide"
 msgstr "Masquer"
 
-#: src/Support/I18n.php:809
+#: src/Support/I18n.php:865
 msgid "View"
 msgstr "Afficher"
 
-#: src/Support/I18n.php:810
+#: src/Support/I18n.php:866
 msgid ""
 "The <code>.htaccess</code> is uploaded to the destination automatically "
 "(Apache/LiteSpeed). nginx serves the static site as-is; its snippet below is"
@@ -3540,11 +4148,11 @@ msgstr ""
 "<strong>Vérifier le serveur</strong> pour voir ce que fait réellement la "
 "destination."
 
-#: src/Support/I18n.php:811
+#: src/Support/I18n.php:867
 msgid "Server check"
 msgstr "Vérification du serveur"
 
-#: src/Support/I18n.php:812
+#: src/Support/I18n.php:868
 msgid ""
 "Fetches the destination’s home page and one asset, and reports the web "
 "server and whether the cache rules are in effect."
@@ -3552,11 +4160,11 @@ msgstr ""
 "Récupère la page d'accueil de la destination et une ressource, puis indique "
 "le serveur web et si les règles de cache sont en vigueur."
 
-#: src/Support/I18n.php:813
+#: src/Support/I18n.php:869
 msgid "Check server"
 msgstr "Vérifier le serveur"
 
-#: src/Support/I18n.php:817
+#: src/Support/I18n.php:873
 msgid ""
 "No destination has a Destination URL yet — set one on the destination to "
 "enable the check."
@@ -3564,51 +4172,51 @@ msgstr ""
 "Aucune destination n'a encore d'URL de destination — définissez-en une sur "
 "la destination pour activer la vérification."
 
-#: src/Support/I18n.php:818
+#: src/Support/I18n.php:874
 msgid "Server"
 msgstr "Serveur"
 
-#: src/Support/I18n.php:819
+#: src/Support/I18n.php:875
 msgid "Cache policy"
 msgstr "Politique de cache"
 
-#: src/Support/I18n.php:821
+#: src/Support/I18n.php:877
 msgid "HTML"
 msgstr "HTML"
 
-#: src/Support/I18n.php:822
+#: src/Support/I18n.php:878
 msgid "Asset"
 msgstr "Ressource"
 
-#: src/Support/I18n.php:823
+#: src/Support/I18n.php:879
 msgid "Applied"
 msgstr "Appliquée"
 
-#: src/Support/I18n.php:824
+#: src/Support/I18n.php:880
 msgid "Partial"
 msgstr "Partielle"
 
-#: src/Support/I18n.php:825
+#: src/Support/I18n.php:881
 msgid "Not applied"
 msgstr "Non appliquée"
 
-#: src/Support/I18n.php:826
+#: src/Support/I18n.php:882
 msgid "Unknown"
 msgstr "Inconnue"
 
-#: src/Support/I18n.php:827
+#: src/Support/I18n.php:883
 msgid "gzip"
 msgstr "gzip"
 
-#: src/Support/I18n.php:828
+#: src/Support/I18n.php:884
 msgid "none"
 msgstr "aucune"
 
-#: src/Support/I18n.php:829
+#: src/Support/I18n.php:885
 msgid "(no Cache-Control header)"
 msgstr "(pas d'en-tête Cache-Control)"
 
-#: src/Support/I18n.php:830
+#: src/Support/I18n.php:886
 msgid ""
 "No Destination URL is set, so the host was guessed from the connection — set"
 " the URL for an accurate check."
@@ -3617,37 +4225,37 @@ msgstr ""
 "connexion — définissez l'URL pour une vérification précise."
 
 #. translators: %s: time the check ran
-#: src/Support/I18n.php:832
+#: src/Support/I18n.php:888
 #, php-format
 msgid "Checked %s"
 msgstr "Vérifié le %s"
 
-#: src/Support/I18n.php:833
+#: src/Support/I18n.php:889
 msgid "unknown"
 msgstr "inconnu"
 
-#: src/Support/I18n.php:834
+#: src/Support/I18n.php:890
 msgid "CDN / proxy"
 msgstr "CDN / proxy"
 
-#: src/Support/I18n.php:835
+#: src/Support/I18n.php:891
 msgid "Sent automatically with every Cloudflare deploy — nothing to paste."
 msgstr ""
 "Envoyé automatiquement à chaque déploiement Cloudflare — rien à coller."
 
-#: src/Support/I18n.php:846
+#: src/Support/I18n.php:902
 msgid "Text replacements"
 msgstr "Remplacements de texte"
 
-#: src/Support/I18n.php:847
+#: src/Support/I18n.php:903
 msgid "(optional)"
 msgstr "(facultatif)"
 
-#: src/Support/I18n.php:848
+#: src/Support/I18n.php:904
 msgid "+ Add"
 msgstr "+ Ajouter"
 
-#: src/Support/I18n.php:849
+#: src/Support/I18n.php:905
 msgid ""
 "Literal find/replace, applied only to visible text content between tags — "
 "never attributes, scripts or markup. Be specific to avoid unintended "
@@ -3657,149 +4265,141 @@ msgstr ""
 "visible entre les balises — jamais aux attributs, scripts ou balises. Soyez "
 "précis pour éviter les correspondances involontaires."
 
-#: src/Support/I18n.php:850
+#: src/Support/I18n.php:906
 msgid "No text replacements yet."
 msgstr "Aucun remplacement de texte pour l'instant."
 
-#: src/Support/I18n.php:851
+#: src/Support/I18n.php:907
 msgid "Find"
 msgstr "Rechercher"
 
-#: src/Support/I18n.php:852
+#: src/Support/I18n.php:908
 msgid "Replace"
 msgstr "Remplacer"
 
-#: src/Support/I18n.php:853 src/Support/I18n.php:854
+#: src/Support/I18n.php:909 src/Support/I18n.php:910
 msgid "(empty)"
 msgstr "(vide)"
 
-#: src/Support/I18n.php:855
+#: src/Support/I18n.php:911
 msgid "Confirm delete"
 msgstr "Confirmer la suppression"
 
-#: src/Support/I18n.php:856
+#: src/Support/I18n.php:912
 msgid "Keep"
 msgstr "Conserver"
 
-#: src/Support/I18n.php:857
+#: src/Support/I18n.php:913
 msgid "Edit"
 msgstr "Modifier"
 
-#: src/Support/I18n.php:858
+#: src/Support/I18n.php:914
 msgid "Delete"
 msgstr "Supprimer"
 
-#: src/Support/I18n.php:859
+#: src/Support/I18n.php:915
 msgid "Add text replacement"
 msgstr "Ajouter un remplacement de texte"
 
-#: src/Support/I18n.php:860
+#: src/Support/I18n.php:916
 msgid "Edit text replacement"
 msgstr "Modifier le remplacement de texte"
 
-#: src/Support/I18n.php:861
+#: src/Support/I18n.php:917
 msgid "Text to find"
 msgstr "Texte à rechercher"
 
-#: src/Support/I18n.php:862 src/Support/I18n.php:866
+#: src/Support/I18n.php:918 src/Support/I18n.php:922
 msgid "Replace with"
 msgstr "Remplacer par"
 
-#: src/Support/I18n.php:863
+#: src/Support/I18n.php:919
 msgid "Replacement format"
 msgstr "Format de remplacement"
 
-#: src/Support/I18n.php:864
+#: src/Support/I18n.php:920
 msgid "Plain"
 msgstr "Texte brut"
 
-#: src/Support/I18n.php:865
+#: src/Support/I18n.php:921
 msgid "Rich"
 msgstr "Texte enrichi"
 
-#: src/Support/I18n.php:878
+#: src/Support/I18n.php:934
 msgid "Paragraph"
 msgstr "Paragraphe"
 
-#: src/Support/I18n.php:879
+#: src/Support/I18n.php:935
 msgid "Heading 1"
 msgstr "Titre 1"
 
-#: src/Support/I18n.php:880
+#: src/Support/I18n.php:936
 msgid "Heading 2"
 msgstr "Titre 2"
 
-#: src/Support/I18n.php:881
+#: src/Support/I18n.php:937
 msgid "Heading 3"
 msgstr "Titre 3"
 
-#: src/Support/I18n.php:882
+#: src/Support/I18n.php:938
 msgid "Bold"
 msgstr "Gras"
 
-#: src/Support/I18n.php:883
+#: src/Support/I18n.php:939
 msgid "Italic"
 msgstr "Italique"
 
-#: src/Support/I18n.php:884
+#: src/Support/I18n.php:940
 msgid "Underline"
 msgstr "Souligné"
 
-#: src/Support/I18n.php:885
+#: src/Support/I18n.php:941
 msgid "Bullet list"
 msgstr "Liste à puces"
 
-#: src/Support/I18n.php:886
+#: src/Support/I18n.php:942
 msgid "Numbered list"
 msgstr "Liste numérotée"
 
-#: src/Support/I18n.php:887
+#: src/Support/I18n.php:943
 msgid "Link"
 msgstr "Lien"
 
-#: src/Support/I18n.php:888
+#: src/Support/I18n.php:944
 msgid "Clear formatting"
 msgstr "Effacer la mise en forme"
 
-#: src/Support/I18n.php:889
+#: src/Support/I18n.php:945
 msgid "HTML source"
 msgstr "Source HTML"
 
-#: src/Support/I18n.php:890
+#: src/Support/I18n.php:946
 msgid "Visual editor"
 msgstr "Éditeur visuel"
 
-#: src/Support/I18n.php:891
+#: src/Support/I18n.php:947
 msgid "Edit HTML"
 msgstr "Modifier le HTML"
 
-#: src/Support/I18n.php:892
+#: src/Support/I18n.php:948
 msgid "Link URL"
 msgstr "URL du lien"
 
-#: src/Support/I18n.php:893
+#: src/Support/I18n.php:949
 msgid "Replace with…"
 msgstr "Remplacer par…"
 
-#: src/Support/I18n.php:894
+#: src/Support/I18n.php:950
 msgid "Formatting"
 msgstr "Mise en forme"
 
-#: src/Support/I18n.php:907
+#: src/Support/I18n.php:963
 msgid "Save"
 msgstr "Enregistrer"
 
-#: src/Support/I18n.php:909
+#: src/Support/I18n.php:965
 msgid "Testing…"
 msgstr "Test en cours…"
-
-#: src/Support/I18n.php:912
-msgid "Dismiss"
-msgstr "Ignorer"
-
-#: src/Support/I18n.php:913
-msgid "Close"
-msgstr "Fermer"
 
 #: src/Support/UrlSafety.php:116
 msgid ""
@@ -3810,27 +4410,27 @@ msgstr ""
 "cloud, LAN, proxy en boucle, etc.) et ne peut pas être utilisée. Utilisez "
 "une URL HTTP(S) publique."
 
-#: src/Support/UrlSafety.php:134
+#: src/Support/UrlSafety.php:139
 msgid ""
 "The destination URL returned a redirect, which is not followed for safety."
 msgstr ""
 "L'URL de destination a retourné une redirection, qui n'est pas suivie par "
 "mesure de sécurité."
 
-#: src/Sync/Runner.php:101
+#: src/Sync/Runner.php:102
 msgid ""
 "An Export ZIP is currently running — wait for it to finish, then try again."
 msgstr ""
 "Un export ZIP est en cours — attendez qu'il se termine, puis réessayez."
 
-#: src/Sync/Runner.php:269
+#: src/Sync/Runner.php:270
 msgid ""
 "There is no up-to-date full render to add changes to yet. Use Process all."
 msgstr ""
 "Il n’existe pas encore de rendu complet à jour auquel ajouter des "
 "modifications. Utilisez « Tout traiter »."
 
-#: src/Sync/Runner.php:272
+#: src/Sync/Runner.php:273
 msgid ""
 "Pages to include has changed since the last Process all, which affects the "
 "whole export. Use Process all."
@@ -3839,7 +4439,7 @@ msgstr ""
 "affecte tout l’export. Utilisez « Tout traiter »."
 
 #. translators: %s: page title(s).
-#: src/Sync/Runner.php:279
+#: src/Sync/Runner.php:280
 #, php-format
 msgid ""
 "Nothing to process yet: %s isn’t linked from any page in the export, and "
@@ -3852,7 +4452,7 @@ msgstr ""
 "lien. Ajoutez-y un lien depuis une page exportée, puis utilisez « Traiter "
 "les modifications » (ou « Tout traiter »)."
 
-#: src/Sync/Runner.php:283
+#: src/Sync/Runner.php:284
 msgid ""
 "No content changes are recorded since the last Process. Site-wide changes "
 "(menus, templates, settings) need Process all."
@@ -3861,19 +4461,19 @@ msgstr ""
 "traitement. Les modifications globales (menus, modèles, réglages) "
 "nécessitent « Tout traiter »."
 
-#: src/Sync/Runner.php:684
+#: src/Sync/Runner.php:685
 msgid "site is in maintenance mode, or temporarily unavailable"
 msgstr "le site est en mode maintenance ou temporairement indisponible"
 
-#: src/Sync/Runner.php:685
+#: src/Sync/Runner.php:686
 msgid "blocked — maintenance mode, a security plugin, or a firewall"
 msgstr "bloqué — mode maintenance, extension de sécurité ou pare-feu"
 
-#: src/Sync/Runner.php:686
+#: src/Sync/Runner.php:687
 msgid "password protected, or behind HTTP authentication"
 msgstr "protégé par mot de passe, ou derrière une authentification HTTP"
 
-#: src/Sync/Runner.php:1286
+#: src/Sync/Runner.php:1287
 msgid ""
 "The page list has changed since the last render. Click Process to refresh "
 "it, then Check again."
@@ -3881,13 +4481,13 @@ msgstr ""
 "La liste des pages a changé depuis le dernier rendu. Cliquez sur Traiter "
 "pour l'actualiser, puis vérifiez à nouveau."
 
-#: src/Sync/Runner.php:1287
+#: src/Sync/Runner.php:1288
 msgid "Nothing has been rendered yet. Click Process first, then Check."
 msgstr ""
 "Rien n'a encore été rendu. Cliquez d'abord sur Traiter, puis sur Vérifier."
 
 #. translators: %d: number of published pages not in the static export.
-#: src/Sync/Runner.php:1361
+#: src/Sync/Runner.php:1362
 #, php-format
 msgid "%d published page isn’t in the export — see View list."
 msgid_plural "%d published pages aren’t in the export — see View list."
@@ -4025,6 +4625,74 @@ msgstr ""
 "%s détecté — la politique de cache n'est pas en vigueur. Sous "
 "Apache/LiteSpeed, le .htaccess est envoyé automatiquement ; sous nginx, "
 "appliquez l'extrait ci-dessous."
+
+#: src/Transport/FolderTransport.php:78
+msgid "No folder is set up for this destination yet. Use “Set up the folder”."
+msgstr ""
+"Aucun dossier n’est encore configuré pour cette destination. Utilisez « "
+"Configurer le dossier »."
+
+#: src/Transport/FolderTransport.php:85
+msgid ""
+"This folder isn’t set up for this destination (its .shipstatic-folder file "
+"is missing or belongs to another one). Use “Set up the folder” again."
+msgstr ""
+"Ce dossier n’est pas configuré pour cette destination (son fichier "
+".shipstatic-folder est absent ou appartient à une autre). Utilisez de "
+"nouveau « Configurer le dossier »."
+
+#. translators: %s: WordPress folder name(s).
+#: src/Transport/FolderTransport.php:125
+#, php-format
+msgid "WordPress folder %s is left alone"
+msgstr "Le dossier WordPress %s n’est pas touché"
+
+#. translators: %s: free disk space.
+#: src/Transport/FolderTransport.php:129
+#, php-format
+msgid "%s free"
+msgstr "%s libres"
+
+#: src/Transport/FolderTransport.php:237
+msgid "Refused an empty or invalid file name."
+msgstr "Nom de fichier vide ou invalide refusé."
+
+#. translators: %s: file path.
+#: src/Transport/FolderTransport.php:243
+#, php-format
+msgid "Refused %s: not a plain path."
+msgstr "%s refusé : ce n’est pas un chemin simple."
+
+#. translators: %s: file path.
+#: src/Transport/FolderTransport.php:248
+#, php-format
+msgid "Refused %s: that folder belongs to WordPress or the hosting account."
+msgstr ""
+"%s refusé : ce dossier appartient à WordPress ou au compte d’hébergement."
+
+#. translators: %s: file path.
+#: src/Transport/FolderTransport.php:254 src/Transport/FolderTransport.php:263
+#, php-format
+msgid "Refused %s."
+msgstr "%s refusé."
+
+#. translators: %s: file path.
+#: src/Transport/FolderTransport.php:259
+#, php-format
+msgid "Refused %s: PHP files are never published."
+msgstr "%s refusé : les fichiers PHP ne sont jamais publiés."
+
+#. translators: %s: file path.
+#: src/Transport/FolderTransport.php:277 src/Transport/FolderTransport.php:281
+#, php-format
+msgid "Refused %s: it leads outside the folder."
+msgstr "%s refusé : il mène hors du dossier."
+
+#. translators: %s: folder path.
+#: src/Transport/FolderTransport.php:299
+#, php-format
+msgid "Couldn’t create the folder %s."
+msgstr "Impossible de créer le dossier %s."
 
 #: templates/admin/docs.php:20
 msgid "ShipStatic documentation requires JavaScript."

@@ -36,6 +36,7 @@ use WPEasy\ShipStatic\REST\EditorController;
 use WPEasy\ShipStatic\REST\ExportController;
 use WPEasy\ShipStatic\REST\LinksController;
 use WPEasy\ShipStatic\REST\LockdownController;
+use WPEasy\ShipStatic\REST\ServerFolderController;
 use WPEasy\ShipStatic\REST\MediaController;
 use WPEasy\ShipStatic\REST\SitemapController;
 use WPEasy\ShipStatic\REST\StatusController;
@@ -226,6 +227,7 @@ final class Plugin {
     public static function register_rest_routes(): void {
         ConnectionController::register();
         DestinationsController::register();
+        ServerFolderController::register();
         StatusController::register();
         SyncController::register();
         EditorController::register();
