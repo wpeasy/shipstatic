@@ -1,6 +1,4 @@
 <h1>Changelog</h1>
-<h2>v2.3.2 (2026-10-26)</h2>
-<h3>Changed</h3>
-<p><strong>Lockdown only lets in the address you&#x27;re on.</strong> Turning Lockdown on, or opening the unlock link, now adds just your own address, never a range, and single addresses are listed plainly (no /32 or /128). If your IPv6 address changes every day, add your range by hand.</p>
+<h2>v2.3.3 (2026-10-26)</h2>
 <h3>Fixed</h3>
-<p><strong>Lockdown on nginx is clearer about what it covers.</strong> Without the optional nginx snippet, uploaded files (images, PDFs), CSS and JavaScript can still be opened by anyone who has their address. The Lockdown tab and the documentation now say so and explain how to lock them too.</p>
+<p><strong>Destinations on your own computer work again.</strong> A Connector destination on a local development address, such as a Herd or Valet <code>.test</code> site, a Local <code>.local</code> site or <code>localhost</code> on any port, failed Test with &quot;A valid URL was not provided&quot;. It now connects. Addresses on your network and other private addresses are still blocked.</p>

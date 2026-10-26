@@ -119,7 +119,12 @@ final class UrlSafety {
 
         $args['redirection'] = 0; // Do NOT follow redirects (defeats the IP check).
         if (!isset($args['reject_unsafe_urls'])) {
-            $args['reject_unsafe_urls'] = true;
+            // WordPress's own check refuses every loopback address and any port
+            // but 80/443/8080, which would undo the local-dev allowance above
+            // (Herd/Valet *.test, Local *.local, localhost:8088). Skip it only for
+            // a dev host that resolves to loopback alone; is_safe_url() has
+            // already refused every private, reserved and link-local range.
+            $args['reject_unsafe_urls'] = !self::is_local_dev_url($url);
         }
 
         $response = wp_remote_request($url, $args);
@@ -162,6 +167,23 @@ final class UrlSafety {
         }
 
         return false;
+    }
+
+    /**
+     * Whether a URL points at a development host on this machine: is_dev_host()
+     * and every address it resolves to is loopback (a *.test name pointing at a
+     * LAN machine is not).
+     *
+     * @param string $url URL.
+     */
+    private static function is_local_dev_url(string $url): bool {
+        $host = trim((string) wp_parse_url($url, PHP_URL_HOST), '[]');
+        if ($host === '' || !self::is_dev_host($host)) {
+            return false;
+        }
+        $ips = self::resolve_ips($host);
+
+        return $ips !== [] && count(array_filter($ips, [self::class, 'is_loopback'])) === count($ips);
     }
 
     /**

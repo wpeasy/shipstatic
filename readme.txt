@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.3.2
+Stable tag: 2.3.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,9 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.3.3 =
+* Fix: Connector, FTP package deploy and the server check now work with a destination on your own computer (Herd or Valet *.test, Local *.local, localhost on any port), which WordPress used to refuse with "A valid URL was not provided".
 
 = 2.3.2 =
 * Lockdown: turning it on and the unlock link now add only your single address (IPv6 included), and single addresses are shown without /32 or /128.

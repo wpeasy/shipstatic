@@ -5,6 +5,11 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.3] - 2026-10-26
+
+### Fixed
+- A destination on the same machine (Herd/Valet `*.test`, Local `*.local`, `localhost` on any port) failed Connector Test, package deploy and the server check with "A valid URL was not provided": `UrlSafety` allows loopback for local development, but then passed `reject_unsafe_urls` to WordPress, whose own check refuses every loopback address and any port but 80/443/8080. That check is now skipped only for a development host that resolves to loopback alone; LAN, link-local and cloud-metadata addresses stay blocked, and a public hostname pointing at 127.0.0.1 is still refused.
+
 ## [2.3.2] - 2026-10-26
 
 ### Changed
