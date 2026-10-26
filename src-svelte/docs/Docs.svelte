@@ -288,7 +288,10 @@
         </p>
         <pre class="bs-docs__code">php /home/&lt;account&gt;/public_html/wp/wp-cron.php &gt;/dev/null 2&gt;&amp;1</pre>
         <p class="bs-docs__muted">
-          If the server can’t find <code>php</code>, use its full path (on cPanel: <code>/usr/local/bin/php</code>). Allowing the server’s own address works too, but on shared hosting that address is shared by every site on the server, which would let them all past Lockdown.
+          If the server can’t find <code>php</code>, use its full path (on cPanel: <code>/usr/local/bin/php</code>). If your host only lets cron jobs fetch a web address, send the unlock key with the request as a bearer token (the tab has the exact command):
+        </p>
+        <pre class="bs-docs__code">wget -q -O /dev/null --header='Authorization: Bearer &lt;unlock key&gt;' 'https://example.com/wp/wp-cron.php'</pre>
+        <p class="bs-docs__muted"> Allowing the server’s own address works too, but on shared hosting that address is shared by every site on the server, which would let them all past Lockdown.
         </p>
         <h3>If you’re locked out</h3>
         <ul class="bs-docs__list">
@@ -301,6 +304,7 @@
         <ul class="bs-docs__list">
           <li>On a mobile connection your address can change from one request to the next. When the tab sees that, it says so instead of reporting you locked out, and offers to allow your provider’s range (a <code>/16</code>, or a <code>/64</code> for IPv6). A range lets in everyone on that part of the network (they still need a WordPress login); the unlock link is the tighter alternative.</li>
           <li>Behind a proxy or CDN (Cloudflare, a load balancer) the server may see the proxy’s address instead of yours. The tab warns you when it looks that way; the unlock link still works.</li>
+          <li><strong>Scripts and services</strong> (an uptime monitor, a deploy hook, a web cron) can send the unlock key as a header instead of opening the link: <code>Authorization: Bearer &lt;unlock key&gt;</code>. That lets the one request through without adding its address to the list. The tab shows the header ready to copy; <strong>New link</strong> changes it too.</li>
           <li>Anyone with the unlock link can get in. Each address it adds is marked in the list, and the site admin gets an email. <strong>New link</strong> replaces it and signs everyone out of their unlock cookie.</li>
           <li>Nothing on your static site is affected: it never loads anything from the WordPress site.</li>
         </ul>

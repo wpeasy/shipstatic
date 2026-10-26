@@ -30,7 +30,7 @@ defined('ABSPATH') || exit;
 final class Writer {
 
     /** Bump when a template changes, so existing sites rewrite their files. */
-    public const VERSION = '3';
+    public const VERSION = '4';
 
     private const BEGIN = 'BEGIN ShipStatic Lockdown';
     private const END   = 'END ShipStatic Lockdown';
@@ -364,6 +364,7 @@ final class Writer {
             $lines[] = 'if ($remote_addr ~* "' . Cidr::regex($cidr) . '") { set $shipstatic_locked 0; }';
         }
         $lines[] = 'if ($arg_unlock = "' . Settings::key() . '") { set $shipstatic_locked 0; }';
+        $lines[] = 'if ($http_authorization ~ "^[Bb][Ee][Aa][Rr][Ee][Rr]\s+' . Settings::key() . '\s*$") { set $shipstatic_locked 0; }';
         $lines[] = 'if ($cookie_' . Settings::COOKIE . ' = "' . Settings::cookie_value() . '") { set $shipstatic_locked 0; }';
         $lines[] = 'if ($http_x_bs_render_token = "' . PageRenderer::token() . '") { set $shipstatic_locked 0; }';
         $lines[] = 'if ($uri ~ "^/\.well-known/") { set $shipstatic_locked 0; }';

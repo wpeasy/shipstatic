@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.2
+Stable tag: 2.4.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,7 +43,7 @@ Bricks isn't required. Rendering is builder-agnostic: ShipStatic captures whatev
 * Favicon and asset handling
 * "Sync this page" floating button for single-page pushes
 * **Scheduled sync** — Process and Sync automatically every hour, day, week or month, to all destinations or the ones you pick
-* **Lockdown** — lock the WordPress site to your editors' IP addresses and send everyone else to the static site, with an unlock link for when your address changes
+* **Lockdown** — lock the WordPress site to your editors' IP addresses and send everyone else to the static site, with an unlock link for when your address changes (scripts and services can send the same key as an `Authorization: Bearer` header)
 * WP-CLI command for reliable syncs on any host
 
 = Credits =
@@ -89,6 +89,10 @@ SFTP, FTP and explicit-TLS FTPS; the Connector (signed HTTPS to a small receiver
 
 Lockdown is off by default. When you turn it on, it writes `wp-content/shipstatic-lockdown.php` (the check that decides who gets in) and `wp-content/mu-plugins/shipstatic-lockdown.php` (which runs that check inside WordPress), plus a marked block at the top of `.htaccess` on Apache and LiteSpeed, or in `.user.ini` on nginx and other FastCGI hosts. Turning Lockdown off or deactivating the plugin removes them all. On hosts using `.user.ini`, the check file is left as an empty stub for 10 minutes first, because PHP keeps reading `.user.ini` from its cache for up to 5 minutes.
 
+= Can a cron job or script get past Lockdown? =
+
+WordPress's own WP-Cron and command-line PHP (`php wp-cron.php`, WP-CLI) are never stopped. A script or service that calls the site over the web can send the unlock key as a header, `Authorization: Bearer <key>`: that request gets through without its address being added to the list. The Lockdown tab shows the header and a ready-made cron command.
+
 = Why does the plugin run shell commands? =
 
 Only to start its own WP-CLI commands (`wp shipstatic …`) as background processes, so a long sync keeps running after the admin page request ends and several destinations can deploy in parallel. The commands are built from fixed internal paths and arguments, never from request input. When `exec()`/`proc_open()` are disabled on the host, the plugin falls back to running the sync in the browser.
@@ -116,6 +120,10 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.3 =
+* Lockdown: scripts and services can now get past Lockdown by sending the unlock key as a header, `Authorization: Bearer <key>`. Only that request gets through; its address isn't added to the list.
+* Lockdown: a ready-made web cron command that sends the key, for hosts whose cron jobs can only fetch a web address.
 
 = 2.4.2 =
 * Fix: right after turning Lockdown on, the tab could wrongly report a problem on LiteSpeed servers, which take a few seconds to read the new rules. It now keeps checking for about ten seconds first.

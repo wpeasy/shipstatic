@@ -45,6 +45,16 @@ if (!defined('SHIPSTATIC_LOCKDOWN_GATE')) {
             return;
         }
 
+        // The unlock key as a bearer token, for scripts and services
+        // (Authorization: Bearer <key>). It lets the request through without
+        // adding an address, and is taken off so WordPress never sees it (an
+        // auth plugin would otherwise try it as its own token and refuse it).
+        $auth = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
+        if (preg_match('/^Bearer\s+(\S+)\s*$/i', $auth, $m) && hash_equals($cfg['key'], hash('sha256', $m[1]))) {
+            unset($_SERVER['HTTP_AUTHORIZATION'], $_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
+            return;
+        }
+
         // The unlock cookie (12 hours).
         $cookie = $_COOKIE[$cfg['cookieName']] ?? '';
         if (is_string($cookie) && $cookie !== '' && hash_equals($cfg['cookie'], hash('sha256', $cookie))) {

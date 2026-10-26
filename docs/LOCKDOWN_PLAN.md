@@ -34,6 +34,7 @@ the main lock has to sit in front of PHP (§4).
 | Scope | The **whole site**, not just `wp-admin` / `wp-login.php`. |
 | What blocked visitors see | A **302 redirect** to the same path on the static site (§7); a 403 when no destination has a URL. |
 | What the unlock key does | It **adds the visitor's IP** to the allowed list (and sets the unlock cookie). |
+| The unlock key as a header | `Authorization: Bearer <key>` **passes that request only** (no IP added, no cookie, no email) — for scripts and services (2.4.3, §5). |
 | Unlock cookie lifetime | **12 hours.** |
 | Where it lives | A new **Lockdown** top-level tab in the dashboard, after Schedule. |
 
@@ -43,6 +44,8 @@ A request passes when **any** of these is true. Everything else is redirected (o
 
 1. **Its IP is on the allowed list.** Entries are single addresses or CIDR ranges, IPv4 or IPv6.
 2. **It carries the unlock key** (`unlock=<key>` in the query string). WordPress then adds the IP (§5).
+   Or as a header, `Authorization: Bearer <key>` (2.4.3, for scripts and services): that request
+   passes, but nothing is added and no cookie is set. The gate removes the header after matching it.
 3. **It carries a valid unlock cookie** (`shipstatic_unlock`, 12 hours). This covers an IP that changes
    during a session, such as mobile data or rotating IPv6 addresses.
 4. **It's one of the site's own requests**, carrying the existing render token header
@@ -85,9 +88,12 @@ Generated from `src/Lockdown/templates/htaccess.txt` (no heredoc; see CLAUDE.md,
 # BEGIN ShipStatic Lockdown
 <IfModule mod_rewrite.c>
 RewriteEngine On
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteCond %{REQUEST_URI} !^/\.well-known/
 RewriteCond %{HTTP:X-BS-Render-Token} !^__TOKEN__$
 RewriteCond %{QUERY_STRING} !(^|&)unlock=__KEY__(&|$)
+RewriteCond %{HTTP:Authorization} !^[Bb][Ee][Aa][Rr][Ee][Rr]\s+__KEY__\s*$
 RewriteCond %{HTTP_COOKIE} !(^|;\s*)shipstatic_unlock=__COOKIE__
 __IP_CONDITIONS__
 RewriteRule ^(.*)$ __REDIRECT__$1? [R=302,L]
@@ -96,6 +102,8 @@ RewriteRule ^(.*)$ __REDIRECT__$1? [R=302,L]
 ```
 
 - All the conditions must match for the request to be blocked, so any one exemption lets it through.
+- The first rule copies the `Authorization` header into `HTTP_AUTHORIZATION` (PHP-FPM drops it
+  otherwise), so the gate can check a bearer key too. "Bearer" matches in any case; the key exactly.
 - The trailing `?` on the target drops the query string. It's portable, unlike `QSD`, which LiteSpeed
   may not support.
 - With no redirect target, the last line is `RewriteRule ^ - [F,L]`.
@@ -155,6 +163,7 @@ For people who manage their own server, the tab offers a copy-paste snippet for 
 set $shipstatic_locked 1;
 if ($remote_addr = 203.0.113.7)           { set $shipstatic_locked 0; }
 if ($arg_unlock = "KEY")                  { set $shipstatic_locked 0; }
+if ($http_authorization ~ "^[Bb][Ee][Aa][Rr][Ee][Rr]\s+KEY\s*$") { set $shipstatic_locked 0; }
 if ($cookie_shipstatic_unlock = "COOKIE") { set $shipstatic_locked 0; }
 if ($http_x_bs_render_token = "TOKEN")    { set $shipstatic_locked 0; }
 if ($uri ~ "^/\.well-known/")             { set $shipstatic_locked 0; }
@@ -202,6 +211,13 @@ deliberate recovery path (§9).
 - **Who holds the key** gets permanent access (it adds their IP). That's the chosen trade-off, so the
   tab makes it visible: every key-added entry shows "via unlock link" and its date, the email in step
   5 tells the admin each time, and removing entries is one click.
+- **As a bearer token** (2.4.3): `Authorization: Bearer <key>` lets that one request through every
+  layer and does nothing else — no IP added, no cookie, no email — so a monitor, deploy hook or web
+  cron (`wget --header='Authorization: Bearer <key>' …/wp-cron.php`) never fills the list. The gate
+  compares its hash with `hash_equals()`, then unsets `HTTP_AUTHORIZATION` and
+  `REDIRECT_HTTP_AUTHORIZATION`, so an auth plugin (JWT) never takes the key for its own token and
+  refuses the request. A wrong token, or any other scheme (Basic), is blocked like any request.
+  The tab shows the header with a Copy button; a new link changes it too.
 - The key is a URL parameter, so it shows up in server access logs. Editors should bookmark the link
   rather than share it in public places; the tab says so.
 

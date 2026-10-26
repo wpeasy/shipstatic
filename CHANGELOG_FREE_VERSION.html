@@ -1,12 +1,6 @@
 <h1>Changelog</h1>
-<h2>v2.4.2 (2026-10-26)</h2>
+<h2>v2.4.3 (2026-10-26)</h2>
 <h3>New</h3>
-<p><strong>Help for server cron jobs with Lockdown.</strong> A cron job that calls <code>wp-cron.php</code> over the web (with wget, curl or an online cron service) is turned away by Lockdown, so scheduled tasks stop. The Lockdown tab now has a <strong>Using a server cron job?</strong> section with the command to run it with PHP instead, which Lockdown never stops.</p>
+<p><strong>Scripts and services can get past Lockdown with the unlock key.</strong> Uptime monitors, deploy hooks and web cron jobs can send the unlock key as a header, <code>Authorization: Bearer &lt;key&gt;</code>, instead of opening the unlock link. Only that request gets through: its address isn&#x27;t added to the list and no email is sent. The Lockdown tab shows the header ready to copy, and <strong>New link</strong> changes it too.</p>
 <h3>New</h3>
-<p><strong>A warning when WordPress&#x27;s own cron is turned off.</strong> If <code>wp-config.php</code> sets <code>DISABLE_WP_CRON</code> while Lockdown is on, the Lockdown tab (and <code>wp shipstatic lockdown status</code>) reminds you that your server cron job must use PHP.</p>
-<h3>Fixed</h3>
-<p><strong>No more false alarms right after turning Lockdown on.</strong> Some servers, LiteSpeed especially, take a few seconds to read the new rules, so the tab could briefly say your address wasn&#x27;t getting in or that the rules weren&#x27;t taking effect. It now keeps checking for about ten seconds before reporting a problem.</p>
-<h3>Fixed</h3>
-<p><strong>Lockdown warnings show their text again.</strong> Two warnings on the Lockdown tab showed only their button.</p>
-<h3>Improved</h3>
-<p><strong>Changing mobile addresses are recognised.</strong> On a mobile connection your address can change from one request to the next. Instead of reporting you locked out, the tab now explains what&#x27;s happening and offers the unlock link or your provider&#x27;s address range.</p>
+<p><strong>A web cron command for Lockdown.</strong> If your host&#x27;s cron jobs can only fetch a web address, the Lockdown tab&#x27;s <strong>Using a server cron job?</strong> section now has a ready-made command that sends the unlock key with the request.</p>

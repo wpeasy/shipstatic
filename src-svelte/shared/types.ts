@@ -581,6 +581,10 @@ export interface LockdownSettings {
   cronDisabled: boolean;
   /** A server cron job command that Lockdown never stops (command-line PHP). */
   cronCommand: string;
+  /** The same job over the web, with the unlock key as a bearer token. */
+  cronWebCommand: string;
+  /** The unlock key as a request header (`Authorization: Bearer <key>`). */
+  bearer: string;
   errors?: string[];
 }
 

@@ -5,6 +5,13 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.3] - 2026-10-26
+
+### Added
+- Lockdown: the unlock key also works as a request header, `Authorization: Bearer <key>`, for scripts and services (uptime monitors, deploy hooks, web cron). It passes that request only — no address added, no cookie, no email. Checked in every layer: the `.htaccess` block (which now also copies the `Authorization` header into `HTTP_AUTHORIZATION`, since PHP-FPM drops it), the gate, and the nginx snippet. "Bearer" matches in any case, the key exactly. The gate strips the header after a match, so an auth plugin (JWT) never takes the key for its own token. `Lockdown\Writer::VERSION` is 4, so existing sites rewrite their files on the next admin visit.
+- Lockdown tab: the header ready to copy under the unlock link, and a web cron command (`wget --header='Authorization: Bearer <key>' …/wp-cron.php`) in "Using a server cron job?". The `DISABLE_WP_CRON` warning and `wp shipstatic lockdown status` mention it.
+- Documentation: Docs → Lockdown, readme FAQ "Can a cron job or script get past Lockdown?", `docs/LOCKDOWN_PLAN.md`, SECURITY_PATTERNS.md §11.
+
 ## [2.4.2] - 2026-10-26
 
 ### Fixed

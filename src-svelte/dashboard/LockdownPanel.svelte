@@ -279,6 +279,11 @@
           <CopyButton text={ld.link} variant="button" label={__('ldCopy')} copiedLabel={__('ldCopied')} oncopy={() => (linkSaved = true)} />
           <ConfirmButton variant="ghost" size="sm" label={__('ldNewLink')} confirmLabel={__('ldNewLinkConfirm')} onconfirm={newLink} disabled={saving} />
         </div>
+        <p class="bs-ld__help">{__('ldBearerHelp')}</p>
+        <div class="bs-ld__link">
+          <Input value={ld.bearer} readonly aria-label={__('ldBearerLabel')} />
+          <CopyButton text={ld.bearer} variant="button" label={__('ldCopy')} copiedLabel={__('ldCopied')} />
+        </div>
         {#if !ld.enabled}
           <Checkbox label={__('ldLinkSaved')} checked={linkSaved ? 1 : 0} onchange={(c) => (linkSaved = c === 1)} />
         {/if}
@@ -424,6 +429,11 @@
           <pre class="bs-ld__pre">{ld.cronCommand}</pre>
           <div class="bs-row">
             <CopyButton text={ld.cronCommand} variant="button" label={__('ldCopy')} copiedLabel={__('ldCopied')} />
+          </div>
+          <p class="bs-ld__help">{__('ldCronWeb')}</p>
+          <pre class="bs-ld__pre">{ld.cronWebCommand}</pre>
+          <div class="bs-row">
+            <CopyButton text={ld.cronWebCommand} variant="button" label={__('ldCopy')} copiedLabel={__('ldCopied')} />
           </div>
           <p class="bs-ld__help">{__('ldCronShared')}</p>
         </div>

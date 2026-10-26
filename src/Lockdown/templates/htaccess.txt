@@ -4,6 +4,10 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 __BS_INHERIT__
+# Hand the Authorization header to PHP (PHP-FPM drops it otherwise), so the
+# gate sees a bearer key too. WordPress's own block does the same.
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 # Certificate renewals. THE_REQUEST, not REQUEST_URI: it stays the same when
 # WordPress's rules rewrite to index.php and Apache runs these rules again.
 # Only plain paths: no ".." or other dot segments, no %-escapes, no query.
@@ -11,6 +15,7 @@ __BS_INHERIT__
 RewriteCond %{THE_REQUEST} !^[A-Z]+\s/\.well-known(?:/[A-Za-z0-9_~-][A-Za-z0-9._~-]*)*/?\s
 RewriteCond %{HTTP:X-BS-Render-Token} !^__BS_TOKEN__$
 RewriteCond %{QUERY_STRING} !(^|&)unlock=__BS_KEY__(&|$)
+RewriteCond %{HTTP:Authorization} !^[Bb][Ee][Aa][Rr][Ee][Rr]\s+__BS_KEY__\s*$
 RewriteCond %{HTTP_COOKIE} !(^|;\s*)__BS_COOKIE_NAME__=__BS_COOKIE__(;|$)
 __BS_IPS__
 __BS_RULE__

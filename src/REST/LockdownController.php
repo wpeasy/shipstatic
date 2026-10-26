@@ -172,6 +172,8 @@ final class LockdownController {
             'nginxSnippet'   => $env['server'] === 'nginx' ? Writer::nginx_snippet() : '',
             'cronDisabled'   => Settings::cron_disabled(),
             'cronCommand'    => Settings::cron_command(),
+            'cronWebCommand' => Settings::cron_web_command(),
+            'bearer'         => 'Authorization: Bearer ' . Settings::key(),
         ];
     }
 }

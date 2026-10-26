@@ -239,6 +239,14 @@ final class Settings {
     }
 
     /**
+     * A server cron job command that fetches wp-cron.php over the web with
+     * the unlock key as a bearer token, for hosts that only offer web cron.
+     */
+    public static function cron_web_command(): string {
+        return 'wget -q -O /dev/null --header=' . escapeshellarg('Authorization: Bearer ' . self::key()) . ' ' . escapeshellarg(site_url('wp-cron.php'));
+    }
+
+    /**
      * A URL safe to write into server config, or ''.
      *
      * @param string $url Destination URL.
