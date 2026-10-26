@@ -577,6 +577,10 @@ export interface LockdownSettings {
   method: 'htaccess' | 'userIni' | 'wordpress';
   layers: { gate: LockdownLayerState; mu: LockdownLayerState; htaccess: LockdownLayerState; userIni: LockdownLayerState; version: LockdownLayerState };
   nginxSnippet: string;
+  /** DISABLE_WP_CRON is set: WP-Cron only runs from a server cron job. */
+  cronDisabled: boolean;
+  /** A server cron job command that Lockdown never stops (command-line PHP). */
+  cronCommand: string;
   errors?: string[];
 }
 

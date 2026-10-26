@@ -269,7 +269,7 @@
         <h3>Turning it on</h3>
         <ol class="bs-docs__steps">
           <li>On the <strong>Lockdown</strong> tab, copy the <strong>unlock link</strong> and keep it somewhere safe (a bookmark, a password manager).</li>
-          <li>Turn <strong>Lockdown</strong> on. Your current address is added to the list, and the tab checks that a stranger really is turned away.</li>
+          <li>Turn <strong>Lockdown</strong> on. Your current address is added to the list, and the tab checks that a stranger really is turned away and that you still get in. Some servers (LiteSpeed especially) take a few seconds to read the new rules, so the tab keeps checking for about ten seconds before it reports a problem.</li>
           <li>Add your team’s addresses, or send them the unlock link: opening it adds the address they’re on.</li>
         </ol>
         <h3>How it locks the site</h3>
@@ -282,6 +282,14 @@
         <p class="bs-docs__muted">
           The site’s own requests still get through, so Process, Sync, scheduled syncs, WP-Cron and Site Health keep working, and so do certificate renewals (<code>/.well-known/</code>). WP-CLI is never affected.
         </p>
+        <h3 id="lockdown-cron">Server cron jobs</h3>
+        <p class="bs-docs__muted">
+          WordPress’s own WP-Cron keeps running, but a <strong>server cron job</strong> that fetches <code>wp-cron.php</code> over the web (<code>wget</code> or <code>curl</code> in cPanel’s Cron Jobs, or an online cron service) is a visitor like any other, so Lockdown turns it away and scheduled tasks stop. That matters most when <code>wp-config.php</code> sets <code>DISABLE_WP_CRON</code>: then the cron job is the only thing running them, and the tab warns you. Run the job with PHP on the command line instead, which Lockdown never stops. The tab’s <em>Using a server cron job?</em> section has the command for this site, for example:
+        </p>
+        <pre class="bs-docs__code">php /home/&lt;account&gt;/public_html/wp/wp-cron.php &gt;/dev/null 2&gt;&amp;1</pre>
+        <p class="bs-docs__muted">
+          If the server can’t find <code>php</code>, use its full path (on cPanel: <code>/usr/local/bin/php</code>). Allowing the server’s own address works too, but on shared hosting that address is shared by every site on the server, which would let them all past Lockdown.
+        </p>
         <h3>If you’re locked out</h3>
         <ul class="bs-docs__list">
           <li>Open your <strong>unlock link</strong>. It adds the address you’re on and keeps you in for 12 hours even if your address changes.</li>
@@ -291,6 +299,7 @@
         </ul>
         <h3>Good to know</h3>
         <ul class="bs-docs__list">
+          <li>On a mobile connection your address can change from one request to the next. When the tab sees that, it says so instead of reporting you locked out, and offers to allow your provider’s range (a <code>/16</code>, or a <code>/64</code> for IPv6). A range lets in everyone on that part of the network (they still need a WordPress login); the unlock link is the tighter alternative.</li>
           <li>Behind a proxy or CDN (Cloudflare, a load balancer) the server may see the proxy’s address instead of yours. The tab warns you when it looks that way; the unlock link still works.</li>
           <li>Anyone with the unlock link can get in. Each address it adds is marked in the list, and the site admin gets an email. <strong>New link</strong> replaces it and signs everyone out of their unlock cookie.</li>
           <li>Nothing on your static site is affected: it never loads anything from the WordPress site.</li>

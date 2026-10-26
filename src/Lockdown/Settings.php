@@ -223,6 +223,22 @@ final class Settings {
     }
 
     /**
+     * Whether WP-Cron only runs from a server cron job (DISABLE_WP_CRON).
+     */
+    public static function cron_disabled(): bool {
+        return defined('DISABLE_WP_CRON') && DISABLE_WP_CRON;
+    }
+
+    /**
+     * A server cron job command that runs WP-Cron with command-line PHP, which
+     * Lockdown never stops. One that fetches wp-cron.php over the web (wget,
+     * curl, a cron service) carries no render token and is turned away.
+     */
+    public static function cron_command(): string {
+        return 'php ' . escapeshellarg(ABSPATH . 'wp-cron.php') . ' >/dev/null 2>&1';
+    }
+
+    /**
      * A URL safe to write into server config, or ''.
      *
      * @param string $url Destination URL.

@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,12 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.2 =
+* Fix: right after turning Lockdown on, the tab could wrongly report a problem on LiteSpeed servers, which take a few seconds to read the new rules. It now keeps checking for about ten seconds first.
+* Lockdown now recognises an address that changes between requests (mobile connections) and suggests the unlock link or your provider's range, instead of reporting you locked out.
+* Lockdown: new help for server cron jobs (run wp-cron.php with PHP, not wget or curl), and a warning when DISABLE_WP_CRON is set.
+* Fix: two Lockdown warnings showed only their button, without their text.
 
 = 2.4.1 =
 * Fix: with "This server", pages in sub-folders returned 404 on cPanel hosts (folders were created with the parent folder's permissions, which the web server can't enter). Test now checks a sub-folder too.

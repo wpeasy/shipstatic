@@ -1,4 +1,12 @@
 <h1>Changelog</h1>
-<h2>v2.4.1 (2026-10-26)</h2>
+<h2>v2.4.2 (2026-10-26)</h2>
+<h3>New</h3>
+<p><strong>Help for server cron jobs with Lockdown.</strong> A cron job that calls <code>wp-cron.php</code> over the web (with wget, curl or an online cron service) is turned away by Lockdown, so scheduled tasks stop. The Lockdown tab now has a <strong>Using a server cron job?</strong> section with the command to run it with PHP instead, which Lockdown never stops.</p>
+<h3>New</h3>
+<p><strong>A warning when WordPress&#x27;s own cron is turned off.</strong> If <code>wp-config.php</code> sets <code>DISABLE_WP_CRON</code> while Lockdown is on, the Lockdown tab (and <code>wp shipstatic lockdown status</code>) reminds you that your server cron job must use PHP.</p>
 <h3>Fixed</h3>
-<p><strong>Pages publish correctly with &quot;This server&quot; on cPanel.</strong> Every page except the home page could show &quot;Not found&quot;, because the folders ShipStatic created couldn&#x27;t be opened by the web server. They&#x27;re now created so the web server can read them, and <strong>Test</strong> checks this too. If you already synced, Sync again after updating.</p>
+<p><strong>No more false alarms right after turning Lockdown on.</strong> Some servers, LiteSpeed especially, take a few seconds to read the new rules, so the tab could briefly say your address wasn&#x27;t getting in or that the rules weren&#x27;t taking effect. It now keeps checking for about ten seconds before reporting a problem.</p>
+<h3>Fixed</h3>
+<p><strong>Lockdown warnings show their text again.</strong> Two warnings on the Lockdown tab showed only their button.</p>
+<h3>Improved</h3>
+<p><strong>Changing mobile addresses are recognised.</strong> On a mobile connection your address can change from one request to the next. Instead of reporting you locked out, the tab now explains what&#x27;s happening and offers the unlock link or your provider&#x27;s address range.</p>

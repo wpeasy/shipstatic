@@ -5,6 +5,18 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.2] - 2026-10-26
+
+### Fixed
+- Lockdown: the check right after turning Lockdown on could report a false failure on LiteSpeed, which takes a few seconds to re-read `.htaccess` ("Your address isn’t getting in", "strangers are only being stopped inside WordPress"). The stranger check and the browser check now retry (up to 5 tries over ~10 s, shown as "Checking…") before reporting.
+- Lockdown: when the browser check still fails and this browser has reached the server from more than one address (mobile connections), the tab says "Your address keeps changing" and offers the unlock link or the provider's range (/16, or /64 for IPv6) instead of reporting you locked out. The 204 from the browser check now feeds the address it came from (`X-ShipStatic-Address`).
+- Lockdown: the warnings with a button ("Your address isn’t getting in", "Files changed") showed only the button — ab-ui's `Alert` renders its children instead of `description`. Their text is back.
+
+### Added
+- Lockdown: **Using a server cron job?** section on the Lockdown tab, with this site's command-line cron command (`php …/wp-cron.php`). A server cron job that fetches `wp-cron.php` over the web (wget, curl, an online cron service) is turned away by Lockdown; WordPress's own WP-Cron and command-line PHP never are.
+- Lockdown: a warning on the tab and in `wp shipstatic lockdown status` when `DISABLE_WP_CRON` is set while Lockdown is on.
+- Documentation: Lockdown "Server cron jobs", the post-enable check, and changing mobile addresses.
+
 ## [2.4.1] - 2026-10-26
 
 ### Fixed

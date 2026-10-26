@@ -170,6 +170,8 @@ final class LockdownController {
             'method'         => Writer::uses_htaccess() ? 'htaccess' : (Writer::uses_user_ini() ? 'userIni' : 'wordpress'),
             'layers'         => Writer::layers(),
             'nginxSnippet'   => $env['server'] === 'nginx' ? Writer::nginx_snippet() : '',
+            'cronDisabled'   => Settings::cron_disabled(),
+            'cronCommand'    => Settings::cron_command(),
         ];
     }
 }

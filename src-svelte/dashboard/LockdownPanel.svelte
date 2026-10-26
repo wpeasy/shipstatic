@@ -24,6 +24,18 @@
   let newLabel = $state('');
   let helpOpen = $state(false);
   let snippetOpen = $state(false);
+  let cronOpen = $state(false);
+  /** Lockdown was just turned on: the checks are retrying while the server reads the new rules. */
+  let settling = $state(false);
+  /** Addresses the server has seen this browser on during this visit. */
+  let seen = $state<string[]>([]);
+  /** The browser check kept failing and this browser's address seems to change between requests. */
+  let addressChanges = $state(false);
+
+  // A server can take a few seconds to read a changed .htaccess (LiteSpeed) or
+  // .user.ini, so the checks after turning Lockdown on retry before reporting.
+  const SETTLE_TRIES = 5;
+  const SETTLE_GAP_MS = 2500;
 
   const columns = [
     { key: 'cidr', header: __('ldColAddress'), width: '30%' },
@@ -74,6 +86,35 @@
     !!ld?.enabled && (ld.layers.gate === 'missing' || ld.layers.mu === 'missing' || ld.layers.htaccess === 'missing' || ld.layers.htaccess === 'notFirst' || ld.layers.userIni === 'missing' || ld.layers.version === 'old'),
   );
 
+  // A range that covers every address this browser was seen on: the /16 for
+  // IPv4 (mobile networks hand out addresses across one), the /64 for IPv6.
+  let suggestedRange = $derived.by((): string => {
+    if (!addressChanges || seen.length === 0) return '';
+    if (seen.every((a) => /^\d+\.\d+\.\d+\.\d+$/.test(a))) {
+      const prefix = seen[0].split('.').slice(0, 2).join('.');
+      return seen.every((a) => a.startsWith(prefix + '.')) ? `${prefix}.0.0/16` : '';
+    }
+    const groups = seen.map(v6Groups);
+    if (groups.some((g) => g === null)) return '';
+    const prefix = (groups[0] as string[]).slice(0, 4).join(':');
+    return groups.every((g) => (g as string[]).slice(0, 4).join(':') === prefix) ? `${prefix}::/64` : '';
+  });
+
+  /** The eight groups of an IPv6 address, or null. */
+  function v6Groups(address: string): string[] | null {
+    const halves = address.toLowerCase().split('::');
+    if (!address.includes(':') || address.includes('.') || halves.length > 2) return null;
+    const head = halves[0] ? halves[0].split(':') : [];
+    const tail = halves.length === 2 && halves[1] ? halves[1].split(':') : [];
+    const fill = halves.length === 2 ? 8 - head.length - tail.length : 0;
+    const all = [...head, ...Array<string>(Math.max(0, fill)).fill('0'), ...tail];
+    return all.length === 8 ? all.map((g) => g.replace(/^0+(?=.)/, '')) : null;
+  }
+
+  function noteAddress(address: string): void {
+    if (address && !seen.includes(address)) seen = [...seen, address];
+  }
+
   function when(ts: number): string {
     return ts ? new Date(ts * 1000).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '—';
   }
@@ -81,6 +122,7 @@
   function take(next: LockdownSettings): void {
     problems = next.errors ?? [];
     ld = next;
+    noteAddress(next.yourIp);
   }
 
   async function load(): Promise<void> {
@@ -92,28 +134,78 @@
     }
   }
 
-  async function runProbe(): Promise<void> {
-    probing = true;
+  async function fetchProbe(): Promise<LockdownProbe> {
     try {
-      probe = await api.probeLockdown();
+      return await api.probeLockdown();
     } catch (e) {
-      probe = { result: 'error', address: '', message: (e as Error).message };
-    } finally {
-      probing = false;
+      return { result: 'error', address: '', message: (e as Error).message };
     }
   }
 
+  async function runProbe(): Promise<void> {
+    probing = true;
+    probe = await fetchProbe();
+    probing = false;
+  }
+
+  /** Whether a probe found the strongest layer this server can have working. */
+  function probeSettled(p: LockdownProbe | null): boolean {
+    if (!p) return false;
+    if (p.result === 'server' || p.result === 'gate' || p.result === 'allowed') return true;
+    return p.result === 'wordpress' && ld?.method === 'wordpress';
+  }
+
   // Ask for the home page as a stranger with this browser's address would:
-  // no cookies, so only the address is tested; no redirects followed.
-  async function checkBrowser(): Promise<void> {
-    if (!ld) return;
+  // no cookies, so only the address is tested; no redirects followed. The 204
+  // says which address the server saw.
+  async function checkBrowser(): Promise<boolean> {
+    if (!ld) return false;
     try {
       const url = new URL(ld.checkUrl);
       url.searchParams.set('shipstatic_lockdown_check', Math.random().toString(36).slice(2));
       const res = await fetch(url.toString(), { credentials: 'omit', redirect: 'manual', cache: 'no-store' });
-      browserIn = res.status === 204;
+      if (res.status !== 204) return false;
+      noteAddress(res.headers.get('X-ShipStatic-Address') ?? '');
+      return true;
     } catch {
-      browserIn = false;
+      return false;
+    }
+  }
+
+  // Run both checks, retrying while either fails, before reporting.
+  async function settle(tries = SETTLE_TRIES): Promise<void> {
+    settling = true;
+    probing = true;
+    browserIn = null;
+    probe = null;
+    addressChanges = false;
+    let inOk = false;
+    let found: LockdownProbe | null = null;
+    for (let i = 0; i < tries && ld?.enabled; i++) {
+      if (i > 0) await new Promise((r) => setTimeout(r, SETTLE_GAP_MS));
+      inOk = inOk || (await checkBrowser());
+      if (!probeSettled(found)) found = await fetchProbe();
+      if (inOk && probeSettled(found)) break;
+    }
+    if (!inOk && ld?.enabled) {
+      // Which address does this browser have now? (The dashboard's own
+      // requests get in on the unlock cookie.)
+      try {
+        take(await api.getLockdown());
+      } catch {
+        // Keep what we have.
+      }
+      addressChanges = seen.length > 1;
+    }
+    probe = found;
+    browserIn = inOk;
+    probing = false;
+    settling = false;
+  }
+
+  async function allowRange(range: string): Promise<void> {
+    if (await save({ add: { cidr: range, label: __('ldRangeLabel') } })) {
+      await settle(1);
     }
   }
 
@@ -134,9 +226,9 @@
   async function setEnabled(on: boolean): Promise<void> {
     browserIn = null;
     probe = null;
+    addressChanges = false;
     if (!(await save({ enabled: on })) || !on || !ld?.enabled) return;
-    await checkBrowser();
-    runProbe();
+    await settle();
   }
 
   async function addEntry(): Promise<void> {
@@ -205,7 +297,7 @@
           {#if ld.enabled}
             <Tag size="sm" tone={ld.yourIpAllowed ? 'success' : 'warning'} variant="soft" label={ld.yourIpAllowed ? __('ldAllowed') : __('ldNotAllowed')} />
             {#if !ld.yourIpAllowed && ld.yourIp}
-              <Button variant="ghost" size="sm" onclick={() => save({ add: { cidr: ld?.yourIp ?? '', label: __('ldMyAddressLabel') } }).then(() => (browserIn = null))} disabled={saving}>{__('ldAddMine')}</Button>
+              <Button variant="ghost" size="sm" onclick={() => save({ add: { cidr: ld?.yourIp ?? '', label: __('ldMyAddressLabel') } }).then((ok) => (ok ? settle(1) : undefined))} disabled={saving}>{__('ldAddMine')}</Button>
             {/if}
           {/if}
         </p>
@@ -215,16 +307,36 @@
 
         {#if ld.enabled}
           <div class="bs-ld__status">
-            <Status status="ok" label={__('ldStatusOn')} />
-            <span class="bs-ld__help">
-              {ld.method === 'htaccess' ? __('ldMethodHtaccess') : ld.method === 'userIni' ? __('ldMethodUserIni') : __('ldMethodWordPress')}
-            </span>
+            {#if settling}
+              <Status status="info" pulse label={__('ldChecking')} />
+              <span class="bs-ld__help">{__('ldSettling')}</span>
+            {:else}
+              <Status status="ok" label={__('ldStatusOn')} />
+              <span class="bs-ld__help">
+                {ld.method === 'htaccess' ? __('ldMethodHtaccess') : ld.method === 'userIni' ? __('ldMethodUserIni') : __('ldMethodWordPress')}
+              </span>
+            {/if}
           </div>
 
-          {#if browserIn === false}
-            <Alert tone="danger" title={__('ldBrowserBlockedTitle')} description={__('ldBrowserBlocked')}>
-              <div class="bs-row">
-                <Button variant="secondary" size="sm" onclick={() => setEnabled(false)} disabled={saving}>{__('ldTurnOff')}</Button>
+          {#if browserIn === false && addressChanges}
+            <Alert tone="warning" title={__('ldAddressChangesTitle')}>
+              <div class="bs-stack bs-stack--sm">
+                <p>{__f('ldAddressChanges', seen.join(', '))}</p>
+                <div class="bs-row">
+                  {#if suggestedRange}
+                    <Button variant="secondary" size="sm" onclick={() => allowRange(suggestedRange)} disabled={saving}>{__f('ldAllowRange', suggestedRange)}</Button>
+                  {/if}
+                  <CopyButton text={ld.link} variant="button" label={__('ldCopyLink')} copiedLabel={__('ldCopied')} />
+                </div>
+              </div>
+            </Alert>
+          {:else if browserIn === false}
+            <Alert tone="danger" title={__('ldBrowserBlockedTitle')}>
+              <div class="bs-stack bs-stack--sm">
+                <p>{__('ldBrowserBlocked')}</p>
+                <div class="bs-row">
+                  <Button variant="secondary" size="sm" onclick={() => setEnabled(false)} disabled={saving}>{__('ldTurnOff')}</Button>
+                </div>
               </div>
             </Alert>
           {/if}
@@ -233,16 +345,30 @@
             <Alert tone={probeNote.tone} description={probeNote.text} />
           {/if}
 
+          {#if ld.cronDisabled}
+            <Alert tone="warning">
+              <div class="bs-stack bs-stack--sm">
+                <p>{__('ldCronDisabled')}</p>
+                <div class="bs-row">
+                  <Button variant="secondary" size="sm" onclick={() => (cronOpen = true)}>{__('ldCronHeading')}</Button>
+                </div>
+              </div>
+            </Alert>
+          {/if}
+
           {#if filesNeedWriting}
-            <Alert tone="warning" description={__('ldFilesChanged')}>
-              <div class="bs-row">
-                <Button variant="secondary" size="sm" onclick={() => save({}).then(runProbe)} disabled={saving}>{__('ldWriteAgain')}</Button>
+            <Alert tone="warning">
+              <div class="bs-stack bs-stack--sm">
+                <p>{__('ldFilesChanged')}</p>
+                <div class="bs-row">
+                  <Button variant="secondary" size="sm" onclick={() => save({}).then(runProbe)} disabled={saving}>{__('ldWriteAgain')}</Button>
+                </div>
               </div>
             </Alert>
           {/if}
 
           <div class="bs-row">
-            <Button variant="ghost" size="sm" onclick={runProbe} disabled={probing}>{probing ? __('ldChecking') : __('ldCheckAgain')}</Button>
+            <Button variant="ghost" size="sm" onclick={() => settle(1)} disabled={probing}>{probing ? __('ldChecking') : __('ldCheckAgain')}</Button>
           </div>
         {:else}
           <Status status="neutral" label={__('ldStatusOff')} />
@@ -291,6 +417,17 @@
           </div>
         </Collapsible>
       {/if}
+
+      <Collapsible title={__('ldCronHeading')} bind:open={cronOpen}>
+        <div class="bs-stack bs-stack--sm">
+          <p class="bs-ld__help">{__('ldCronHelp')}</p>
+          <pre class="bs-ld__pre">{ld.cronCommand}</pre>
+          <div class="bs-row">
+            <CopyButton text={ld.cronCommand} variant="button" label={__('ldCopy')} copiedLabel={__('ldCopied')} />
+          </div>
+          <p class="bs-ld__help">{__('ldCronShared')}</p>
+        </div>
+      </Collapsible>
 
       <Collapsible title={__('ldHelpHeading')} bind:open={helpOpen}>
         <!-- eslint-disable svelte/no-at-html-tags -- trusted PHP dictionary -->

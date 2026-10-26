@@ -743,6 +743,9 @@ final class SyncCommand {
                 foreach (LockdownWriter::layers() as $layer => $state) {
                     \WP_CLI::log(sprintf('  %-9s %s', $layer, $state));
                 }
+                if ($s['enabled'] && LockdownSettings::cron_disabled()) {
+                    \WP_CLI::warning('DISABLE_WP_CRON is set: scheduled tasks need a server cron job. Lockdown turns away one that fetches wp-cron.php over the web (wget, curl); run it with PHP instead: ' . LockdownSettings::cron_command());
+                }
                 if (LockdownWriter::environment()['server'] === '') {
                     \WP_CLI::warning('The server type is not known yet: open the Lockdown tab once so .htaccess / .user.ini can be written.');
                 }
