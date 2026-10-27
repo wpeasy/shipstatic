@@ -1,20 +1,14 @@
 <h1>Changelog</h1>
-<h2>v2.4.5 (2026-10-27)</h2>
+<h2>v2.4.6 (2026-10-27)</h2>
 <h3>Fixed</h3>
-<p><strong>Your logo link no longer points at the current page.</strong> Bricks writes a link to your home page without a trailing slash (<code>https://example.com</code>), and the export turned it into an empty link, which browsers treat as &quot;this page&quot;. On your About page, the logo linked to the About page. It now goes to your home page again. After updating, use <strong>Process all</strong> once so every page picks up the fix.</p>
+<p><strong>Tracked outbound links work on your static site.</strong> If a URL manager or link-tracking plugin (Pretty Links, ThirstyAffiliates and similar) gives your outbound links an address on your site, such as <code>/go/partner</code>, those links used to lead to a missing page on the static site. They now go straight to where they redirect. Clicks from the static site aren&#x27;t counted, because the tracker runs inside WordPress.</p>
 <h3>Fixed</h3>
-<p><strong>Links to your site inside page scripts and structured data are no longer corrupted.</strong> On sites published at the root of a domain, these links were left with a stray backslash, which could break the script or data around them.</p>
+<p><strong>Clearer reason for skipped redirects.</strong> A page skipped because it redirects to another site now says where it goes and why it isn&#x27;t exported, instead of just &quot;HTTP 301&quot;. In <strong>View processed list</strong>, such links are marked &quot;Redirects to another site&quot;.</p>
 <h3>Fixed</h3>
-<p><strong>Move WordPress into /wp now works on nginx servers.</strong> nginx needs one extra rule before WordPress can live in <code>/wp</code>; without it, the dashboard stopped loading after the move (&quot;Unexpected token &#x27;&lt;&#x27; … is not valid JSON&quot;) and the Undo button couldn&#x27;t be reached. The move now shows the rule ready to copy, checks that your server is using it, and only moves WordPress once it is.</p>
+<p><strong>&quot;This server&quot; can publish to another domain.</strong> When WordPress sits at the root of its domain, the folder wizard used to offer only &quot;Move WordPress into /wp&quot;. It now also lets you publish to another domain or subdomain (such as <code>static.example.com</code>) whose folder is beside WordPress, and suggests that folder for you.</p>
 <h3>Fixed</h3>
-<p><strong>Undo the move works again.</strong> It refused with &quot;wp-includes already exists&quot;, because your published static site contains its own copies of some WordPress files.</p>
+<p><strong>The &quot;This server&quot; wizard finishes properly.</strong> After <strong>Create and test</strong> it no longer jumps back to the first step, and it switches the destination on so you can Sync straight away.</p>
 <h3>Fixed</h3>
-<p><strong>Sync is ready straight after moving WordPress into /wp</strong> — no connection test needed first.</p>
+<p><strong>Moving WordPress into /wp, or back, now asks for a fresh Process.</strong> Previously the old render was reused, so after an Undo the sitemap still listed <code>/wp/</code> addresses, and the dashboard showed &quot;In sync&quot; when it wasn&#x27;t.</p>
 <h3>Fixed</h3>
-<p><strong>Sites on a non-standard port</strong> (such as <code>:8080</code>) no longer get broken addresses after moving WordPress into /wp.</p>
-<h3>Fixed</h3>
-<p><strong>Process and Sync no longer wait forever at 0 on some VPS servers.</strong> The dashboard&#x27;s background task couldn&#x27;t find WP-CLI on servers where PHP runs without the usual command paths.</p>
-<h3>Fixed</h3>
-<p><strong>The Lockdown check on nginx answers straight away</strong> instead of taking about 25 seconds after you turn Lockdown on.</p>
-<h3>Improved</h3>
-<p><strong>The &quot;This server&quot; folder wizard&#x27;s messages</strong> now show as proper notices instead of plain text.</p>
+<p><strong>The optional nginx Lockdown snippet no longer loops.</strong> With WordPress in <code>/wp</code>, it now blocks only WordPress&#x27;s own addresses and sends visitors to the matching page on your static site.</p>

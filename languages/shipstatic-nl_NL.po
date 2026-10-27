@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shipstatic\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shipstatic\n"
-"POT-Creation-Date: 2026-10-27T01:32:49+00:00\n"
+"POT-Creation-Date: 2026-10-27T04:24:40+00:00\n"
 "PO-Revision-Date: 2026-06-22 00:00+0000\n"
 "Last-Translator: Claude Code (machine translation)\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -202,7 +202,7 @@ msgstr ""
 " wijzigen, zonder iets naar een bestemming te pushen."
 
 #: src/Abilities/AbilityRegistry.php:224 src/Support/I18n.php:270
-#: src/Support/I18n.php:647
+#: src/Support/I18n.php:650
 msgid "Sync"
 msgstr "Synchroniseren"
 
@@ -486,7 +486,7 @@ msgid "Hide button"
 msgstr "Knop verbergen"
 
 #: src/Bricks/SearchElement.php:174 src/Bricks/SearchElement.php:191
-#: src/Support/I18n.php:771
+#: src/Support/I18n.php:774
 msgid "Text"
 msgstr "Tekst"
 
@@ -670,15 +670,15 @@ msgstr ""
 "PHP kan niet naar die map schrijven. Controleer de rechten, of vraag het je "
 "host."
 
-#: src/Deploy/ServerFolder.php:224
+#: src/Deploy/ServerFolder.php:236
 msgid "Couldn’t create the folder."
 msgstr "Kon de map niet aanmaken."
 
-#: src/Deploy/ServerFolder.php:227
+#: src/Deploy/ServerFolder.php:239
 msgid "Couldn’t write to the folder."
 msgstr "Kon niet naar de map schrijven."
 
-#: src/Deploy/ServerFolder.php:265
+#: src/Deploy/ServerFolder.php:277
 msgid ""
 "Enter the address the folder is served at (Destination URL) so Test can "
 "check it."
@@ -686,18 +686,18 @@ msgstr ""
 "Voer het adres in waarop de map wordt geserveerd (bestemmings-URL), zodat "
 "Testen het kan controleren."
 
-#: src/Deploy/ServerFolder.php:275
+#: src/Deploy/ServerFolder.php:287
 msgid "Couldn’t write a test file into the folder."
 msgstr "Kon geen testbestand in de map schrijven."
 
 #. translators: 1: Destination URL, 2: error.
-#: src/Deploy/ServerFolder.php:288
+#: src/Deploy/ServerFolder.php:300
 #, php-format
 msgid "Couldn’t open %1$s: %2$s"
 msgstr "Kon %1$s niet openen: %2$s"
 
 #. translators: 1: Destination URL, 2: HTTP status code.
-#: src/Deploy/ServerFolder.php:292
+#: src/Deploy/ServerFolder.php:304
 #, php-format
 msgid ""
 "%1$s doesn’t serve this folder yet (a test file came back as HTTP %2$d). "
@@ -848,13 +848,13 @@ msgid "There is no move to undo."
 msgstr "Er is geen verplaatsing om ongedaan te maken."
 
 #. translators: %s: file name.
-#: src/Deploy/WordPressMove.php:412
+#: src/Deploy/WordPressMove.php:418
 #, php-format
 msgid "%s already exists at the root, so WordPress can’t move back."
 msgstr "%s bestaat al in de root, dus WordPress kan niet terug."
 
 #. translators: %s: WordPress address.
-#: src/Deploy/WordPressMove.php:483
+#: src/Deploy/WordPressMove.php:492
 #, php-format
 msgid "Moving WordPress back to %s. Log in there again."
 msgstr "WordPress wordt teruggezet naar %s. Log daar opnieuw in."
@@ -1162,15 +1162,15 @@ msgstr "Jij (toen Lockdown werd aangezet)"
 msgid "Site search is not available."
 msgstr "Sitezoeken is niet beschikbaar."
 
-#: src/REST/ServerFolderController.php:100
+#: src/REST/ServerFolderController.php:101
 msgid "Confirm that you have a backup first."
 msgstr "Bevestig eerst dat je een back-up hebt."
 
-#: src/REST/ServerFolderController.php:171
+#: src/REST/ServerFolderController.php:172
 msgid "The address must start with https:// (or http://)."
 msgstr "Het adres moet beginnen met https:// (of http://)."
 
-#: src/REST/ServerFolderController.php:178
+#: src/REST/ServerFolderController.php:179
 msgid ""
 "That folder already has an index.html. Confirm that your home page may "
 "replace it, or choose “It’s my static site already”."
@@ -1178,12 +1178,12 @@ msgstr ""
 "Die map heeft al een index.html. Bevestig dat je homepage die mag vervangen,"
 " of kies ‘Het is al mijn statische site’."
 
-#: src/REST/ServerFolderController.php:192
+#: src/REST/ServerFolderController.php:193
 msgid "Folder ready."
 msgstr "Map klaar."
 
 #. translators: %d: number of files.
-#: src/REST/ServerFolderController.php:198
+#: src/REST/ServerFolderController.php:199
 #, php-format
 msgid ""
 "Folder ready. All %d files of your site are already there and match, so it’s"
@@ -1193,7 +1193,7 @@ msgstr ""
 "alles is gesynchroniseerd."
 
 #. translators: 1: matching files, 2: files to write.
-#: src/REST/ServerFolderController.php:200
+#: src/REST/ServerFolderController.php:201
 #, php-format
 msgid ""
 "Folder ready. %1$d files already match; %2$d will be written on the next "
@@ -1202,7 +1202,7 @@ msgstr ""
 "Map klaar. %1$d bestanden komen al overeen; %2$d worden bij de volgende "
 "synchronisatie geschreven."
 
-#: src/REST/ServerFolderController.php:202
+#: src/REST/ServerFolderController.php:203
 msgid ""
 "Process the pages first and set it up again to skip rewriting files that are"
 " already there. Otherwise the first Sync rewrites them (same content, "
@@ -1212,16 +1212,16 @@ msgstr ""
 "al staan niet opnieuw worden geschreven. Anders schrijft de eerste "
 "synchronisatie ze opnieuw (zelfde inhoud, er gaat niets verloren)."
 
-#: src/REST/StatusController.php:170
+#: src/REST/StatusController.php:171
 msgid "(no title)"
 msgstr "(geen titel)"
 
-#: src/REST/StatusController.php:219
+#: src/REST/StatusController.php:220
 msgid "Form submit action points to this site (PHP/REST callback won’t work)"
 msgstr ""
 "Formulierverzendactie verwijst naar deze site (PHP/REST-callback werkt niet)"
 
-#: src/REST/StatusController.php:220
+#: src/REST/StatusController.php:221
 msgid ""
 "Search form posts back to this site — turn on Site search in Settings to "
 "make it work statically"
@@ -1229,27 +1229,34 @@ msgstr ""
 "Het zoekformulier verstuurt naar deze site — zet Zoeken op de site aan in "
 "Instellingen om het statisch te laten werken"
 
-#: src/REST/StatusController.php:221
+#: src/REST/StatusController.php:222
 msgid "Links to a PHP script on this site"
 msgstr "Koppelt naar een PHP-script op deze site"
 
-#: src/REST/StatusController.php:246
+#: src/REST/StatusController.php:249
 msgid "Not published"
 msgstr "Niet gepubliceerd"
 
-#: src/REST/StatusController.php:253
+#: src/REST/StatusController.php:256
 msgid "Plain permalinks"
 msgstr "Eenvoudige permalinks"
 
-#: src/REST/StatusController.php:258
+#. translators: %s: the URL it redirects to.
+#: src/REST/StatusController.php:263
+#, php-format
+msgid "Redirects to another site (%s) — links to it go straight there"
+msgstr ""
+"Leidt om naar een andere site (%s) — links ernaar gaan rechtstreeks daarheen"
+
+#: src/REST/StatusController.php:268
 msgid "Not included"
 msgstr "Niet opgenomen"
 
-#: src/REST/StatusController.php:260 src/REST/StatusController.php:266
+#: src/REST/StatusController.php:270 src/REST/StatusController.php:276
 msgid "Not rendered"
 msgstr "Niet gerenderd"
 
-#: src/REST/StatusController.php:270
+#: src/REST/StatusController.php:280
 msgid "Not linked"
 msgstr "Niet gekoppeld"
 
@@ -1412,11 +1419,11 @@ msgstr "Voorbereiden…"
 msgid "Creating gzip files…"
 msgstr "Gzip-bestanden maken…"
 
-#: src/Support/I18n.php:109 src/Support/I18n.php:825
+#: src/Support/I18n.php:109 src/Support/I18n.php:828
 msgid "Packaging…"
 msgstr "Inpakken…"
 
-#: src/Support/I18n.php:110 src/Support/I18n.php:993
+#: src/Support/I18n.php:110 src/Support/I18n.php:996
 msgid "Saving…"
 msgstr "Opslaan…"
 
@@ -1424,7 +1431,7 @@ msgstr "Opslaan…"
 msgid "Export ready"
 msgstr "Export gereed"
 
-#: src/Support/I18n.php:113 src/Support/I18n.php:991
+#: src/Support/I18n.php:113 src/Support/I18n.php:994
 msgid "Cancel"
 msgstr "Annuleren"
 
@@ -1452,7 +1459,7 @@ msgstr "Publiceer deze pagina om hem te synchroniseren."
 msgid "Enable a destination to sync this page."
 msgstr "Schakel een bestemming in om deze pagina te synchroniseren."
 
-#: src/Support/I18n.php:130 src/Support/I18n.php:794
+#: src/Support/I18n.php:130 src/Support/I18n.php:797
 msgid "Not pushed"
 msgstr "Niet verzonden"
 
@@ -1520,11 +1527,11 @@ msgstr ""
 "hem heeft, komt binnen: houd hem privé en sla hem op als bladwijzer in "
 "plaats van hem openbaar te delen."
 
-#: src/Support/I18n.php:154 src/Support/I18n.php:995
+#: src/Support/I18n.php:154 src/Support/I18n.php:998
 msgid "Copy"
 msgstr "Kopiëren"
 
-#: src/Support/I18n.php:155 src/Support/I18n.php:996
+#: src/Support/I18n.php:155 src/Support/I18n.php:999
 msgid "Copied"
 msgstr "Gekopieerd"
 
@@ -1743,11 +1750,11 @@ msgstr "Bereik van mijn provider"
 msgid "Copy the unlock link"
 msgstr "Ontgrendellink kopiëren"
 
-#: src/Support/I18n.php:196 src/Support/I18n.php:899
+#: src/Support/I18n.php:196 src/Support/I18n.php:902
 msgid "Check again"
 msgstr "Opnieuw controleren"
 
-#: src/Support/I18n.php:197 src/Support/I18n.php:645 src/Support/I18n.php:900
+#: src/Support/I18n.php:197 src/Support/I18n.php:648 src/Support/I18n.php:903
 msgid "Checking…"
 msgstr "Controleren…"
 
@@ -1783,11 +1790,11 @@ msgstr "Toegevoegd"
 msgid "Label, e.g. Office"
 msgstr "Label, bijv. Kantoor"
 
-#: src/Support/I18n.php:205 src/Support/I18n.php:952
+#: src/Support/I18n.php:205 src/Support/I18n.php:955
 msgid "Add"
 msgstr "Toevoegen"
 
-#: src/Support/I18n.php:206 src/Support/I18n.php:702
+#: src/Support/I18n.php:206 src/Support/I18n.php:705
 msgid "Remove"
 msgstr "Verwijderen"
 
@@ -2109,7 +2116,7 @@ msgstr ""
 "volledige synchronisatie als de knop Synchroniseren, naar de gekozen "
 "bestemmingen."
 
-#: src/Support/I18n.php:283 src/Support/I18n.php:643
+#: src/Support/I18n.php:283 src/Support/I18n.php:646
 msgid "Enabled"
 msgstr "Ingeschakeld"
 
@@ -2133,7 +2140,7 @@ msgstr "Wekelijks"
 msgid "Monthly"
 msgstr "Maandelijks"
 
-#: src/Support/I18n.php:290 src/Support/I18n.php:789
+#: src/Support/I18n.php:290 src/Support/I18n.php:792
 msgid "All destinations"
 msgstr "Alle bestemmingen"
 
@@ -2142,7 +2149,7 @@ msgid "Every enabled destination, including ones you add later."
 msgstr ""
 "Elke ingeschakelde bestemming, ook bestemmingen die je later toevoegt."
 
-#: src/Support/I18n.php:292 src/Support/I18n.php:791
+#: src/Support/I18n.php:292 src/Support/I18n.php:794
 msgid "disabled"
 msgstr "uitgeschakeld"
 
@@ -2167,11 +2174,11 @@ msgid "In progress"
 msgstr "Bezig"
 
 #: src/Support/I18n.php:299 src/Support/I18n.php:511 src/Support/I18n.php:538
-#: src/Support/I18n.php:820 src/Support/I18n.php:821
+#: src/Support/I18n.php:823 src/Support/I18n.php:824
 msgid "Done"
 msgstr "Klaar"
 
-#: src/Support/I18n.php:300 src/Support/I18n.php:822
+#: src/Support/I18n.php:300 src/Support/I18n.php:825
 msgid "Failed"
 msgstr "Mislukt"
 
@@ -2179,7 +2186,7 @@ msgstr "Mislukt"
 msgid "Skipped"
 msgstr "Overgeslagen"
 
-#: src/Support/I18n.php:302 src/Support/I18n.php:823 src/Support/I18n.php:830
+#: src/Support/I18n.php:302 src/Support/I18n.php:826 src/Support/I18n.php:833
 msgid "Cancelled"
 msgstr "Geannuleerd"
 
@@ -2221,7 +2228,7 @@ msgstr "Synchronisatie bevestigen?"
 msgid "Sync all destinations?"
 msgstr "Alle bestemmingen synchroniseren?"
 
-#: src/Support/I18n.php:321 src/Support/I18n.php:901
+#: src/Support/I18n.php:321 src/Support/I18n.php:904
 msgid "Destination"
 msgstr "Bestemming"
 
@@ -2483,7 +2490,7 @@ msgstr "Opgenomen"
 msgid "Excluded"
 msgstr "Uitgesloten"
 
-#: src/Support/I18n.php:383 src/Support/I18n.php:990
+#: src/Support/I18n.php:383 src/Support/I18n.php:993
 #: templates/admin/docs.php:23 templates/admin/page.php:23
 msgid "Loading…"
 msgstr "Laden…"
@@ -2496,7 +2503,7 @@ msgstr "Er staan nog geen pagina's in de export."
 msgid "Every published page is in the export."
 msgstr "Elke gepubliceerde pagina staat in de export."
 
-#: src/Support/I18n.php:386 src/Support/I18n.php:679 src/Support/I18n.php:745
+#: src/Support/I18n.php:386 src/Support/I18n.php:682 src/Support/I18n.php:748
 msgid "Page"
 msgstr "Pagina"
 
@@ -2605,7 +2612,7 @@ msgstr "Alleen de pagina's die je op 'Opnemen' zet (per bericht)."
 msgid "Transport"
 msgstr "Transport"
 
-#: src/Support/I18n.php:426 src/Support/I18n.php:905
+#: src/Support/I18n.php:426 src/Support/I18n.php:908
 msgid "Compression"
 msgstr "Compressie"
 
@@ -2613,7 +2620,7 @@ msgstr "Compressie"
 msgid "Server target"
 msgstr "Doelserver"
 
-#: src/Support/I18n.php:428 src/Support/I18n.php:773
+#: src/Support/I18n.php:428 src/Support/I18n.php:776
 msgid "Links"
 msgstr "Koppelingen"
 
@@ -3031,7 +3038,7 @@ msgstr ""
 msgid "Where"
 msgstr "Waar"
 
-#: src/Support/I18n.php:509 src/Support/I18n.php:644
+#: src/Support/I18n.php:509 src/Support/I18n.php:647
 msgid "Check"
 msgstr "Controleren"
 
@@ -3190,12 +3197,30 @@ msgstr ""
 "Zet Lockdown aan (tabblad Lockdown) zodat alleen je redacteuren WordPress "
 "kunnen bereiken."
 
-#: src/Support/I18n.php:542 src/Support/I18n.php:998
+#: src/Support/I18n.php:542 src/Support/I18n.php:1001
 msgid "Close"
 msgstr "Sluiten"
 
 #. translators: 1: site address, 2: new WordPress address.
 #: src/Support/I18n.php:544
+msgid ""
+"Or leave WordPress where it is and publish to another domain or subdomain "
+"(such as static.example.com) whose folder sits beside WordPress on this "
+"server."
+msgstr ""
+"Of laat WordPress staan waar het staat en publiceer naar een ander domein of"
+" subdomein (zoals static.example.com) waarvan de map naast WordPress op deze"
+" server staat."
+
+#: src/Support/I18n.php:545
+msgid "Publish to another domain"
+msgstr "Publiceren naar een ander domein"
+
+#: src/Support/I18n.php:546
+msgid "← Move WordPress into /wp instead"
+msgstr "← WordPress in plaats daarvan naar /wp verplaatsen"
+
+#: src/Support/I18n.php:547
 #, php-format
 msgid ""
 "WordPress is installed at the root of %1$s, so the static site has nowhere "
@@ -3207,7 +3232,7 @@ msgstr ""
 "verplaatsen: WordPress staat dan op %2$s en de statische site in de root."
 
 #. translators: %s: new WordPress address.
-#: src/Support/I18n.php:546
+#: src/Support/I18n.php:549
 #, php-format
 msgid ""
 "WordPress’s files move into /wp and its address becomes %s. Links in your "
@@ -3217,7 +3242,7 @@ msgstr ""
 "content worden aangepast."
 
 #. translators: %s: static site address.
-#: src/Support/I18n.php:548
+#: src/Support/I18n.php:551
 #, php-format
 msgid ""
 "This destination switches to “This server” and will publish the static site "
@@ -3226,7 +3251,7 @@ msgstr ""
 "Deze bestemming schakelt over naar ‘Deze server’ en publiceert de statische "
 "site op %s. Tot je eerste synchronisatie staat daar een tijdelijke pagina."
 
-#: src/Support/I18n.php:549
+#: src/Support/I18n.php:552
 msgid ""
 "You log in again at the new address (login cookies belong to the old one), "
 "then run Sync."
@@ -3234,7 +3259,7 @@ msgstr ""
 "Je logt opnieuw in op het nieuwe adres (inlogcookies horen bij het oude) en "
 "voert daarna Synchroniseren uit."
 
-#: src/Support/I18n.php:550
+#: src/Support/I18n.php:553
 msgid ""
 "It can be undone from the dashboard while the notice about the move is "
 "shown."
@@ -3242,24 +3267,24 @@ msgstr ""
 "Het kan ongedaan worden gemaakt vanuit het dashboard zolang de melding over "
 "de verplaatsing wordt getoond."
 
-#: src/Support/I18n.php:551
+#: src/Support/I18n.php:554
 msgid "I have a backup of this site’s files and database"
 msgstr "Ik heb een back-up van de bestanden en de database van deze site"
 
-#: src/Support/I18n.php:552
+#: src/Support/I18n.php:555
 msgid "Move WordPress into /wp"
 msgstr "WordPress naar /wp verplaatsen"
 
-#: src/Support/I18n.php:553
+#: src/Support/I18n.php:556
 msgid "Moving…"
 msgstr "Verplaatsen…"
 
-#: src/Support/I18n.php:554
+#: src/Support/I18n.php:557
 msgid "WordPress moved into /wp"
 msgstr "WordPress verplaatst naar /wp"
 
 #. translators: 1: new WordPress address, 2: static site address.
-#: src/Support/I18n.php:556
+#: src/Support/I18n.php:559
 #, php-format
 msgid ""
 "WordPress is now at %1$s and this server publishes the static site at %2$s. "
@@ -3270,11 +3295,11 @@ msgstr ""
 "%2$s. Voer Synchroniseren uit om de site live te zetten en zet daarna "
 "Lockdown aan, zodat alleen je redacteuren WordPress bereiken."
 
-#: src/Support/I18n.php:557
+#: src/Support/I18n.php:560
 msgid "nginx"
 msgstr "nginx"
 
-#: src/Support/I18n.php:558
+#: src/Support/I18n.php:561
 msgid ""
 "Add this block inside this site’s server { } block in nginx (next to its "
 "other location blocks), reload nginx, then press Check again. Without it, "
@@ -3287,51 +3312,51 @@ msgstr ""
 "(ook die van dit dashboard) na de verhuizing niet meer. Je host kan het voor"
 " je toevoegen."
 
-#: src/Support/I18n.php:559
+#: src/Support/I18n.php:562
 msgid "nginx is ready: addresses under /wp/ reach WordPress."
 msgstr "nginx is klaar: adressen onder /wp/ bereiken WordPress."
 
 #. translators: %s: error message.
-#: src/Support/I18n.php:561
+#: src/Support/I18n.php:564
 #, php-format
 msgid "The check couldn’t reach the site: %s"
 msgstr "De controle kon de site niet bereiken: %s"
 
-#: src/Support/I18n.php:562
+#: src/Support/I18n.php:565
 msgid "Keep it"
 msgstr "Behouden"
 
-#: src/Support/I18n.php:563
+#: src/Support/I18n.php:566
 msgid "Undo the move"
 msgstr "Verplaatsing ongedaan maken"
 
-#: src/Support/I18n.php:564
+#: src/Support/I18n.php:567
 msgid "Move WordPress back?"
 msgstr "WordPress terugzetten?"
 
-#: src/Support/I18n.php:565
+#: src/Support/I18n.php:568
 msgid "WordPress couldn’t be moved"
 msgstr "WordPress kon niet worden verplaatst"
 
 #. translators: %s: error message.
-#: src/Support/I18n.php:567
+#: src/Support/I18n.php:570
 #, php-format
 msgid "Nothing was changed: everything was put back. The server said: %s"
 msgstr "Er is niets gewijzigd: alles is teruggezet. De server meldde: %s"
 
-#: src/Support/I18n.php:568 src/Support/I18n.php:997
+#: src/Support/I18n.php:571 src/Support/I18n.php:1000
 msgid "Dismiss"
 msgstr "Sluiten"
 
-#: src/Support/I18n.php:569
+#: src/Support/I18n.php:572
 msgid "WordPress is being moved. Reload this page in a moment."
 msgstr "WordPress wordt verplaatst. Laad deze pagina zo opnieuw."
 
-#: src/Support/I18n.php:570
+#: src/Support/I18n.php:573
 msgid "Taken from the Destination URL."
 msgstr "Overgenomen uit de bestemmings-URL."
 
-#: src/Support/I18n.php:571
+#: src/Support/I18n.php:574
 msgid ""
 "Publishes the site to GitHub Pages by committing it to a branch of your "
 "repository — no web host, PHP or FTP account needed. Each sync is one commit"
@@ -3341,38 +3366,38 @@ msgstr ""
 " je repository — geen webhost, PHP of FTP-account nodig. Elke synchronisatie"
 " is één commit met alleen de gewijzigde bestanden."
 
-#: src/Support/I18n.php:572
+#: src/Support/I18n.php:575
 msgid "Owner"
 msgstr "Eigenaar"
 
-#: src/Support/I18n.php:573
+#: src/Support/I18n.php:576
 msgid "Repository"
 msgstr "Repository"
 
-#: src/Support/I18n.php:574
+#: src/Support/I18n.php:577
 msgid "Branch"
 msgstr "Branch"
 
-#: src/Support/I18n.php:575
+#: src/Support/I18n.php:578
 msgid "Folder"
 msgstr "Map"
 
-#: src/Support/I18n.php:576
+#: src/Support/I18n.php:579
 msgid "Whole branch (/)"
 msgstr "Hele branch (/)"
 
-#: src/Support/I18n.php:577
+#: src/Support/I18n.php:580
 msgid "The /docs folder"
 msgstr "De map /docs"
 
 #. translators: 1: Git branch name (e.g. gh-pages), 2: folder ("/" or
 #. "/docs").
-#: src/Support/I18n.php:579
+#: src/Support/I18n.php:582
 #, php-format
 msgid "Advanced: branch %1$s, %2$s"
 msgstr "Geavanceerd: branch %1$s, %2$s"
 
-#: src/Support/I18n.php:580
+#: src/Support/I18n.php:583
 msgid ""
 "Most sites keep <code>gh-pages</code> and the whole branch. Change them when"
 " the site should live next to your code — for example <code>main</code> with"
@@ -3390,11 +3415,11 @@ msgstr ""
 "publiceert. Kies dezelfde branch en map in <strong>Settings → Pages</strong>"
 " van de repository."
 
-#: src/Support/I18n.php:581
+#: src/Support/I18n.php:584
 msgid "Access token"
 msgstr "Toegangstoken"
 
-#: src/Support/I18n.php:582
+#: src/Support/I18n.php:585
 msgid ""
 "Everything in this folder of the branch is replaced by the site on each "
 "sync, except CNAME, README, LICENSE and .github/."
@@ -3402,7 +3427,7 @@ msgstr ""
 "Bij elke synchronisatie wordt alles in deze map van de branch vervangen door"
 " de site, behalve CNAME, README, LICENSE en .github/."
 
-#: src/Support/I18n.php:583
+#: src/Support/I18n.php:586
 msgid ""
 "Create a repository on GitHub with at least one commit (tick <strong>Add a "
 "README</strong>). Make it public — GitHub Pages on a private repository "
@@ -3412,7 +3437,7 @@ msgstr ""
 "README</strong> aan). Maak hem openbaar — GitHub Pages op een privé-"
 "repository vereist een betaald GitHub-abonnement."
 
-#: src/Support/I18n.php:584
+#: src/Support/I18n.php:587
 msgid ""
 "Create a fine-grained token (<strong>Settings → Developer settings → Fine-"
 "grained tokens → Generate new token</strong>): <strong>Only select "
@@ -3426,7 +3451,7 @@ msgstr ""
 "write</strong>. Voeg eventueel <strong>Pages: Read-only</strong> toe zodat "
 "de test de Pages-status kan tonen."
 
-#: src/Support/I18n.php:585
+#: src/Support/I18n.php:588
 msgid ""
 "Enter the owner, repository and token here. With the default branch "
 "<code>gh-pages</code> GitHub turns Pages on by itself at the first sync; for"
@@ -3440,7 +3465,7 @@ msgstr ""
 "<strong>Geavanceerd</strong>) die daarna in <strong>Settings → Pages → "
 "Deploy from a branch</strong> van de repository."
 
-#: src/Support/I18n.php:586
+#: src/Support/I18n.php:589
 msgid ""
 "Press <strong>Test</strong>. An empty Destination URL is filled with the "
 "Pages address — for a project site "
@@ -3456,7 +3481,7 @@ msgstr ""
 "<strong>Opslaan</strong>, klik op <strong>Verwerken</strong>, dan zoals "
 "gewoonlijk Controleren / Synchroniseren."
 
-#: src/Support/I18n.php:587
+#: src/Support/I18n.php:590
 msgid ""
 "For a custom domain, set it in the repository’s <strong>Settings → "
 "Pages</strong> (or enter it as the Destination URL); the plugin keeps the "
@@ -3466,7 +3491,7 @@ msgstr ""
 "repository (of vul het in als bestemmings-URL); de plugin bewaart het "
 "<code>CNAME</code>-bestand dat GitHub gebruikt."
 
-#: src/Support/I18n.php:588
+#: src/Support/I18n.php:591
 msgid ""
 "<strong>Limits:</strong> 25 MiB per file and 1 GB per site. GitHub allows "
 "about 500 uploads an hour, so a first sync with many images pauses and "
@@ -3481,33 +3506,33 @@ msgstr ""
 "projectsite heeft robots.txt geen effect. Formulieren die naar WordPress "
 "versturen werken niet op een statische kopie."
 
-#: src/Support/I18n.php:589
+#: src/Support/I18n.php:592
 msgid "Re-pair (new file)"
 msgstr "Opnieuw koppelen (nieuw bestand)"
 
-#: src/Support/I18n.php:590
+#: src/Support/I18n.php:593
 msgid "Pairing…"
 msgstr "Koppelen…"
 
-#: src/Support/I18n.php:591
+#: src/Support/I18n.php:594
 msgid "Revoke"
 msgstr "Intrekken"
 
-#: src/Support/I18n.php:592
+#: src/Support/I18n.php:595
 msgid "Yes, revoke"
 msgstr "Ja, intrekken"
 
 #. translators: %s: connector filename
-#: src/Support/I18n.php:594
+#: src/Support/I18n.php:597
 #, php-format
 msgid "Download %s"
 msgstr "%s downloaden"
 
-#: src/Support/I18n.php:595
+#: src/Support/I18n.php:598
 msgid "Pair"
 msgstr "Koppelen"
 
-#: src/Support/I18n.php:596
+#: src/Support/I18n.php:599
 msgid ""
 "Re-pairing invalidates the file currently on the destination — upload the "
 "new one before the next sync."
@@ -3515,15 +3540,15 @@ msgstr ""
 "Opnieuw koppelen maakt het bestand dat nu op de bestemming staat ongeldig — "
 "upload het nieuwe vóór de volgende synchronisatie."
 
-#: src/Support/I18n.php:597
+#: src/Support/I18n.php:600
 msgid "Rebuild push record"
 msgstr "Pushrecord opnieuw opbouwen"
 
-#: src/Support/I18n.php:598
+#: src/Support/I18n.php:601
 msgid "Rebuilding…"
 msgstr "Opnieuw opbouwen…"
 
-#: src/Support/I18n.php:599
+#: src/Support/I18n.php:602
 msgid ""
 "Ask the connector what is already on the destination and rebuild the push "
 "record from it — so after a reset or re-pair, files that are already there "
@@ -3533,15 +3558,15 @@ msgstr ""
 "pushrecord opnieuw op — zodat na een reset of nieuwe koppeling bestanden die"
 " er al identiek staan niet opnieuw worden geüpload."
 
-#: src/Support/I18n.php:600
+#: src/Support/I18n.php:603
 msgid "Manual deploy"
 msgstr "Handmatige uitrol"
 
-#: src/Support/I18n.php:601
+#: src/Support/I18n.php:604
 msgid "How it works"
 msgstr "Hoe het werkt"
 
-#: src/Support/I18n.php:602
+#: src/Support/I18n.php:605
 msgid ""
 "No server access needed. <strong>Export ZIP</strong> packages the current "
 "render — with this destination’s replacements applied — into a zip you "
@@ -3553,7 +3578,7 @@ msgstr ""
 "die je zelf uploadt en uitpakt. De plugin uploadt niets en de "
 "synchronisatiestatistieken van de bestemming blijven onaangeroerd."
 
-#: src/Support/I18n.php:603
+#: src/Support/I18n.php:606
 msgid ""
 "If the pages list is stale, run <strong>Process</strong> first (Export never"
 " renders on its own)."
@@ -3561,13 +3586,13 @@ msgstr ""
 "Als de paginalijst verouderd is, voer dan eerst <strong>Verwerken</strong> "
 "uit (exporteren rendert nooit zelf)."
 
-#: src/Support/I18n.php:604
+#: src/Support/I18n.php:607
 msgid "Press <strong>Export ZIP</strong> and download it when it finishes."
 msgstr ""
 "Klik op <strong>ZIP exporteren</strong> en download het bestand zodra het "
 "klaar is."
 
-#: src/Support/I18n.php:605
+#: src/Support/I18n.php:608
 msgid ""
 "Extract it into the destination web root — the folder served at the "
 "<strong>Destination URL</strong>. If the site lives under a sub-folder, "
@@ -3581,7 +3606,7 @@ msgstr ""
 "zonder bestemmings-URL <strong>Geserveerd vanuit subpad</strong> in) "
 "<em>voordat</em> je exporteert, zodat de links ervoor worden herschreven."
 
-#: src/Support/I18n.php:606
+#: src/Support/I18n.php:609
 msgid ""
 "The zip includes the <code>.htaccess</code> (Apache/LiteSpeed), "
 "<code>.gz</code> siblings where supported, <code>sitemap.xml</code> and "
@@ -3595,71 +3620,71 @@ msgstr ""
 "bestemming</em> voor het optionele fragment en <strong>Server "
 "controleren</strong>."
 
-#: src/Support/I18n.php:607
+#: src/Support/I18n.php:610
 msgid "Enable this destination to export."
 msgstr "Schakel deze bestemming in om te exporteren."
 
-#: src/Support/I18n.php:608
+#: src/Support/I18n.php:611
 msgid "Saved."
 msgstr "Opgeslagen."
 
-#: src/Support/I18n.php:609
+#: src/Support/I18n.php:612
 msgid "Test"
 msgstr "Testen"
 
-#: src/Support/I18n.php:610
+#: src/Support/I18n.php:613
 msgid "Remove this destination?"
 msgstr "Deze bestemming verwijderen?"
 
-#: src/Support/I18n.php:611
+#: src/Support/I18n.php:614
 msgid "Yes, remove"
 msgstr "Ja, verwijderen"
 
-#: src/Support/I18n.php:612
+#: src/Support/I18n.php:615
 msgid "Remove destination"
 msgstr "Bestemming verwijderen"
 
-#: src/Support/I18n.php:623
+#: src/Support/I18n.php:626
 msgid "All Destinations"
 msgstr "Alle bestemmingen"
 
-#: src/Support/I18n.php:624
+#: src/Support/I18n.php:627
 msgid "Destination name"
 msgstr "Naam bestemming"
 
-#: src/Support/I18n.php:625
+#: src/Support/I18n.php:628
 msgid "Double-click to rename"
 msgstr "Dubbelklik om te hernoemen"
 
-#: src/Support/I18n.php:626
+#: src/Support/I18n.php:629
 msgid "off"
 msgstr "uit"
 
-#: src/Support/I18n.php:627
+#: src/Support/I18n.php:630
 msgid "Add destination"
 msgstr "Bestemming toevoegen"
 
-#: src/Support/I18n.php:638
+#: src/Support/I18n.php:641
 msgid "Enable this destination first"
 msgstr "Schakel deze bestemming eerst in"
 
-#: src/Support/I18n.php:639
+#: src/Support/I18n.php:642
 msgid "Test the connection first"
 msgstr "Test de verbinding eerst"
 
-#: src/Support/I18n.php:640
+#: src/Support/I18n.php:643
 msgid "Connected"
 msgstr "Verbonden"
 
-#: src/Support/I18n.php:641
+#: src/Support/I18n.php:644
 msgid "Pushed"
 msgstr "Gepusht"
 
-#: src/Support/I18n.php:642
+#: src/Support/I18n.php:645
 msgid "In sync"
 msgstr "Gesynchroniseerd"
 
-#: src/Support/I18n.php:646
+#: src/Support/I18n.php:649
 msgid ""
 "Preview what a sync would change on this destination — compares the last "
 "render, uploads nothing."
@@ -3667,19 +3692,19 @@ msgstr ""
 "Bekijk wat een synchronisatie op deze bestemming zou wijzigen — vergelijkt "
 "de laatste render, uploadt niets."
 
-#: src/Support/I18n.php:648
+#: src/Support/I18n.php:651
 msgid "Visit site ↗"
 msgstr "Site bezoeken ↗"
 
-#: src/Support/I18n.php:649
+#: src/Support/I18n.php:652
 msgid "Export ZIP"
 msgstr "ZIP exporteren"
 
-#: src/Support/I18n.php:650
+#: src/Support/I18n.php:653
 msgid "Exporting…"
 msgstr "Exporteren…"
 
-#: src/Support/I18n.php:651
+#: src/Support/I18n.php:654
 msgid ""
 "Package the current render into a downloadable zip for this destination — an"
 " alternative to Sync for manual deploys. Uploads nothing."
@@ -3687,40 +3712,40 @@ msgstr ""
 "Pakt de huidige rendering in een downloadbare zip voor deze bestemming — een"
 " alternatief voor Synchroniseren bij handmatige uitrol. Uploadt niets."
 
-#: src/Support/I18n.php:652
+#: src/Support/I18n.php:655
 msgid "Download"
 msgstr "Downloaden"
 
-#: src/Support/I18n.php:663
+#: src/Support/I18n.php:666
 msgid "Replacements"
 msgstr "Vervangingen"
 
 #. translators: %s: destination name
-#: src/Support/I18n.php:665
+#: src/Support/I18n.php:668
 #, php-format
 msgid "Replacements for %s"
 msgstr "Vervangingen voor %s"
 
-#: src/Support/I18n.php:666
+#: src/Support/I18n.php:669
 msgid "(applied to this destination only · saved automatically)"
 msgstr "(alleen toegepast op deze bestemming · automatisch opgeslagen)"
 
-#: src/Support/I18n.php:678
+#: src/Support/I18n.php:681
 msgid "Image Replacer"
 msgstr "Afbeeldingen vervangen"
 
-#: src/Support/I18n.php:680
+#: src/Support/I18n.php:683
 msgid "Select a page, or type to filter…"
 msgstr "Kies een pagina of typ om te filteren…"
 
 #. translators: %s: page path, e.g. /about/.
-#: src/Support/I18n.php:682
+#: src/Support/I18n.php:685
 #, php-format
 msgid "%s — not in the export"
 msgstr "%s — niet in de export"
 
 #. translators: %d: number of pages.
-#: src/Support/I18n.php:684
+#: src/Support/I18n.php:687
 #, php-format
 msgid ""
 "%d published page(s) aren’t in the export, so they can’t be picked (shown "
@@ -3731,63 +3756,63 @@ msgstr ""
 "kiezen (grijs). Link ernaar vanaf een geëxporteerde pagina of wijzig ‘Pages "
 "to include’ in de instellingen en verwerk opnieuw."
 
-#: src/Support/I18n.php:685
+#: src/Support/I18n.php:688
 msgid "Select a page above to replace its images."
 msgstr "Selecteer hierboven een pagina om de afbeeldingen ervan te vervangen."
 
-#: src/Support/I18n.php:686
+#: src/Support/I18n.php:689
 msgid "Process the site first, then choose a page to replace its images."
 msgstr ""
 "Verwerk eerst de site en kies daarna een pagina om de afbeeldingen ervan te "
 "vervangen."
 
-#: src/Support/I18n.php:687
+#: src/Support/I18n.php:690
 msgid "No replaceable images on this page."
 msgstr "Geen vervangbare afbeeldingen op deze pagina."
 
-#: src/Support/I18n.php:688
+#: src/Support/I18n.php:691
 msgid "Loading images…"
 msgstr "Afbeeldingen laden…"
 
-#: src/Support/I18n.php:689
+#: src/Support/I18n.php:692
 msgid "Choose a replacement"
 msgstr "Kies een vervanging"
 
-#: src/Support/I18n.php:690
+#: src/Support/I18n.php:693
 msgid "Use this image"
 msgstr "Deze afbeelding gebruiken"
 
-#: src/Support/I18n.php:691
+#: src/Support/I18n.php:694
 msgid "Click to replace"
 msgstr "Klik om te vervangen"
 
-#: src/Support/I18n.php:692
+#: src/Support/I18n.php:695
 msgid "— no alt —"
 msgstr "— geen alt —"
 
-#: src/Support/I18n.php:693
+#: src/Support/I18n.php:696
 msgid "↳ replaced with"
 msgstr "↳ vervangen door"
 
-#: src/Support/I18n.php:694
+#: src/Support/I18n.php:697
 msgid "No images match the current filter."
 msgstr "Geen afbeeldingen komen overeen met het huidige filter."
 
-#: src/Support/I18n.php:695
+#: src/Support/I18n.php:698
 msgid "Pages with replacements:"
 msgstr "Pagina's met vervangingen:"
 
 #. translators: %d is the number of image sizes.
-#: src/Support/I18n.php:697
+#: src/Support/I18n.php:700
 #, php-format
 msgid "%d sizes"
 msgstr "%d formaten"
 
-#: src/Support/I18n.php:698
+#: src/Support/I18n.php:701
 msgid "not in library"
 msgstr "niet in bibliotheek"
 
-#: src/Support/I18n.php:699
+#: src/Support/I18n.php:702
 msgid ""
 "This image isn’t in the media library, so only this exact URL is swapped — "
 "other responsive sizes may remain."
@@ -3795,53 +3820,53 @@ msgstr ""
 "Deze afbeelding staat niet in de mediabibliotheek, dus alleen deze exacte "
 "URL wordt vervangen — andere responsieve formaten kunnen blijven staan."
 
-#: src/Support/I18n.php:700
+#: src/Support/I18n.php:703
 msgid "The WordPress media library is unavailable on this page."
 msgstr "De WordPress-mediabibliotheek is niet beschikbaar op deze pagina."
 
-#: src/Support/I18n.php:701
+#: src/Support/I18n.php:704
 msgid "Replace…"
 msgstr "Vervangen…"
 
-#: src/Support/I18n.php:703
+#: src/Support/I18n.php:706
 msgid "Filter by page…"
 msgstr "Filteren op pagina…"
 
-#: src/Support/I18n.php:704
+#: src/Support/I18n.php:707
 msgid "Filter by page"
 msgstr "Filteren op pagina"
 
-#: src/Support/I18n.php:705
+#: src/Support/I18n.php:708
 msgid "Only replacements"
 msgstr "Alleen vervangingen"
 
-#: src/Support/I18n.php:716
+#: src/Support/I18n.php:719
 msgid "Link replacer"
 msgstr "Koppelingvervanging"
 
 #. translators: %d is a link count (singular).
-#: src/Support/I18n.php:718
+#: src/Support/I18n.php:721
 #, php-format
 msgid "%d link"
 msgstr "%d koppeling"
 
 #. translators: %d is a link count (plural).
-#: src/Support/I18n.php:720
+#: src/Support/I18n.php:723
 #, php-format
 msgid "%d links"
 msgstr "%d koppelingen"
 
 #. translators: %d is a count of replaced links.
-#: src/Support/I18n.php:722
+#: src/Support/I18n.php:725
 #, php-format
 msgid ", %d replaced"
 msgstr ", %d vervangen"
 
-#: src/Support/I18n.php:723
+#: src/Support/I18n.php:726
 msgid "Search URL or label…"
 msgstr "URL of label zoeken…"
 
-#: src/Support/I18n.php:724
+#: src/Support/I18n.php:727
 msgid ""
 "Replace a link target (<code>&lt;a&gt;</code>/button <code>href</code>) with"
 " another URL for this destination. Leave blank to keep the original."
@@ -3850,70 +3875,70 @@ msgstr ""
 "door een andere URL voor deze bestemming. Laat leeg om het origineel te "
 "behouden."
 
-#: src/Support/I18n.php:725
+#: src/Support/I18n.php:728
 msgid "Loading links…"
 msgstr "Koppelingen laden…"
 
-#: src/Support/I18n.php:726
+#: src/Support/I18n.php:729
 msgid ""
 "No links found yet — run a Check or Sync first so the pages are rendered."
 msgstr ""
 "Nog geen koppelingen gevonden — voer eerst een Controle of Synchronisatie "
 "uit zodat de pagina's worden gerenderd."
 
-#: src/Support/I18n.php:727
+#: src/Support/I18n.php:730
 msgid "— no label —"
 msgstr "— geen label —"
 
 #. translators: %d is a page count (singular).
-#: src/Support/I18n.php:729
+#: src/Support/I18n.php:732
 #, php-format
 msgid "%d page"
 msgstr "%d pagina"
 
 #. translators: %d is a page count (plural).
-#: src/Support/I18n.php:731
+#: src/Support/I18n.php:734
 #, php-format
 msgid "%d pages"
 msgstr "%d pagina's"
 
-#: src/Support/I18n.php:732
+#: src/Support/I18n.php:735
 msgid "Replacement URL…"
 msgstr "Vervangende URL…"
 
-#: src/Support/I18n.php:733
+#: src/Support/I18n.php:736
 msgid "No links match the current filter."
 msgstr "Geen koppelingen komen overeen met het huidige filter."
 
-#: src/Support/I18n.php:744
+#: src/Support/I18n.php:747
 msgid "Video replacer"
 msgstr "Videovervanging"
 
-#: src/Support/I18n.php:746
+#: src/Support/I18n.php:749
 msgid "Select a page above to replace its videos."
 msgstr "Selecteer hierboven een pagina om de video's ervan te vervangen."
 
-#: src/Support/I18n.php:747
+#: src/Support/I18n.php:750
 msgid "No replaceable videos on this page."
 msgstr "Geen vervangbare video's op deze pagina."
 
 #. translators: %d is a video count (singular).
-#: src/Support/I18n.php:749
+#: src/Support/I18n.php:752
 #, php-format
 msgid "%d video"
 msgstr "%d video"
 
 #. translators: %d is a video count (plural).
-#: src/Support/I18n.php:751
+#: src/Support/I18n.php:754
 #, php-format
 msgid "%d videos"
 msgstr "%d video's"
 
-#: src/Support/I18n.php:752
+#: src/Support/I18n.php:755
 msgid "Search URL or title…"
 msgstr "URL of titel zoeken…"
 
-#: src/Support/I18n.php:753
+#: src/Support/I18n.php:756
 msgid ""
 "Local videos swap via the media library; embeds (YouTube, Vimeo, …) take a "
 "URL <em>or</em> a video ID (like Bricks). An embed’s <code>origin=</code> is"
@@ -3924,50 +3949,50 @@ msgstr ""
 "Bricks). De <code>origin=</code> van een insluitcode wordt automatisch "
 "herschreven naar deze bestemming wanneer een bestemmings-URL is ingesteld."
 
-#: src/Support/I18n.php:754
+#: src/Support/I18n.php:757
 msgid "Loading videos…"
 msgstr "Video's laden…"
 
-#: src/Support/I18n.php:755
+#: src/Support/I18n.php:758
 msgid ""
 "No videos found yet — run a Check or Sync first so the pages are rendered."
 msgstr ""
 "Nog geen video's gevonden — voer eerst een Controle of Synchronisatie uit "
 "zodat de pagina's worden gerenderd."
 
-#: src/Support/I18n.php:756
+#: src/Support/I18n.php:759
 msgid "local file"
 msgstr "lokaal bestand"
 
-#: src/Support/I18n.php:757
+#: src/Support/I18n.php:760
 msgid "Choose a replacement video"
 msgstr "Kies een vervangende video"
 
-#: src/Support/I18n.php:758
+#: src/Support/I18n.php:761
 msgid "Use this video"
 msgstr "Deze video gebruiken"
 
-#: src/Support/I18n.php:759
+#: src/Support/I18n.php:762
 msgid "Replacement URL or video ID…"
 msgstr "Vervangende URL of video-ID…"
 
-#: src/Support/I18n.php:760
+#: src/Support/I18n.php:763
 msgid "No videos match the current filter."
 msgstr "Geen video's komen overeen met het huidige filter."
 
-#: src/Support/I18n.php:772
+#: src/Support/I18n.php:775
 msgid "Images"
 msgstr "Afbeeldingen"
 
-#: src/Support/I18n.php:774
+#: src/Support/I18n.php:777
 msgid "Videos"
 msgstr "Video's"
 
-#: src/Support/I18n.php:775
+#: src/Support/I18n.php:778
 msgid "Find and replace visible text on this destination only."
 msgstr "Zichtbare tekst zoeken en vervangen op alleen deze bestemming."
 
-#: src/Support/I18n.php:776
+#: src/Support/I18n.php:779
 msgid ""
 "Pick a page, then swap any of its images for another library item — "
 "responsive variants are rebuilt automatically."
@@ -3975,14 +4000,14 @@ msgstr ""
 "Kies een pagina en vervang elke afbeelding ervan door een ander item uit de "
 "mediabibliotheek — responsieve varianten worden automatisch opnieuw gemaakt."
 
-#: src/Support/I18n.php:777
+#: src/Support/I18n.php:780
 msgid ""
 "Rewrite link and button targets per destination, without touching body text."
 msgstr ""
 "Koppeling- en knopdoelen herschrijven per bestemming, zonder de hoofdtekst "
 "aan te raken."
 
-#: src/Support/I18n.php:778
+#: src/Support/I18n.php:781
 msgid ""
 "Swap local or embedded videos and fix embed origins for the destination "
 "domain."
@@ -3990,82 +4015,82 @@ msgstr ""
 "Lokale of ingesloten video's vervangen en embed-origins herstellen voor het "
 "bestemmingsdomein."
 
-#: src/Support/I18n.php:790
+#: src/Support/I18n.php:793
 msgid "Render once, then push to every enabled destination in turn."
 msgstr ""
 "Eenmalig renderen en vervolgens naar elke ingeschakelde bestemming pushen."
 
-#: src/Support/I18n.php:792
+#: src/Support/I18n.php:795
 msgid "Out of date"
 msgstr "Verouderd"
 
-#: src/Support/I18n.php:793
+#: src/Support/I18n.php:796
 msgid "Content changed — Process to check"
 msgstr "Inhoud gewijzigd — klik op Verwerken om te controleren"
 
-#: src/Support/I18n.php:795
+#: src/Support/I18n.php:798
 msgid "Remove deleted files from each destination (prune)"
 msgstr "Verwijderde bestanden van elke bestemming verwijderen (opschonen)"
 
-#: src/Support/I18n.php:796
+#: src/Support/I18n.php:799
 msgid "Working…"
 msgstr "Bezig…"
 
 #. translators: %d is the number of enabled destinations.
-#: src/Support/I18n.php:798
+#: src/Support/I18n.php:801
 #, php-format
 msgid "Sync all (%d enabled)"
 msgstr "Alles synchroniseren (%d ingeschakeld)"
 
-#: src/Support/I18n.php:809
+#: src/Support/I18n.php:812
 msgid "Progress"
 msgstr "Voortgang"
 
-#: src/Support/I18n.php:810
+#: src/Support/I18n.php:813
 msgid "Last sync"
 msgstr "Laatste synchronisatie"
 
-#: src/Support/I18n.php:811
+#: src/Support/I18n.php:814
 msgid "Last Process"
 msgstr "Laatste verwerking"
 
-#: src/Support/I18n.php:812
+#: src/Support/I18n.php:815
 msgid "Collecting URLs"
 msgstr "URL's verzamelen"
 
-#: src/Support/I18n.php:813
+#: src/Support/I18n.php:816
 msgid "Rendering pages"
 msgstr "Pagina's renderen"
 
-#: src/Support/I18n.php:814
+#: src/Support/I18n.php:817
 msgid "Processing assets"
 msgstr "Assets verwerken"
 
-#: src/Support/I18n.php:815
+#: src/Support/I18n.php:818
 msgid "Finalising"
 msgstr "Afronden"
 
-#: src/Support/I18n.php:816
+#: src/Support/I18n.php:819
 msgid "Packaging & deploying"
 msgstr "Inpakken & implementeren"
 
-#: src/Support/I18n.php:817
+#: src/Support/I18n.php:820
 msgid "Uploading"
 msgstr "Uploaden"
 
-#: src/Support/I18n.php:818
+#: src/Support/I18n.php:821
 msgid "Deploying"
 msgstr "Uitrollen"
 
-#: src/Support/I18n.php:819
+#: src/Support/I18n.php:822
 msgid "Removing old files"
 msgstr "Oude bestanden verwijderen"
 
-#: src/Support/I18n.php:824
+#: src/Support/I18n.php:827
 msgid "Uploading…"
 msgstr "Uploaden…"
 
-#: src/Support/I18n.php:826
+#: src/Support/I18n.php:829
 msgid ""
 "Uploaded file-by-file: the PHP runtime running this sync has no Zip "
 "(ZipArchive) extension, so the faster single-package deploy wasn’t "
@@ -4080,7 +4105,7 @@ msgstr ""
 "hebben Zip en pakken automatisch in."
 
 #. translators: %s is the reason package deploy failed.
-#: src/Support/I18n.php:828
+#: src/Support/I18n.php:831
 #, php-format
 msgid ""
 "The faster one-shot package deploy didn’t complete — %s. Files were uploaded"
@@ -4089,128 +4114,128 @@ msgstr ""
 "De snellere uitrol in één pakket is niet voltooid — %s. De bestanden zijn in"
 " plaats daarvan afzonderlijk geüpload: hetzelfde resultaat, alleen trager."
 
-#: src/Support/I18n.php:829
+#: src/Support/I18n.php:832
 msgid "Error"
 msgstr "Fout"
 
-#: src/Support/I18n.php:831
+#: src/Support/I18n.php:834
 msgid "View error details"
 msgstr "Foutdetails bekijken"
 
-#: src/Support/I18n.php:832
+#: src/Support/I18n.php:835
 msgid "Sync error details"
 msgstr "Details synchronisatiefout"
 
-#: src/Support/I18n.php:833
+#: src/Support/I18n.php:836
 msgid "No further detail was recorded for this destination."
 msgstr "Er zijn geen verdere details vastgelegd voor deze bestemming."
 
-#: src/Support/I18n.php:834
+#: src/Support/I18n.php:837
 msgid "Pages"
 msgstr "Pagina's"
 
-#: src/Support/I18n.php:835
+#: src/Support/I18n.php:838
 msgid "Assets"
 msgstr "Assets"
 
-#: src/Support/I18n.php:836
+#: src/Support/I18n.php:839
 msgid "Deploy"
 msgstr "Implementeren"
 
-#: src/Support/I18n.php:837
+#: src/Support/I18n.php:840
 msgid "Uploads"
 msgstr "Uploads"
 
 #. translators: %d is a file count.
-#: src/Support/I18n.php:839
+#: src/Support/I18n.php:842
 #, php-format
 msgid "%d files"
 msgstr "%d bestanden"
 
 #. translators: %1$d is a file count, %2$s a human size (e.g. "1.2 MB").
-#: src/Support/I18n.php:841
+#: src/Support/I18n.php:844
 #, php-format
 msgid "Site: %1$d files · %2$s"
 msgstr "Site: %1$d bestanden · %2$s"
 
 #. translators: %d is a count of removed files.
-#: src/Support/I18n.php:843
+#: src/Support/I18n.php:846
 #, php-format
 msgid "%d removed"
 msgstr "%d verwijderd"
 
 #. translators: %d is a count of skipped pages.
-#: src/Support/I18n.php:845
+#: src/Support/I18n.php:848
 #, php-format
 msgid "%d skipped"
 msgstr "%d overgeslagen"
 
 #. translators: %d is a count of pages flagged as not static-friendly.
-#: src/Support/I18n.php:847
+#: src/Support/I18n.php:850
 #, php-format
 msgid "%d not static-friendly"
 msgstr "%d niet statisch-vriendelijk"
 
 #. translators: %d is a count of errors.
-#: src/Support/I18n.php:849
+#: src/Support/I18n.php:852
 #, php-format
 msgid "%d errors"
 msgstr "%d fouten"
 
 #. translators: %d is a count of failed uploads (singular).
-#: src/Support/I18n.php:851
+#: src/Support/I18n.php:854
 #, php-format
 msgid "%d failed upload"
 msgstr "%d mislukte upload"
 
 #. translators: %d is a count of failed uploads (plural).
-#: src/Support/I18n.php:853
+#: src/Support/I18n.php:856
 #, php-format
 msgid "%d failed uploads"
 msgstr "%d mislukte uploads"
 
 #. translators: %d is a count of failed files (singular).
-#: src/Support/I18n.php:855
+#: src/Support/I18n.php:858
 #, php-format
 msgid "%d file failed to upload."
 msgstr "%d bestand kon niet worden geüpload."
 
 #. translators: %d is a count of failed files (plural).
-#: src/Support/I18n.php:857
+#: src/Support/I18n.php:860
 #, php-format
 msgid "%d files failed to upload."
 msgstr "%d bestanden konden niet worden geüpload."
 
-#: src/Support/I18n.php:858
+#: src/Support/I18n.php:861
 msgid "Retrying…"
 msgstr "Opnieuw proberen…"
 
 #. translators: %d is a count of uploads to retry (singular).
-#: src/Support/I18n.php:860
+#: src/Support/I18n.php:863
 #, php-format
 msgid "Retry %d upload"
 msgstr "%d upload opnieuw proberen"
 
 #. translators: %d is a count of uploads to retry (plural).
-#: src/Support/I18n.php:862
+#: src/Support/I18n.php:865
 #, php-format
 msgid "Retry %d uploads"
 msgstr "%d uploads opnieuw proberen"
 
 #. translators: %d is the error count.
-#: src/Support/I18n.php:864
+#: src/Support/I18n.php:867
 #, php-format
 msgid "Errors (%d)"
 msgstr "Fouten (%d)"
 
 #. translators: %d is the skipped count.
-#: src/Support/I18n.php:866
+#: src/Support/I18n.php:869
 #, php-format
 msgid "Skipped (%d)"
 msgstr "Overgeslagen (%d)"
 
 #. translators: %d is the count of pages that won't work on static.
-#: src/Support/I18n.php:868
+#: src/Support/I18n.php:871
 #, php-format
 msgid ""
 "Won't work on static (%d) — forms / dynamic endpoints (notice only; pages "
@@ -4219,11 +4244,11 @@ msgstr ""
 "Werkt niet op statisch (%d) — formulieren / dynamische eindpunten (alleen "
 "melding; pagina's worden nog wel geüpload)"
 
-#: src/Support/I18n.php:879
+#: src/Support/I18n.php:882
 msgid "Run this in your terminal to render & sync"
 msgstr "Voer dit uit in uw terminal om te renderen en te synchroniseren"
 
-#: src/Support/I18n.php:880
+#: src/Support/I18n.php:883
 msgid ""
 "This host serves only a couple of PHP requests at once, so the browser can't"
 " render reliably here. WP-CLI does it without that limit. In Local, right-"
@@ -4234,7 +4259,7 @@ msgstr ""
 "beperking. Klik in Local met de rechtermuisknop op de site → <em>Site shell "
 "openen</em> en voer dan uit:"
 
-#: src/Support/I18n.php:881
+#: src/Support/I18n.php:884
 msgid ""
 "Add <code>--check</code> for a dry run, or <code>--prune</code> to remove "
 "deleted files. Progress will appear here automatically once it starts."
@@ -4243,19 +4268,19 @@ msgstr ""
 "verwijderde bestanden te verwijderen. De voortgang verschijnt hier "
 "automatisch zodra het begint."
 
-#: src/Support/I18n.php:892
+#: src/Support/I18n.php:895
 msgid "Server config"
 msgstr "Serverconfiguratie"
 
-#: src/Support/I18n.php:893
+#: src/Support/I18n.php:896
 msgid "Hide"
 msgstr "Verbergen"
 
-#: src/Support/I18n.php:894
+#: src/Support/I18n.php:897
 msgid "View"
 msgstr "Bekijken"
 
-#: src/Support/I18n.php:895
+#: src/Support/I18n.php:898
 msgid ""
 "The <code>.htaccess</code> is uploaded to the destination automatically "
 "(Apache/LiteSpeed). nginx serves the static site as-is; its snippet below is"
@@ -4270,11 +4295,11 @@ msgstr ""
 "Gebruik <strong>Server controleren</strong> om te zien wat de bestemming "
 "werkelijk doet."
 
-#: src/Support/I18n.php:896
+#: src/Support/I18n.php:899
 msgid "Server check"
 msgstr "Servercontrole"
 
-#: src/Support/I18n.php:897
+#: src/Support/I18n.php:900
 msgid ""
 "Fetches the destination’s home page and one asset, and reports the web "
 "server and whether the cache rules are in effect."
@@ -4282,11 +4307,11 @@ msgstr ""
 "Haalt de startpagina van de bestemming en één asset op en rapporteert de "
 "webserver en of de cacheregels actief zijn."
 
-#: src/Support/I18n.php:898
+#: src/Support/I18n.php:901
 msgid "Check server"
 msgstr "Server controleren"
 
-#: src/Support/I18n.php:902
+#: src/Support/I18n.php:905
 msgid ""
 "No destination has a Destination URL yet — set one on the destination to "
 "enable the check."
@@ -4294,51 +4319,51 @@ msgstr ""
 "Geen enkele bestemming heeft nog een bestemmings-URL — stel er een in op de "
 "bestemming om de controle mogelijk te maken."
 
-#: src/Support/I18n.php:903
+#: src/Support/I18n.php:906
 msgid "Server"
 msgstr "Server"
 
-#: src/Support/I18n.php:904
+#: src/Support/I18n.php:907
 msgid "Cache policy"
 msgstr "Cachebeleid"
 
-#: src/Support/I18n.php:906
+#: src/Support/I18n.php:909
 msgid "HTML"
 msgstr "HTML"
 
-#: src/Support/I18n.php:907
+#: src/Support/I18n.php:910
 msgid "Asset"
 msgstr "Asset"
 
-#: src/Support/I18n.php:908
+#: src/Support/I18n.php:911
 msgid "Applied"
 msgstr "Toegepast"
 
-#: src/Support/I18n.php:909
+#: src/Support/I18n.php:912
 msgid "Partial"
 msgstr "Gedeeltelijk"
 
-#: src/Support/I18n.php:910
+#: src/Support/I18n.php:913
 msgid "Not applied"
 msgstr "Niet toegepast"
 
-#: src/Support/I18n.php:911
+#: src/Support/I18n.php:914
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: src/Support/I18n.php:912
+#: src/Support/I18n.php:915
 msgid "gzip"
 msgstr "gzip"
 
-#: src/Support/I18n.php:913
+#: src/Support/I18n.php:916
 msgid "none"
 msgstr "geen"
 
-#: src/Support/I18n.php:914
+#: src/Support/I18n.php:917
 msgid "(no Cache-Control header)"
 msgstr "(geen Cache-Control-header)"
 
-#: src/Support/I18n.php:915
+#: src/Support/I18n.php:918
 msgid ""
 "No Destination URL is set, so the host was guessed from the connection — set"
 " the URL for an accurate check."
@@ -4347,37 +4372,37 @@ msgstr ""
 "verbinding — stel de URL in voor een nauwkeurige controle."
 
 #. translators: %s: time the check ran
-#: src/Support/I18n.php:917
+#: src/Support/I18n.php:920
 #, php-format
 msgid "Checked %s"
 msgstr "Gecontroleerd op %s"
 
-#: src/Support/I18n.php:918
+#: src/Support/I18n.php:921
 msgid "unknown"
 msgstr "onbekend"
 
-#: src/Support/I18n.php:919
+#: src/Support/I18n.php:922
 msgid "CDN / proxy"
 msgstr "CDN / proxy"
 
-#: src/Support/I18n.php:920
+#: src/Support/I18n.php:923
 msgid "Sent automatically with every Cloudflare deploy — nothing to paste."
 msgstr ""
 "Wordt automatisch meegestuurd bij elke Cloudflare-uitrol — niets te plakken."
 
-#: src/Support/I18n.php:931
+#: src/Support/I18n.php:934
 msgid "Text replacements"
 msgstr "Tekstvervangingen"
 
-#: src/Support/I18n.php:932
+#: src/Support/I18n.php:935
 msgid "(optional)"
 msgstr "(optioneel)"
 
-#: src/Support/I18n.php:933
+#: src/Support/I18n.php:936
 msgid "+ Add"
 msgstr "+ Toevoegen"
 
-#: src/Support/I18n.php:934
+#: src/Support/I18n.php:937
 msgid ""
 "Literal find/replace, applied only to visible text content between tags — "
 "never attributes, scripts or markup. Be specific to avoid unintended "
@@ -4387,139 +4412,139 @@ msgstr ""
 "tussen tags — nooit op attributen, scripts of opmaak. Wees specifiek om "
 "onbedoelde overeenkomsten te vermijden."
 
-#: src/Support/I18n.php:935
+#: src/Support/I18n.php:938
 msgid "No text replacements yet."
 msgstr "Nog geen tekstvervangingen."
 
-#: src/Support/I18n.php:936
+#: src/Support/I18n.php:939
 msgid "Find"
 msgstr "Zoeken"
 
-#: src/Support/I18n.php:937
+#: src/Support/I18n.php:940
 msgid "Replace"
 msgstr "Vervangen"
 
-#: src/Support/I18n.php:938 src/Support/I18n.php:939
+#: src/Support/I18n.php:941 src/Support/I18n.php:942
 msgid "(empty)"
 msgstr "(leeg)"
 
-#: src/Support/I18n.php:940
+#: src/Support/I18n.php:943
 msgid "Confirm delete"
 msgstr "Verwijdering bevestigen"
 
-#: src/Support/I18n.php:941
+#: src/Support/I18n.php:944
 msgid "Keep"
 msgstr "Behouden"
 
-#: src/Support/I18n.php:942
+#: src/Support/I18n.php:945
 msgid "Edit"
 msgstr "Bewerken"
 
-#: src/Support/I18n.php:943
+#: src/Support/I18n.php:946
 msgid "Delete"
 msgstr "Verwijderen"
 
-#: src/Support/I18n.php:944
+#: src/Support/I18n.php:947
 msgid "Add text replacement"
 msgstr "Tekstvervanging toevoegen"
 
-#: src/Support/I18n.php:945
+#: src/Support/I18n.php:948
 msgid "Edit text replacement"
 msgstr "Tekstvervanging bewerken"
 
-#: src/Support/I18n.php:946
+#: src/Support/I18n.php:949
 msgid "Text to find"
 msgstr "Te zoeken tekst"
 
-#: src/Support/I18n.php:947 src/Support/I18n.php:951
+#: src/Support/I18n.php:950 src/Support/I18n.php:954
 msgid "Replace with"
 msgstr "Vervangen door"
 
-#: src/Support/I18n.php:948
+#: src/Support/I18n.php:951
 msgid "Replacement format"
 msgstr "Vervangingsindeling"
 
-#: src/Support/I18n.php:949
+#: src/Support/I18n.php:952
 msgid "Plain"
 msgstr "Platte tekst"
 
-#: src/Support/I18n.php:950
+#: src/Support/I18n.php:953
 msgid "Rich"
 msgstr "Opgemaakte tekst"
 
-#: src/Support/I18n.php:963
+#: src/Support/I18n.php:966
 msgid "Paragraph"
 msgstr "Alinea"
 
-#: src/Support/I18n.php:964
+#: src/Support/I18n.php:967
 msgid "Heading 1"
 msgstr "Kop 1"
 
-#: src/Support/I18n.php:965
+#: src/Support/I18n.php:968
 msgid "Heading 2"
 msgstr "Kop 2"
 
-#: src/Support/I18n.php:966
+#: src/Support/I18n.php:969
 msgid "Heading 3"
 msgstr "Kop 3"
 
-#: src/Support/I18n.php:967
+#: src/Support/I18n.php:970
 msgid "Bold"
 msgstr "Vet"
 
-#: src/Support/I18n.php:968
+#: src/Support/I18n.php:971
 msgid "Italic"
 msgstr "Cursief"
 
-#: src/Support/I18n.php:969
+#: src/Support/I18n.php:972
 msgid "Underline"
 msgstr "Onderstrepen"
 
-#: src/Support/I18n.php:970
+#: src/Support/I18n.php:973
 msgid "Bullet list"
 msgstr "Opsommingslijst"
 
-#: src/Support/I18n.php:971
+#: src/Support/I18n.php:974
 msgid "Numbered list"
 msgstr "Genummerde lijst"
 
-#: src/Support/I18n.php:972
+#: src/Support/I18n.php:975
 msgid "Link"
 msgstr "Koppeling"
 
-#: src/Support/I18n.php:973
+#: src/Support/I18n.php:976
 msgid "Clear formatting"
 msgstr "Opmaak wissen"
 
-#: src/Support/I18n.php:974
+#: src/Support/I18n.php:977
 msgid "HTML source"
 msgstr "HTML-bron"
 
-#: src/Support/I18n.php:975
+#: src/Support/I18n.php:978
 msgid "Visual editor"
 msgstr "Visuele editor"
 
-#: src/Support/I18n.php:976
+#: src/Support/I18n.php:979
 msgid "Edit HTML"
 msgstr "HTML bewerken"
 
-#: src/Support/I18n.php:977
+#: src/Support/I18n.php:980
 msgid "Link URL"
 msgstr "URL van koppeling"
 
-#: src/Support/I18n.php:978
+#: src/Support/I18n.php:981
 msgid "Replace with…"
 msgstr "Vervangen door…"
 
-#: src/Support/I18n.php:979
+#: src/Support/I18n.php:982
 msgid "Formatting"
 msgstr "Opmaak"
 
-#: src/Support/I18n.php:992
+#: src/Support/I18n.php:995
 msgid "Save"
 msgstr "Opslaan"
 
-#: src/Support/I18n.php:994
+#: src/Support/I18n.php:997
 msgid "Testing…"
 msgstr "Testen…"
 
@@ -4539,21 +4564,21 @@ msgstr ""
 "De bestemmings-URL heeft een omleiding geretourneerd, die om "
 "veiligheidsredenen niet gevolgd wordt."
 
-#: src/Sync/Runner.php:102
+#: src/Sync/Runner.php:121
 msgid ""
 "An Export ZIP is currently running — wait for it to finish, then try again."
 msgstr ""
 "Er loopt momenteel een ZIP-export — wacht tot die klaar is en probeer het "
 "dan opnieuw."
 
-#: src/Sync/Runner.php:270
+#: src/Sync/Runner.php:289
 msgid ""
 "There is no up-to-date full render to add changes to yet. Use Process all."
 msgstr ""
 "Er is nog geen actuele volledige render om wijzigingen aan toe te voegen. "
 "Gebruik ‘Alles verwerken’."
 
-#: src/Sync/Runner.php:273
+#: src/Sync/Runner.php:292
 msgid ""
 "Pages to include has changed since the last Process all, which affects the "
 "whole export. Use Process all."
@@ -4562,7 +4587,7 @@ msgstr ""
 "hele export raakt. Gebruik ‘Alles verwerken’."
 
 #. translators: %s: page title(s).
-#: src/Sync/Runner.php:280
+#: src/Sync/Runner.php:299
 #, php-format
 msgid ""
 "Nothing to process yet: %s isn’t linked from any page in the export, and "
@@ -4575,7 +4600,7 @@ msgstr ""
 "de export. Link ernaar vanaf een geëxporteerde pagina en gebruik dan "
 "‘Wijzigingen verwerken’ (of ‘Alles verwerken’)."
 
-#: src/Sync/Runner.php:284
+#: src/Sync/Runner.php:303
 msgid ""
 "No content changes are recorded since the last Process. Site-wide changes "
 "(menus, templates, settings) need Process all."
@@ -4584,19 +4609,40 @@ msgstr ""
 "Sitebrede wijzigingen (menu’s, templates, instellingen) hebben ‘Alles "
 "verwerken’ nodig."
 
-#: src/Sync/Runner.php:685
+#. translators: 1: HTTP status code, 2: URL.
+#: src/Sync/Runner.php:708
+#, php-format
+msgid ""
+"HTTP %1$d — too many redirects (last to %2$s); check for a redirect loop"
+msgstr ""
+"HTTP %1$d — te veel omleidingen (de laatste naar %2$s); controleer op een "
+"omleidingslus"
+
+#. translators: 1: HTTP status code, 2: URL on another site.
+#: src/Sync/Runner.php:710
+#, php-format
+msgid ""
+"HTTP %1$d — redirects to another site (%2$s), e.g. a link-tracking or short "
+"link: not a page, so not exported; links to it on the static site go "
+"straight there"
+msgstr ""
+"HTTP %1$d — leidt om naar een andere site (%2$s), bijvoorbeeld een tracking-"
+" of korte link: geen pagina, dus niet geëxporteerd; links ernaar gaan op de "
+"statische site rechtstreeks daarheen"
+
+#: src/Sync/Runner.php:716
 msgid "site is in maintenance mode, or temporarily unavailable"
 msgstr "site staat in onderhoudsmodus of is tijdelijk niet beschikbaar"
 
-#: src/Sync/Runner.php:686
+#: src/Sync/Runner.php:717
 msgid "blocked — maintenance mode, a security plugin, or a firewall"
 msgstr "geblokkeerd — onderhoudsmodus, een beveiligingsplugin of een firewall"
 
-#: src/Sync/Runner.php:687
+#: src/Sync/Runner.php:718
 msgid "password protected, or behind HTTP authentication"
 msgstr "met wachtwoord beveiligd, of achter HTTP-authenticatie"
 
-#: src/Sync/Runner.php:1287
+#: src/Sync/Runner.php:1368
 msgid ""
 "The page list has changed since the last render. Click Process to refresh "
 "it, then Check again."
@@ -4604,13 +4650,13 @@ msgstr ""
 "De paginalijst is gewijzigd sinds de laatste render. Klik op Verwerken om "
 "hem te verversen en controleer daarna opnieuw."
 
-#: src/Sync/Runner.php:1288
+#: src/Sync/Runner.php:1369
 msgid "Nothing has been rendered yet. Click Process first, then Check."
 msgstr ""
 "Er is nog niets gerenderd. Klik eerst op Verwerken en daarna op Controleren."
 
 #. translators: %d: number of published pages not in the static export.
-#: src/Sync/Runner.php:1362
+#: src/Sync/Runner.php:1443
 #, php-format
 msgid "%d published page isn’t in the export — see View list."
 msgid_plural "%d published pages aren’t in the export — see View list."

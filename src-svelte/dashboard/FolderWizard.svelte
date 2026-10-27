@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { Alert, Button, Checkbox, CopyButton, Input, RadioGroup, Wizard } from '@wpeasy/ab-ui';
   import type { WizardStep } from '@wpeasy/ab-ui';
   import Modal from '../lib/Modal.svelte';
@@ -48,12 +49,23 @@
   let moveOk = $state(true);
   let moveProblems = $state<string[]>([]);
   let rechecking = $state(false);
+  // …or keep WordPress where it is and publish to another domain whose folder
+  // sits beside it (the wizard's ordinary steps).
+  let otherDomain = $state(false);
+
+  function hostOf(u: string): string {
+    try {
+      return new URL(u).hostname.toLowerCase();
+    } catch {
+      return '';
+    }
+  }
 
   // Run the move's pre-flight again (after adding the nginx rule, say).
   async function recheck(): Promise<void> {
     rechecking = true;
     try {
-      check = await api.serverFolderCheck({ id: destId });
+      check = await api.serverFolderCheck({ id: destId, url: destUrl });
     } catch (e) {
       loadError = (e as Error).message;
     }
@@ -94,9 +106,15 @@
     { value: CUSTOM, label: __('fwOptCustom') },
   ]);
 
-  // Fresh start each time it opens.
+  // Fresh start each time it opens — only then: setup saves the address
+  // (onDone), which changes destUrl, and re-running on that jumped the wizard
+  // back to its first step instead of showing the result.
   $effect(() => {
     if (!open) return;
+    untrack(reset);
+  });
+
+  function reset(): void {
     step = 0;
     check = null;
     loadError = '';
@@ -110,16 +128,20 @@
     warnings = [];
     customPath = '';
     url = destUrl;
+    otherDomain = false;
     api
-      .serverFolderCheck({ id: destId })
+      .serverFolderCheck({ id: destId, url: destUrl })
       .then((c) => {
         check = c;
         const first = c.suggestions[0];
         choice = first ? first.path : CUSTOM;
         if (first?.url) url = first.url;
+        // A Destination URL on another domain already says which layout.
+        const host = hostOf(destUrl);
+        otherDomain = !!c.move && host !== '' && host !== hostOf(c.move.from);
       })
       .catch((e) => (loadError = (e as Error).message));
-  });
+  }
 
   function pick(): void {
     if (suggestion?.url) url = suggestion.url;
@@ -299,15 +321,26 @@
     {#each moveProblems as p (p)}
       <Alert tone="danger" description={p} />
     {/each}
+    <div class="bs-wiz__alt bs-stack bs-stack--sm">
+      <p class="bs-wiz__muted">{__('wmOtherDomainHelp')}</p>
+      <div class="bs-row">
+        <Button variant="secondary" size="sm" onclick={() => (otherDomain = true)} disabled={moving}>{__('wmOtherDomain')}</Button>
+      </div>
+    </div>
   </div>
 {/snippet}
 
 <Modal bind:open title={__('fwTitle')} size="lg">
   <div class="bs-wiz">
-    {#if check?.move}
+    {#if check?.move && !otherDomain}
       {@render moveFlow(check.move)}
     {:else}
     <p class="bs-wiz__intro">{__('fwIntro')}</p>
+    {#if check?.move && step === 0}
+      <div class="bs-row">
+        <Button variant="ghost" size="sm" onclick={() => (otherDomain = false)}>{__('fwMoveInstead')}</Button>
+      </div>
+    {/if}
     <Wizard
       steps={[
         { label: __('fwStepWhere'), content: whereStep, nextDisabled: !check || !path || !/^https?:\/\//i.test(url.trim()) },
@@ -347,6 +380,11 @@
 
   .bs-wiz__h {
     margin: 0;
+  }
+
+  .bs-wiz__alt {
+    padding-top: var(--ab-space-3);
+    border-top: 1px solid var(--ab-color-border);
   }
 
   .bs-wiz__pre {

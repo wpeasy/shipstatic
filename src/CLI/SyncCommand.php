@@ -523,7 +523,7 @@ final class SyncCommand {
                 \WP_CLI::log('WordPress: ' . (ServerFolder::wp_roots()[0] ?? '?') . '   account: ' . ServerFolder::account_root());
                 // WP-CLI has no document root, so the one-domain layout is only
                 // suggested from the dashboard; folders beside WordPress are listed here.
-                foreach (ServerFolder::suggestions() as $s) {
+                foreach (ServerFolder::suggestions('', (string) ($assoc_args['dest-url'] ?? '')) as $s) {
                     \WP_CLI::log(sprintf('  %-10s %s %s', $s['layout'], $s['path'], $s['url']));
                 }
                 return;

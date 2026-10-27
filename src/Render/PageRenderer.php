@@ -105,13 +105,16 @@ final class PageRenderer {
     /**
      * Fetch a page URL and return its rendered HTML.
      *
+     * `location` is where a redirect that wasn't followed points (absolute;
+     * another site, or '' when there was none).
+     *
      * @param string $url Absolute URL.
-     * @return array{code:int,body:string,contentType:string,object:string}
+     * @return array{code:int,body:string,contentType:string,object:string,location:string}
      * @throws \RuntimeException On transport error.
      */
     public static function render(string $url): array {
         self::release_session();
-        $response = self::get($url, self::request_args($url));
+        $response = self::get($url, self::request_args($url), $location);
 
         if (is_wp_error($response)) {
             throw new \RuntimeException($response->get_error_message());
@@ -122,6 +125,7 @@ final class PageRenderer {
             'body'        => (string) wp_remote_retrieve_body($response),
             'contentType' => (string) wp_remote_retrieve_header($response, 'content-type'),
             'object'      => (string) wp_remote_retrieve_header($response, self::OBJECT_HEADER),
+            'location'    => $location,
         ];
     }
 
@@ -129,7 +133,7 @@ final class PageRenderer {
      * Fetch a binary asset URL.
      *
      * @param string $url Absolute URL.
-     * @return array{code:int,body:string,contentType:string}
+     * @return array{code:int,body:string,contentType:string,location:string}
      * @throws \RuntimeException On transport error.
      */
     public static function fetch_asset(string $url): array {
@@ -145,7 +149,7 @@ final class PageRenderer {
          */
         $args['timeout'] = max(5, (int) apply_filters('shipstatic_asset_timeout', 60, $url));
 
-        $response = self::get($url, $args);
+        $response = self::get($url, $args, $location);
 
         if (is_wp_error($response)) {
             throw new \RuntimeException($response->get_error_message());
@@ -155,6 +159,7 @@ final class PageRenderer {
             'code'        => (int) wp_remote_retrieve_response_code($response),
             'body'        => (string) wp_remote_retrieve_body($response),
             'contentType' => (string) wp_remote_retrieve_header($response, 'content-type'),
+            'location'    => $location,
         ];
     }
 
@@ -164,23 +169,26 @@ final class PageRenderer {
      * there: its 3xx is returned, so the page is skipped instead of the other
      * site's HTML being saved as ours — and the render token never leaves.
      *
-     * @param string              $url  Absolute URL.
-     * @param array<string,mixed> $args Request args (`redirection` = how many to follow).
+     * @param string              $url      Absolute URL.
+     * @param array<string,mixed> $args     Request args (`redirection` = how many to follow).
+     * @param string|null         $location Set to where an unfollowed redirect points (absolute), or ''.
      * @return array<string,mixed>|\WP_Error
      */
-    private static function get(string $url, array $args) {
+    private static function get(string $url, array $args, ?string &$location = null) {
         $hops                = max(0, (int) ($args['redirection'] ?? 5));
         $args['redirection'] = 0;
+        $location            = '';
 
         $response = wp_remote_get($url, $args);
-        while (!is_wp_error($response) && $hops-- > 0) {
-            $code     = (int) wp_remote_retrieve_response_code($response);
-            $location = (string) wp_remote_retrieve_header($response, 'location');
-            if ($code < 300 || $code > 399 || $location === '') {
+        while (!is_wp_error($response)) {
+            $code   = (int) wp_remote_retrieve_response_code($response);
+            $header = (string) wp_remote_retrieve_header($response, 'location');
+            if ($code < 300 || $code > 399 || $header === '') {
                 break;
             }
-            $next = Url::absolutize($location, $url);
-            if ($next === '' || !Url::is_internal($next)) {
+            $next = Url::absolutize($header, $url);
+            if ($next === '' || !Url::is_internal($next) || $hops-- <= 0) {
+                $location = $next;
                 break;
             }
             $url      = $next;

@@ -79,6 +79,23 @@ final class Runner {
      */
     private const RENDER_FORMAT_OPTION = 'shipstatic_render_format';
 
+    /**
+     * WordPress's address when the render was made. The render holds source
+     * URLs (sitemap, robots.txt) and strips the home sub-path it had then, so
+     * a render from before an address change (moving WordPress into /wp or
+     * back, a migration) isn't current: the sitemap kept "/wp/" after Undo.
+     */
+    private const RENDER_HOME_OPTION = 'shipstatic_render_home';
+
+    /**
+     * Site URLs the render found redirecting to another site — a link-tracking
+     * or short-link plugin's "/go/partner" → 301 → partner.com — as rendered
+     * link path => target. They aren't pages, and the static site has nothing
+     * to count clicks or redirect, so links to them would 404 there; the Links
+     * step at deploy points them straight at the target (LinkDeployReplacer).
+     */
+    private const RENDER_REDIRECTS_OPTION = 'shipstatic_render_redirects';
+
     /** When the render last finished (full or partial), for "Using the render from …". */
     private const RENDER_AT_OPTION = 'shipstatic_render_at';
 
@@ -268,7 +285,7 @@ final class Runner {
      * @throws \RuntimeException With a message for the dashboard.
      */
     private static function partial_plan(): array {
-        if (empty(Manifest::load(Manifest::RENDER_OPTION)) || (int) get_option(self::RENDER_FORMAT_OPTION, 0) !== self::RENDER_FORMAT) {
+        if (empty(Manifest::load(Manifest::RENDER_OPTION)) || (int) get_option(self::RENDER_FORMAT_OPTION, 0) !== self::RENDER_FORMAT || !self::render_home_current()) {
             throw new \RuntimeException(__('There is no up-to-date full render to add changes to yet. Use Process all.', 'shipstatic'));
         }
         if (ChangeTracker::rendered_mode() !== UrlCollector::mode()) {
@@ -677,10 +694,22 @@ final class Runner {
      * Skip reason for a non-200 render/fetch, with a hint for the statuses that
      * have a specific, fixable cause — otherwise "HTTP 503" alone sends people
      * hunting through server logs for a switch they flipped themselves.
+     * A redirect says where it went: a link-tracking or short-link plugin's
+     * URL (/go/partner → 301 → partner.com) is skipped on purpose, and "HTTP
+     * 301" alone read like a fault.
      *
-     * @param int $code HTTP status code.
+     * @param int    $code     HTTP status code.
+     * @param string $location Where an unfollowed redirect points ('' if none).
      */
-    private static function http_skip_reason(int $code): string {
+    private static function http_skip_reason(int $code, string $location = ''): string {
+        if ($code >= 300 && $code <= 399 && $location !== '') {
+            return Url::is_internal($location)
+                /* translators: 1: HTTP status code, 2: URL. */
+                ? sprintf(__('HTTP %1$d — too many redirects (last to %2$s); check for a redirect loop', 'shipstatic'), $code, $location)
+                /* translators: 1: HTTP status code, 2: URL on another site. */
+                : sprintf(__('HTTP %1$d — redirects to another site (%2$s), e.g. a link-tracking or short link: not a page, so not exported; links to it on the static site go straight there', 'shipstatic'), $code, $location);
+        }
+
         $hints = [
             // Bricks serves its maintenance screen with 503; other maintenance
             // plugins and WAFs use 403/401 for the same "site is closed" state.
@@ -692,6 +721,40 @@ final class Runner {
         $reason = 'HTTP ' . $code;
 
         return isset($hints[$code]) ? $reason . ' (' . $hints[$code] . ')' : $reason;
+    }
+
+    /**
+     * Remember a site URL that redirects to another site, keyed the way links
+     * to it appear in the render (Url::strip_base_token() form).
+     *
+     * @param Job                 $job    Active job.
+     * @param string              $url    The URL that was requested.
+     * @param array<string,mixed> $result PageRenderer result.
+     */
+    private static function note_redirect(Job $job, string $url, array $result): void {
+        $code = (int) ($result['code'] ?? 0);
+        $to   = (string) ($result['location'] ?? '');
+        if ($code < 300 || $code > 399 || $to === '' || Url::is_internal($to) || !in_array(strtolower((string) wp_parse_url($to, PHP_URL_SCHEME)), ['http', 'https'], true)) {
+            return;
+        }
+        $key = Url::strip_base_token(UrlRewriter::rewrite($url));
+        if ($key === '' || $key[0] !== '/') {
+            return;
+        }
+        $job->data['redirects'][$key] = $to;
+        // Links are written with or without the trailing slash.
+        if (strpbrk($key, '?#') === false && $key !== '/') {
+            $job->data['redirects'][str_ends_with($key, '/') ? rtrim($key, '/') : $key . '/'] = $to;
+        }
+    }
+
+    /**
+     * Site URLs the last render found redirecting to another site.
+     *
+     * @return array<string,string> Rendered link path => target URL.
+     */
+    public static function external_redirects(): array {
+        return array_map('strval', (array) get_option(self::RENDER_REDIRECTS_OPTION, []));
     }
 
     /**
@@ -717,7 +780,8 @@ final class Runner {
                 $result = PageRenderer::render($url);
 
                 if ($result['code'] !== 200) {
-                    $job->skip($url, self::http_skip_reason((int) $result['code']));
+                    $job->skip($url, self::http_skip_reason((int) $result['code'], (string) ($result['location'] ?? '')));
+                    self::note_redirect($job, $url, $result);
                     continue;
                 }
 
@@ -839,7 +903,8 @@ final class Runner {
                 // No source file (dynamic asset): fetch and cache it.
                 $result = PageRenderer::fetch_asset($url);
                 if ($result['code'] !== 200) {
-                    $job->skip($url, self::http_skip_reason((int) $result['code']));
+                    $job->skip($url, self::http_skip_reason((int) $result['code'], (string) ($result['location'] ?? '')));
+                    self::note_redirect($job, $url, $result);
                     continue;
                 }
                 // A page that slipped into the asset queue must not be written.
@@ -891,6 +956,8 @@ final class Runner {
 
         Manifest::save(Manifest::RENDER_OPTION, $manifest);
         update_option(self::RENDER_AT_OPTION, time(), false);
+        $redirects = (array) ($job->data['redirects'] ?? []);
+        update_option(self::RENDER_REDIRECTS_OPTION, empty($job->data['singlePage']) ? $redirects : array_replace(self::external_redirects(), $redirects), false);
         self::write_manifest_file($job, $manifest);
         LiveIndex::save_objects((array) ($job->data['objects'] ?? []), !empty($job->data['singlePage']), (array) ($job->data['partialRemove'] ?? []));
         if (!empty($job->data['partial'])) {
@@ -903,6 +970,7 @@ final class Runner {
         if (empty($job->data['singlePage'])) {
             ChangeTracker::mark_rendered(UrlCollector::mode());
             update_option(self::RENDER_FORMAT_OPTION, self::RENDER_FORMAT, false);
+            update_option(self::RENDER_HOME_OPTION, home_url('/'), false);
         }
 
         // Persist the link graph (source post id => linked rels). Full run
@@ -1256,6 +1324,16 @@ final class Runner {
      * @return array<string,mixed>
      */
     /**
+     * Whether the render was made at WordPress's current address (a render
+     * from before this was recorded counts as current).
+     */
+    private static function render_home_current(): bool {
+        $home = (string) get_option(self::RENDER_HOME_OPTION, '');
+
+        return $home === '' || $home === home_url('/');
+    }
+
+    /**
      * Whether the current render manifest still reflects the current
      * discovery mode + content — i.e. Process/Sync would have nothing new to
      * render. Shared by {@see preview()} (Check) and Export ZIP, which both
@@ -1264,6 +1342,7 @@ final class Runner {
     public static function render_is_current(): bool {
         return !empty(Manifest::load(Manifest::RENDER_OPTION))
             && (int) get_option(self::RENDER_FORMAT_OPTION, 1) === self::RENDER_FORMAT
+            && self::render_home_current()
             && !ChangeTracker::is_dirty()
             && ChangeTracker::rendered_mode() === UrlCollector::mode();
     }
@@ -2392,8 +2471,9 @@ final class Runner {
      * @param \WPEasy\ShipStatic\Settings\Destination|null  $dest    Destination.
      */
     public static function in_sync(string $dest_id, $dest): bool {
-        // Content edited since the last render → the export is stale everywhere.
-        if (ChangeTracker::is_dirty()) {
+        // Content edited since the last render, or a render Sync wouldn't reuse
+        // (older format, another address) → the export is stale everywhere.
+        if (!self::render_is_current()) {
             return false;
         }
 
@@ -2704,7 +2784,7 @@ HTML;
 
         $result = PageRenderer::fetch_asset($url);
         if ($result['code'] !== 200) {
-            $job->skip($url, 'HTTP ' . $result['code']);
+            $job->skip($url, self::http_skip_reason((int) $result['code'], (string) ($result['location'] ?? '')));
             return null;
         }
 

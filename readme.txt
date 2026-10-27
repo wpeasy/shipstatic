@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.5
+Stable tag: 2.4.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,13 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.6 =
+* Fix: link-tracking and short links on your site (such as /go/partner) no longer break on the static site. Links to them now go straight to where they redirect, and the skip reason says so.
+* Fix: "This server" can now publish to another domain whose folder sits beside WordPress, even when WordPress is at its domain's root.
+* Fix: the "This server" wizard shows its result instead of jumping back to the start, and switches the destination on.
+* Fix: after moving WordPress into /wp or back, the sitemap no longer keeps the old /wp/ addresses, and the dashboard asks for Process.
+* Fix: the optional nginx Lockdown snippet no longer redirects visitors in a loop when WordPress is in /wp.
 
 = 2.4.5 =
 * Fix: a link to your site's home written without a trailing slash (such as the Bricks logo) pointed at the current page in the export. After updating, use Process all once.

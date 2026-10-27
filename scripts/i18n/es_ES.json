@@ -955,5 +955,11 @@
   "nginx": "nginx",
   "Add this block inside this site’s server { } block in nginx (next to its other location blocks), reload nginx, then press Check again. Without it, WordPress’s addresses under /wp/ (including this dashboard’s) would stop working after the move. Your host can add it for you.": "Añade este bloque dentro del bloque server { } de este sitio en nginx (junto a sus otros bloques location), recarga nginx y pulsa Comprobar de nuevo. Sin él, las direcciones de WordPress bajo /wp/ (incluidas las de este panel) dejarían de funcionar tras el traslado. Tu proveedor de alojamiento puede añadirlo por ti.",
   "nginx is ready: addresses under /wp/ reach WordPress.": "nginx está listo: las direcciones bajo /wp/ llegan a WordPress.",
-  "The check couldn’t reach the site: %s": "La comprobación no pudo llegar al sitio: %s"
+  "The check couldn’t reach the site: %s": "La comprobación no pudo llegar al sitio: %s",
+  "Or leave WordPress where it is and publish to another domain or subdomain (such as static.example.com) whose folder sits beside WordPress on this server.": "O deja WordPress donde está y publica en otro dominio o subdominio (por ejemplo static.example.com) cuya carpeta esté junto a WordPress en este servidor.",
+  "Publish to another domain": "Publicar en otro dominio",
+  "← Move WordPress into /wp instead": "← Mover WordPress a /wp en su lugar",
+  "HTTP %1$d — too many redirects (last to %2$s); check for a redirect loop": "HTTP %1$d — demasiadas redirecciones (la última a %2$s); comprueba si hay un bucle de redirección",
+  "HTTP %1$d — redirects to another site (%2$s), e.g. a link-tracking or short link: not a page, so not exported; links to it on the static site go straight there": "HTTP %1$d — redirige a otro sitio (%2$s), por ejemplo un enlace de seguimiento o un enlace corto: no es una página, así que no se exporta; en el sitio estático, los enlaces a él van directamente allí",
+  "Redirects to another site (%s) — links to it go straight there": "Redirige a otro sitio (%s) — los enlaces a él van directamente allí"
 }

@@ -15,6 +15,7 @@ use WP_REST_Response;
 use WPEasy\ShipStatic\Abilities\AbilityRegistry;
 use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Render\CompatibilityScanner;
+use WPEasy\ShipStatic\Render\UrlRewriter;
 use WPEasy\ShipStatic\Settings\Destinations;
 use WPEasy\ShipStatic\Sync\ChangeTracker;
 use WPEasy\ShipStatic\Sync\ChangedContent;
@@ -111,10 +112,9 @@ final class StatusController {
             'hasRendered'   => $has_rendered,
             // Whether that render still reflects the current mode AND current
             // content — i.e. the pages list is accurate. When false the dashboard
-            // offers "Process" (re-render) instead of "View list".
-            'renderCurrent' => $has_rendered
-                && !ChangeTracker::is_dirty()
-                && ChangeTracker::rendered_mode() === UrlCollector::mode(),
+            // offers "Process" (re-render) instead of "View list". The same test
+            // as Check and Sync (render format, WordPress's address included).
+            'renderCurrent' => Runner::render_is_current(),
             // Published pages NOT in the export — surfaced beside "View list" so an
             // in-sync export never silently hides content the user just published.
             // What "Process changes" would cover, and why Process all may be needed.
@@ -153,7 +153,8 @@ final class StatusController {
         if (!empty($types)) {
             // Include unpublished statuses so the Excluded tab can explain "Not
             // published". auto-draft/trash/inherit (revisions, attachments) stay out.
-            $ids = get_posts([
+            $redirects = Runner::external_redirects();
+            $ids       = get_posts([
                 'post_type'        => $types,
                 'post_status'      => ['publish', 'draft', 'pending', 'private', 'future'],
                 'posts_per_page'   => -1,
@@ -180,7 +181,7 @@ final class StatusController {
                     $excluded[] = [
                         'title' => $title,
                         'url'   => $url,
-                        'tags'  => self::exclusion_reasons($pid, $status, $mode),
+                        'tags'  => self::exclusion_reasons($pid, $status, $mode, $url, $redirects),
                     ];
                 }
             }
@@ -238,10 +239,12 @@ final class StatusController {
      *
      * @param int    $post_id Post id.
      * @param string $status  Post status.
-     * @param string $mode    Discovery mode ('linked'|'all'|'manual').
+     * @param string               $mode      Discovery mode ('linked'|'all'|'manual').
+     * @param string               $url       Its permalink.
+     * @param array<string,string> $redirects Runner::external_redirects().
      * @return array<int,string>
      */
-    private static function exclusion_reasons(int $post_id, string $status, string $mode): array {
+    private static function exclusion_reasons(int $post_id, string $status, string $mode, string $url = '', array $redirects = []): array {
         if ($status !== 'publish') {
             return [__('Not published', 'shipstatic')];
         }
@@ -251,6 +254,13 @@ final class StatusController {
         // out, whatever the discovery mode says.
         if (!Environment::pretty_permalinks()) {
             return [__('Plain permalinks', 'shipstatic')];
+        }
+
+        // A link-tracking or short-link post: its URL redirects to another site.
+        $key = $url !== '' ? Url::strip_base_token(UrlRewriter::rewrite($url)) : '';
+        if ($key !== '' && isset($redirects[$key])) {
+            /* translators: %s: the URL it redirects to. */
+            return [sprintf(__('Redirects to another site (%s) — links to it go straight there', 'shipstatic'), $redirects[$key])];
         }
 
         if ($mode === 'manual') {

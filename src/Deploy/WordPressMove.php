@@ -440,6 +440,10 @@ final class WordPressMove {
             @rmdir($root . '/' . $d); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- only removes empty folders.
         }
         delete_option(Destinations::pushed_option($dest_id));
+        // The move marked it connected; that was the folder at the root.
+        if (!empty($record['connOption'])) {
+            delete_option((string) $record['connOption']);
+        }
         wp_delete_file($root . '/' . ServerFolder::MARKER);
         if (is_file($root . '/index.html') && (string) file_get_contents($root . '/index.html') === (string) ($record['holding'] ?? '')) {
             wp_delete_file($root . '/index.html');

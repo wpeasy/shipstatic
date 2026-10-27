@@ -953,5 +953,11 @@
   "nginx": "nginx",
   "Add this block inside this site’s server { } block in nginx (next to its other location blocks), reload nginx, then press Check again. Without it, WordPress’s addresses under /wp/ (including this dashboard’s) would stop working after the move. Your host can add it for you.": "Voeg dit blok toe binnen het server { }-blok van deze site in nginx (naast de andere location-blokken), herlaad nginx en klik dan op Opnieuw controleren. Zonder dit blok werken de adressen van WordPress onder /wp/ (ook die van dit dashboard) na de verhuizing niet meer. Je host kan het voor je toevoegen.",
   "nginx is ready: addresses under /wp/ reach WordPress.": "nginx is klaar: adressen onder /wp/ bereiken WordPress.",
-  "The check couldn’t reach the site: %s": "De controle kon de site niet bereiken: %s"
+  "The check couldn’t reach the site: %s": "De controle kon de site niet bereiken: %s",
+  "Or leave WordPress where it is and publish to another domain or subdomain (such as static.example.com) whose folder sits beside WordPress on this server.": "Of laat WordPress staan waar het staat en publiceer naar een ander domein of subdomein (zoals static.example.com) waarvan de map naast WordPress op deze server staat.",
+  "Publish to another domain": "Publiceren naar een ander domein",
+  "← Move WordPress into /wp instead": "← WordPress in plaats daarvan naar /wp verplaatsen",
+  "HTTP %1$d — too many redirects (last to %2$s); check for a redirect loop": "HTTP %1$d — te veel omleidingen (de laatste naar %2$s); controleer op een omleidingslus",
+  "HTTP %1$d — redirects to another site (%2$s), e.g. a link-tracking or short link: not a page, so not exported; links to it on the static site go straight there": "HTTP %1$d — leidt om naar een andere site (%2$s), bijvoorbeeld een tracking- of korte link: geen pagina, dus niet geëxporteerd; links ernaar gaan op de statische site rechtstreeks daarheen",
+  "Redirects to another site (%s) — links to it go straight there": "Leidt om naar een andere site (%s) — links ernaar gaan rechtstreeks daarheen"
 }

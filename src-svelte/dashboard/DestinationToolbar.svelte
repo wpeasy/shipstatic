@@ -36,6 +36,12 @@
   let enabled = $state(d.enabled);
   let saving = $state(false);
 
+  // Follow reloads: something else can switch it (folder setup turns it on,
+  // undoing a WordPress move turns it off).
+  $effect(() => {
+    enabled = destination.enabled;
+  });
+
   let connected = $derived(destination.status.connected);
   let busy = $derived(saving || running || checking || exporting);
 

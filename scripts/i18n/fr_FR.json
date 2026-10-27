@@ -955,5 +955,11 @@
   "nginx": "nginx",
   "Add this block inside this site’s server { } block in nginx (next to its other location blocks), reload nginx, then press Check again. Without it, WordPress’s addresses under /wp/ (including this dashboard’s) would stop working after the move. Your host can add it for you.": "Ajoutez ce bloc dans le bloc server { } de ce site dans nginx (à côté de ses autres blocs location), rechargez nginx, puis cliquez sur Vérifier à nouveau. Sans lui, les adresses de WordPress sous /wp/ (y compris celles de ce tableau de bord) cesseraient de fonctionner après le déplacement. Votre hébergeur peut l’ajouter pour vous.",
   "nginx is ready: addresses under /wp/ reach WordPress.": "nginx est prêt : les adresses sous /wp/ atteignent WordPress.",
-  "The check couldn’t reach the site: %s": "La vérification n’a pas pu joindre le site : %s"
+  "The check couldn’t reach the site: %s": "La vérification n’a pas pu joindre le site : %s",
+  "Or leave WordPress where it is and publish to another domain or subdomain (such as static.example.com) whose folder sits beside WordPress on this server.": "Ou laissez WordPress où il est et publiez sur un autre domaine ou sous-domaine (par exemple static.example.com) dont le dossier se trouve à côté de WordPress sur ce serveur.",
+  "Publish to another domain": "Publier sur un autre domaine",
+  "← Move WordPress into /wp instead": "← Déplacer plutôt WordPress dans /wp",
+  "HTTP %1$d — too many redirects (last to %2$s); check for a redirect loop": "HTTP %1$d — trop de redirections (la dernière vers %2$s) ; vérifiez qu’il n’y a pas de boucle de redirection",
+  "HTTP %1$d — redirects to another site (%2$s), e.g. a link-tracking or short link: not a page, so not exported; links to it on the static site go straight there": "HTTP %1$d — redirige vers un autre site (%2$s), par exemple un lien de suivi ou un lien court : ce n’est pas une page, il n’est donc pas exporté ; sur le site statique, les liens vers celui-ci y mènent directement",
+  "Redirects to another site (%s) — links to it go straight there": "Redirige vers un autre site (%s) — les liens vers celui-ci y mènent directement"
 }

@@ -471,6 +471,11 @@
         <h2>Common issues &amp; resolutions</h2>
 
         <details class="bs-docs__faq">
+          <summary>Some pages are skipped with “redirects to another site”</summary>
+          <p>Link-tracking and short-link plugins (Pretty Links, ThirstyAffiliates, a URL manager) give each outbound link an address on your site, such as <code>/go/partner</code>, that redirects to the real site so they can count clicks. Those addresses aren’t pages, so they’re skipped, and the reason says where each one redirects. The static site has no WordPress behind it to count clicks or redirect, so on every destination ShipStatic points links to them straight at their target (<code>/go/partner</code> → <code>https://partner.com/…</code>): they keep working, but clicks aren’t counted. A link swap you set yourself under Replacements → Links takes priority.</p>
+        </details>
+
+        <details class="bs-docs__faq">
           <summary>A destination shows “Out of date” right after a successful sync</summary>
           <p>“In sync” is based on a signature of the current render plus that destination’s replacements and URL. If it lingers after upgrading, run <strong>Sync</strong> once more — the first sync on the new logic records the signature, and it’ll read “In sync” from then on (until content or a replacement actually changes).</p>
         </details>

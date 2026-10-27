@@ -354,8 +354,21 @@ final class Writer {
      * An optional snippet for nginx's `server {}` block, for people who manage
      * their own server. It holds the list as it is now: a later change
      * (including an address added by the unlock link) needs it pasted again.
+     *
+     * It goes in the whole server { } block, so with WordPress in a sub-path
+     * it locks only that path and leaves the rest alone: after "Move WordPress
+     * into /wp" the static site shares the block, and locking it too would
+     * redirect strangers to the page they asked for, forever. Like the
+     * .htaccess rule, the redirect drops the home sub-path (/wp/about/ →
+     * <destination>/about/).
      */
     public static function nginx_snippet(): string {
+        $home = untrailingslashit((string) wp_parse_url(home_url('/'), PHP_URL_PATH));
+        if (!preg_match('#^[A-Za-z0-9._~/-]*$#', $home)) {
+            throw new \RuntimeException('Unexpected characters in the home path.');
+        }
+        $home_re = str_replace('.', '\\.', $home);
+
         $lines = [
             '# ShipStatic Lockdown — the list as of ' . gmdate('Y-m-d H:i') . ' UTC. Paste again (and reload nginx) after changes.',
             'set $shipstatic_locked 1;',
@@ -368,13 +381,22 @@ final class Writer {
         $lines[] = 'if ($cookie_' . Settings::COOKIE . ' = "' . Settings::cookie_value() . '") { set $shipstatic_locked 0; }';
         $lines[] = 'if ($http_x_bs_render_token = "' . PageRenderer::token() . '") { set $shipstatic_locked 0; }';
         $lines[] = 'if ($uri ~ "^/\.well-known/") { set $shipstatic_locked 0; }';
+        if ($home !== '') {
+            $lines[] = 'if ($uri !~ "^' . $home_re . '(/|$)") { set $shipstatic_locked 0; }';
+        }
 
         $base    = Settings::redirect_base();
-        $lines[] = $base !== ''
-            // $request_uri, never $uri: nginx decodes $uri, so "%0d%0a" in a path
-            // would become a real line break in the Location header.
-            ? 'if ($shipstatic_locked) { return 302 ' . untrailingslashit($base) . '$request_uri; }'
-            : 'if ($shipstatic_locked) { return 403; }';
+        if ($base !== '') {
+            // From $request_uri, never $uri: nginx decodes $uri, so "%0d%0a" in
+            // a path would become a real line break in the Location header.
+            // $request_uri keeps the query, so "/wp?x" must lose its "/wp"
+            // too, or it redirects to itself.
+            $lines[] = 'set $shipstatic_path "";';
+            $lines[] = 'if ($request_uri ~ "^(?:' . $home_re . '(?=[/?]|$))?/?(.*)$") { set $shipstatic_path $1; }';
+            $lines[] = 'if ($shipstatic_locked) { return 302 ' . trailingslashit($base) . '$shipstatic_path; }';
+        } else {
+            $lines[] = 'if ($shipstatic_locked) { return 403; }';
+        }
 
         return implode("\n", $lines) . "\n";
     }

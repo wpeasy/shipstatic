@@ -5,6 +5,21 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.6] - 2026-10-27
+
+### Fixed
+- Export: link-tracking and short-link URLs on the site (`/go/partner` → 301 → partner.com, from a URL manager, Pretty Links, ThirstyAffiliates) were skipped as just "HTTP 301", and links to them stayed in the static pages, where they 404. The skip reason now names the target (`PageRenderer::get()` reports an unfollowed redirect's `location`; `Runner::http_skip_reason($code, $location)`), the render records them (`shipstatic_render_redirects`, link path => target), and the Links deploy step points links straight at the target on every destination (a hand-set link swap wins). Clicks from the static site aren't counted — the tracker runs in WordPress. A redirect loop gets its own reason. The pages overview tags such posts "Redirects to another site".
+- "This server", two domains: with WordPress at its domain root the wizard only offered Move WordPress into /wp, so a static site on another domain whose folder sits beside WordPress couldn't be set up from the dashboard. It can now switch to its ordinary steps ("Publish to another domain"), does so by default when the Destination URL is on another host, and suggests the sibling folder named after that host (`/var/www/static.example.com`; also `wp shipstatic folder suggest --dest-url=`).
+- "This server" wizard: after "Create and test" it jumped back to step 1 instead of showing the result whenever the saved address differed from the typed one (e.g. an added trailing slash).
+- "This server" setup now switches the destination on once its test passes (undoing a WordPress move leaves it off, so Sync refused with "Enable this destination first"), and the Enabled switch follows such changes without a reload.
+- Undo of Move WordPress into /wp left the destination showing "Connected".
+- A render made before WordPress's address changed (moving it into /wp or back, a migration) was reused: after an Undo the sitemap listed `/wp/` pages. The render records the address (`shipstatic_render_home`) and is out of date when it changes.
+- The dashboard's "renderCurrent" and "In sync" repeated part of the render-currency test and missed the render format and address — after the 2.4.5 update it showed "In sync" and no Process although Sync would re-render. Both now use `Runner::render_is_current()`.
+- Lockdown, optional nginx snippet: after Move WordPress into /wp the static site shares the server block, and the snippet locked the whole block — strangers were redirected to the same URL forever (and `/wp?x` to itself). It now locks only WordPress's path and drops it from the redirect (`/wp/about/` → `<destination>/about/`), like the `.htaccess` rules.
+
+### Added
+- Documentation: "Some pages are skipped with “redirects to another site”" under Common issues.
+
 ## [2.4.5] - 2026-10-27
 
 ### Fixed

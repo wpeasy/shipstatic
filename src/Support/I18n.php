@@ -541,6 +541,9 @@ final class I18n {
             'fwDoneLockdown'  => __('Turn on Lockdown (Lockdown tab) so only your editors can reach WordPress.', 'shipstatic'),
             'fwFinish'        => __('Close', 'shipstatic'),
             /* translators: 1: site address, 2: new WordPress address. */
+            'wmOtherDomainHelp' => __('Or leave WordPress where it is and publish to another domain or subdomain (such as static.example.com) whose folder sits beside WordPress on this server.', 'shipstatic'),
+            'wmOtherDomain'    => __('Publish to another domain', 'shipstatic'),
+            'fwMoveInstead'    => __('← Move WordPress into /wp instead', 'shipstatic'),
             'wmLead'           => __('WordPress is installed at the root of %1$s, so the static site has nowhere to go there yet. ShipStatic can move WordPress into a /wp folder: WordPress will then be at %2$s, and the static site at the root.', 'shipstatic'),
             /* translators: %s: new WordPress address. */
             'wmStep1'          => __('WordPress’s files move into /wp and its address becomes %s. Links in your content follow.', 'shipstatic'),

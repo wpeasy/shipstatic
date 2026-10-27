@@ -1,30 +1,21 @@
 # Changelog
 
-## v2.4.5 (2026-10-27)
+## v2.4.6 (2026-10-27)
 
 ### Fixed
-**Your logo link no longer points at the current page.** Bricks writes a link to your home page without a trailing slash (`https://example.com`), and the export turned it into an empty link, which browsers treat as "this page". On your About page, the logo linked to the About page. It now goes to your home page again. After updating, use **Process all** once so every page picks up the fix.
+**Tracked outbound links work on your static site.** If a URL manager or link-tracking plugin (Pretty Links, ThirstyAffiliates and similar) gives your outbound links an address on your site, such as `/go/partner`, those links used to lead to a missing page on the static site. They now go straight to where they redirect. Clicks from the static site aren't counted, because the tracker runs inside WordPress.
 
 ### Fixed
-**Links to your site inside page scripts and structured data are no longer corrupted.** On sites published at the root of a domain, these links were left with a stray backslash, which could break the script or data around them.
+**Clearer reason for skipped redirects.** A page skipped because it redirects to another site now says where it goes and why it isn't exported, instead of just "HTTP 301". In **View processed list**, such links are marked "Redirects to another site".
 
 ### Fixed
-**Move WordPress into /wp now works on nginx servers.** nginx needs one extra rule before WordPress can live in `/wp`; without it, the dashboard stopped loading after the move ("Unexpected token '<' … is not valid JSON") and the Undo button couldn't be reached. The move now shows the rule ready to copy, checks that your server is using it, and only moves WordPress once it is.
+**"This server" can publish to another domain.** When WordPress sits at the root of its domain, the folder wizard used to offer only "Move WordPress into /wp". It now also lets you publish to another domain or subdomain (such as `static.example.com`) whose folder is beside WordPress, and suggests that folder for you.
 
 ### Fixed
-**Undo the move works again.** It refused with "wp-includes already exists", because your published static site contains its own copies of some WordPress files.
+**The "This server" wizard finishes properly.** After **Create and test** it no longer jumps back to the first step, and it switches the destination on so you can Sync straight away.
 
 ### Fixed
-**Sync is ready straight after moving WordPress into /wp** — no connection test needed first.
+**Moving WordPress into /wp, or back, now asks for a fresh Process.** Previously the old render was reused, so after an Undo the sitemap still listed `/wp/` addresses, and the dashboard showed "In sync" when it wasn't.
 
 ### Fixed
-**Sites on a non-standard port** (such as `:8080`) no longer get broken addresses after moving WordPress into /wp.
-
-### Fixed
-**Process and Sync no longer wait forever at 0 on some VPS servers.** The dashboard's background task couldn't find WP-CLI on servers where PHP runs without the usual command paths.
-
-### Fixed
-**The Lockdown check on nginx answers straight away** instead of taking about 25 seconds after you turn Lockdown on.
-
-### Improved
-**The "This server" folder wizard's messages** now show as proper notices instead of plain text.
+**The optional nginx Lockdown snippet no longer loops.** With WordPress in `/wp`, it now blocks only WordPress's own addresses and sends visitors to the matching page on your static site.

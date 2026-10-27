@@ -64,8 +64,9 @@ final class ServerFolderController {
     }
 
     /**
-     * POST /server-folder/check — {id?, path?}. No side effects: suggestions,
-     * and what a path would mean.
+     * POST /server-folder/check — {id?, path?, url?}. No side effects:
+     * suggestions (url = the destination's address as typed), and what a path
+     * would mean.
      *
      * @param WP_REST_Request $request Request.
      */
@@ -78,7 +79,7 @@ final class ServerFolderController {
 
         return new WP_REST_Response([
             'server'      => \WPEasy\ShipStatic\Lockdown\Writer::environment()['server'],
-            'suggestions' => ServerFolder::suggestions(self::document_root()),
+            'suggestions' => ServerFolder::suggestions(self::document_root(), esc_url_raw(trim((string) ($params['url'] ?? '')), ['http', 'https'])),
             'account'     => ServerFolder::account_root(),
             'wordpress'   => ServerFolder::wp_roots()[0] ?? '',
             'folder'      => $path !== '' ? ServerFolder::inspect($path, (string) $id) : null,
@@ -209,6 +210,11 @@ final class ServerFolderController {
         }
         $ok = true;
         update_option(DestinationsController::conn_state_option($id), ['ok' => $problem === '', 'time' => time(), 'message' => $problem === '' ? $message : $problem], false);
+        // The wizard ends with "Run Sync": once the address serves the folder,
+        // switch the destination on (Undo of a WordPress move leaves it off).
+        if ($problem === '') {
+            Destinations::update($id, ['enabled' => true]);
+        }
 
         return ['ok' => $ok, 'message' => $message, 'warnings' => $warnings, 'path' => $real];
     }

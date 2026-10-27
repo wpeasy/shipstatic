@@ -112,7 +112,7 @@ export const api = {
   moveWordPress: (id: string) => request<{ ok: boolean; message: string; problems?: string[]; redirect?: string }>('/wordpress-move', 'POST', { id, confirm: true }),
   undoWordPressMove: () => request<{ ok: boolean; message: string; redirect?: string }>('/wordpress-move/undo', 'POST', {}),
   forgetWordPressMove: () => request<{ ok: boolean }>('/wordpress-move/forget', 'POST', {}),
-  serverFolderCheck: (data: { id?: string; path?: string }) => request<FolderCheck>('/server-folder/check', 'POST', data),
+  serverFolderCheck: (data: { id?: string; path?: string; url?: string }) => request<FolderCheck>('/server-folder/check', 'POST', data),
   setupFolder: (id: string, data: { path: string; url: string; adopt?: boolean; replaceIndex?: boolean }) =>
     request<FolderSetupResult>(`/destinations/${id}/folder`, 'POST', data),
   connectorRebuild: (id: string) => request<TestResult & { needsProcess?: boolean }>(`/destinations/${id}/connector/rebuild`, 'POST'),

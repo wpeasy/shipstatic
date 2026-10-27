@@ -161,13 +161,16 @@ final class ServerFolder {
 
     /**
      * Folders worth offering: the one WordPress sits in when that is the
-     * domain's document root (one domain, WordPress in a sub-folder), and
-     * sibling folders that already hold a site.
+     * domain's document root (one domain, WordPress in a sub-folder), a
+     * sibling folder named after the destination's host (VPS and cPanel
+     * set-ups usually name a domain's folder after it: /var/www/static.example.com),
+     * and sibling folders that already hold a site.
      *
      * @param string $doc_root The current web request's document root ('' from WP-CLI).
+     * @param string $dest_url The destination's address, when known.
      * @return array<int,array{path:string,url:string,layout:string}>
      */
-    public static function suggestions(string $doc_root = ''): array {
+    public static function suggestions(string $doc_root = '', string $dest_url = ''): array {
         $out  = [];
         $root = self::wp_roots()[0] ?? '';
         if ($root === '') {
@@ -190,11 +193,20 @@ final class ServerFolder {
             ];
         }
 
+        // A sibling named after the destination's host, empty or not.
+        $host = strtolower((string) wp_parse_url($dest_url, PHP_URL_HOST));
+        if ($host !== '' && preg_match('/^[a-z0-9.-]+$/', $host) && strpos($host, '..') === false) {
+            $dir = $parent . '/' . $host;
+            if ($dir !== $root && is_dir($dir) && self::inspect($dir)['ok']) {
+                $out[] = ['path' => $dir, 'url' => trailingslashit($dest_url), 'layout' => 'separate'];
+            }
+        }
+
         // Siblings that already hold a site (a static site moved here from FTP).
         $entries = @scandir($parent); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- an unreadable parent just means no suggestions.
         foreach (is_array($entries) ? $entries : [] as $name) {
             $dir = $parent . '/' . $name;
-            if ($name[0] === '.' || in_array($name, self::ALWAYS_PROTECTED, true) || $dir === $root || !is_dir($dir) || !is_file($dir . '/index.html')) {
+            if ($name[0] === '.' || in_array($name, self::ALWAYS_PROTECTED, true) || $dir === $root || $name === $host || !is_dir($dir) || !is_file($dir . '/index.html')) {
                 continue;
             }
             if (self::inspect($dir)['ok']) {
