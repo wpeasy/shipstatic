@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,10 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.4 =
+* Fix: a live static site no longer shows the "Currently synchronising" page while an update uploads. It only appears on a destination's first Sync, before it has a home page.
+* Fix: for a site published in a sub-folder over FTP, SFTP or the Connector, the "Currently synchronising" page could replace the page at the domain root and stay there.
 
 = 2.4.3 =
 * Lockdown: scripts and services can now get past Lockdown by sending the unlock key as a header, `Authorization: Bearer <key>`. Only that request gets through; its address isn't added to the list.

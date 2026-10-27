@@ -1,6 +1,6 @@
 <h1>Changelog</h1>
-<h2>v2.4.3 (2026-10-26)</h2>
-<h3>New</h3>
-<p><strong>Scripts and services can get past Lockdown with the unlock key.</strong> Uptime monitors, deploy hooks and web cron jobs can send the unlock key as a header, <code>Authorization: Bearer &lt;key&gt;</code>, instead of opening the unlock link. Only that request gets through: its address isn&#x27;t added to the list and no email is sent. The Lockdown tab shows the header ready to copy, and <strong>New link</strong> changes it too.</p>
-<h3>New</h3>
-<p><strong>A web cron command for Lockdown.</strong> If your host&#x27;s cron jobs can only fetch a web address, the Lockdown tab&#x27;s <strong>Using a server cron job?</strong> section now has a ready-made command that sends the unlock key with the request.</p>
+<h2>v2.4.4 (2026-10-27)</h2>
+<h3>Fixed</h3>
+<p><strong>Visitors no longer see &quot;Currently synchronising&quot; while you update a live site.</strong> The holding page used to replace your home page during every sync that uploaded files one by one, which is how <strong>This server</strong> always works. Now it only appears on a destination&#x27;s first Sync, before it has a home page, and your live site stays fully visible while updates upload.</p>
+<h3>Fixed</h3>
+<p><strong>Sites in a sub-folder no longer affect the page at the domain root.</strong> For a site published in a sub-folder (such as <code>example.com/site/</code>) over FTP, SFTP or the Connector, the &quot;Currently synchronising&quot; page could be written to the domain&#x27;s main home page and stay there.</p>

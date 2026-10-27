@@ -415,7 +415,7 @@ final class Runner {
             self::close_connection();
             // If we'd already swapped in the holding page, put the real home back.
             if (!empty($job->data['holdingShown'])) {
-                self::restore_home();
+                self::restore_home($job);
             }
             delete_option(self::CANCEL_FLAG);
             $job->data['phase']   = 'cancelled';
@@ -2081,19 +2081,28 @@ final class Runner {
 
         try {
             // One-time setup: defer the home page, show a holding page while the
-            // rest uploads, then write server config + store the nginx snippet.
+            // rest uploads (first Sync only), then write server config + store
+            // the nginx snippet.
             if (empty($job->data['htaccessDone'])) {
+                // The home page's key at this destination (in its sub-path
+                // folder when it has one).
+                $home_key               = self::home_key($job);
+                $job->data['homeKey']   = $home_key;
+
                 // Home is uploaded last (after any holding page). Note whether it
                 // actually changed so we can skip re-uploading an unchanged one.
-                $job->data['homeChanged'] = in_array(self::HOME_FILE, $job->data['queue']['uploads'], true);
+                $job->data['homeChanged'] = in_array($home_key, $job->data['queue']['uploads'], true);
 
                 $job->data['queue']['uploads'] = array_values(array_filter(
                     $job->data['queue']['uploads'],
-                    static fn(string $rel): bool => $rel !== self::HOME_FILE
+                    static fn(string $rel): bool => $rel !== $home_key
                 ));
 
-                if (!empty($job->data['queue']['uploads'])) {
-                    self::upload_holding_page($transport);
+                // Only a destination with no home page yet gets the holding page
+                // (the first Sync). A live site keeps its home page while an
+                // update uploads: visitors never see "Currently synchronising".
+                if (!empty($job->data['queue']['uploads']) && !self::remote_has($transport, $home_key)) {
+                    self::upload_holding_page($transport, $home_key);
                     $job->data['holdingShown'] = true;
                 }
 
@@ -2140,7 +2149,7 @@ final class Runner {
                 // with a holding page — otherwise it's already correct on the
                 // remote and re-uploading it every sync is wasted work.
                 if (!empty($job->data['homeChanged']) || !empty($job->data['holdingShown'])) {
-                    self::upload_home($transport, $manifest);
+                    self::upload_home($transport, $manifest, (string) ($job->data['homeKey'] ?? self::home_key($job)));
                     $job->data['counts']['uploaded']++;
                 }
 
@@ -2449,14 +2458,42 @@ final class Runner {
     }
 
     /**
+     * The home page's key at the job's destination: index.html, inside the
+     * sub-path folder when the upload root isn't the served path.
+     *
+     * @param Job $job Active job.
+     */
+    private static function home_key(Job $job): string {
+        $dest = Destinations::get((string) ($job->data['destId'] ?? ''));
+
+        return $dest !== null ? self::deploy_key(self::HOME_FILE, $dest) : self::HOME_FILE;
+    }
+
+    /**
+     * Whether a file is already on the destination. When the answer is
+     * unknown, assume it is: replacing a live home page is the worse mistake.
+     *
+     * @param TransportInterface $transport Connected transport.
+     * @param string             $key       Remote key.
+     */
+    private static function remote_has(TransportInterface $transport, string $key): bool {
+        try {
+            return $transport->exists($key);
+        } catch (\Throwable $e) {
+            return true;
+        }
+    }
+
+    /**
      * Upload the "Currently Synchronising" holding page to the destination home.
      *
      * @param TransportInterface $transport Connected transport.
+     * @param string             $home_key  The home page's key at this destination.
      */
-    private static function upload_holding_page(TransportInterface $transport): void {
+    private static function upload_holding_page(TransportInterface $transport, string $home_key): void {
         $tmp = self::worker_tmp('holding.out');
         file_put_contents($tmp, self::holding_html());
-        self::put_retry($transport, $tmp, self::HOME_FILE);
+        self::put_retry($transport, $tmp, $home_key);
         wp_delete_file($tmp);
     }
 
@@ -2476,30 +2513,32 @@ final class Runner {
      * Upload the real home page (and its gzip sibling) from the render manifest.
      *
      * @param TransportInterface                                          $transport Connected transport.
-     * @param array<string,array{size:int,hash:string,src:string}>        $manifest  Render manifest.
+     * @param array<string,array{size:int,hash:string,src:string}>        $manifest  Deploy manifest.
+     * @param string                                                      $home_key  The home page's key at this destination.
      */
-    private static function upload_home(TransportInterface $transport, array $manifest): void {
-        $meta = $manifest[self::HOME_FILE] ?? null;
+    private static function upload_home(TransportInterface $transport, array $manifest, string $home_key): void {
+        $meta = $manifest[$home_key] ?? null;
         if ($meta === null || !is_file($meta['src'])) {
             return;
         }
 
-        self::put_retry($transport, $meta['src'], self::HOME_FILE);
-        self::upload_gz($transport, self::HOME_FILE, $meta['src']);
+        self::put_retry($transport, $meta['src'], $home_key);
+        self::upload_gz($transport, $home_key, $meta['src']);
     }
 
     /**
      * Best-effort restore of the real home page (used when a push is cancelled
      * after the holding page has gone up).
      */
-    private static function restore_home(): void {
+    private static function restore_home(Job $job): void {
         try {
-            $transport = TransportFactory::make();
+            $dest      = Destinations::get((string) ($job->data['destId'] ?? '')) ?? Destinations::primary();
+            $transport = TransportFactory::make($dest->connection_config());
             $transport->connect();
             try {
                 // The destination's own copy (the raw render still carries the
                 // sub-path placeholder).
-                self::upload_home($transport, self::build_deploy_manifest(Manifest::load(Manifest::RENDER_OPTION), Destinations::primary()->id()));
+                self::upload_home($transport, self::build_deploy_manifest(Manifest::load(Manifest::RENDER_OPTION), $dest->id()), (string) ($job->data['homeKey'] ?? self::home_key($job)));
             } finally {
                 $transport->disconnect();
             }

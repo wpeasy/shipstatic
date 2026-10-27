@@ -5,6 +5,13 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.4] - 2026-10-27
+
+### Fixed
+- Sync: the "Currently synchronising" holding page replaced the home page on **every** file-by-file sync, so visitors to a live site could see it while an update uploaded ("This server" always uploads file by file; FTP/SFTP/Connector do when package deploy isn't available). It now goes up only when the destination has no home page yet (the first Sync; `Runner::remote_has()`, where an unknown answer counts as present). The home page still goes up last, and an unchanged one is no longer re-uploaded.
+- Sync: for a destination in a sub-path folder over FTP/SFTP/Connector, the holding page was written to the domain root's `index.html` and never replaced, and the sub-path home page wasn't held back until last. The home page is now the destination's own key (`Runner::home_key()` = `deploy_key('index.html')`).
+- Sync: cancelling after the holding page went up restored the first destination's home page instead of the one being synced.
+
 ## [2.4.3] - 2026-10-26
 
 ### Added
