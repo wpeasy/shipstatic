@@ -129,8 +129,8 @@ final class Job {
      * @param string $url Absolute URL.
      */
     public function enqueue_page(string $url): void {
-        if (!Url::is_internal($url)) {
-            return;
+        if (!Url::is_internal($url) || !Url::in_home($url)) {
+            return; // Another site, or this host outside WordPress's sub-path.
         }
 
         if (wp_parse_url($url, PHP_URL_QUERY)) {

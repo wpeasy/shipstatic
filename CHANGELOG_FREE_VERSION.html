@@ -1,14 +1,4 @@
 <h1>Changelog</h1>
-<h2>v2.4.6 (2026-10-27)</h2>
+<h2>v2.4.7 (2026-10-27)</h2>
 <h3>Fixed</h3>
-<p><strong>Tracked outbound links work on your static site.</strong> If a URL manager or link-tracking plugin (Pretty Links, ThirstyAffiliates and similar) gives your outbound links an address on your site, such as <code>/go/partner</code>, those links used to lead to a missing page on the static site. They now go straight to where they redirect. Clicks from the static site aren&#x27;t counted, because the tracker runs inside WordPress.</p>
-<h3>Fixed</h3>
-<p><strong>Clearer reason for skipped redirects.</strong> A page skipped because it redirects to another site now says where it goes and why it isn&#x27;t exported, instead of just &quot;HTTP 301&quot;. In <strong>View processed list</strong>, such links are marked &quot;Redirects to another site&quot;.</p>
-<h3>Fixed</h3>
-<p><strong>&quot;This server&quot; can publish to another domain.</strong> When WordPress sits at the root of its domain, the folder wizard used to offer only &quot;Move WordPress into /wp&quot;. It now also lets you publish to another domain or subdomain (such as <code>static.example.com</code>) whose folder is beside WordPress, and suggests that folder for you.</p>
-<h3>Fixed</h3>
-<p><strong>The &quot;This server&quot; wizard finishes properly.</strong> After <strong>Create and test</strong> it no longer jumps back to the first step, and it switches the destination on so you can Sync straight away.</p>
-<h3>Fixed</h3>
-<p><strong>Moving WordPress into /wp, or back, now asks for a fresh Process.</strong> Previously the old render was reused, so after an Undo the sitemap still listed <code>/wp/</code> addresses, and the dashboard showed &quot;In sync&quot; when it wasn&#x27;t.</p>
-<h3>Fixed</h3>
-<p><strong>The optional nginx Lockdown snippet no longer loops.</strong> With WordPress in <code>/wp</code>, it now blocks only WordPress&#x27;s own addresses and sends visitors to the matching page on your static site.</p>
+<p><strong>The static home page no longer stays on &quot;Currently synchronising&quot;.</strong> With WordPress in a sub-folder (such as <code>/wp</code>) and &quot;This server&quot; publishing to the domain root, your static home page could be replaced by the &quot;Currently synchronising&quot; page. A link to <code>/</code> on your pages (a logo or Home link) pointed at the published site instead of WordPress, and the export saved what it found there as the home page. Update and sync again to put the real home page back.</p>

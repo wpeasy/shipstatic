@@ -190,6 +190,26 @@ final class Url {
     }
 
     /**
+     * Whether a URL's path is inside WordPress's address. With WordPress on a
+     * sub-path (`/wp`), the rest of the host is not WordPress — after "This
+     * server" publishes to the domain root it is the static site itself — and
+     * `/` there would map to the same index.html as WordPress's home, so the
+     * crawler rendered the published (holding) page over the real home.
+     *
+     * @param string $url Internal URL or root-relative path.
+     */
+    public static function in_home(string $url): bool {
+        $home = self::home_base();
+        if ($home === '') {
+            return true;
+        }
+
+        $path = rawurldecode((string) (wp_parse_url($url, PHP_URL_PATH) ?? ''));
+
+        return $path === $home || strpos($path, $home . '/') === 0;
+    }
+
+    /**
      * Scheme+host origin prefixes for this site (http/https, www/non-www,
      * protocol-relative), used to detect and strip the source origin.
      *

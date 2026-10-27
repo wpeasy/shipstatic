@@ -5,6 +5,11 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.7] - 2026-10-27
+
+### Fixed
+- "This server" with WordPress on a sub-path (`/wp`) and the destination at the domain root: the static home page stayed "Currently synchronising". The crawler followed same-host links outside WordPress's path (a plain `href="/"`), and `/` maps to the same `index.html` as WordPress's home, so the published holding page was rendered over the real home on every sync. `Job::enqueue_page()` now also requires `Url::in_home()` (the URL's path is inside WordPress's address).
+
 ## [2.4.6] - 2026-10-27
 
 ### Fixed

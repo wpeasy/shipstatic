@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.6
+Stable tag: 2.4.7
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,9 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.7 =
+* Fix: with WordPress in a sub-folder (such as /wp) and "This server" publishing to the domain root, the static home page stayed on "Currently synchronising" after the first sync.
 
 = 2.4.6 =
 * Fix: link-tracking and short links on your site (such as /go/partner) no longer break on the static site. Links to them now go straight to where they redirect, and the skip reason says so.
