@@ -129,9 +129,11 @@ final class Url {
             return $content;
         }
 
+        // Escaped form first: the plain token also matches inside it, which
+        // left a stray backslash ("\\/x") for a root destination.
         return str_replace(
-            [self::BASE_TOKEN, str_replace('/', '\\/', self::BASE_TOKEN)],
-            [$base, str_replace('/', '\\/', $base)],
+            [str_replace('/', '\\/', self::BASE_TOKEN), self::BASE_TOKEN],
+            [str_replace('/', '\\/', $base), $base],
             $content
         );
     }

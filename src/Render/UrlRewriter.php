@@ -44,9 +44,18 @@ final class UrlRewriter {
 
         // Replacing the origin with '' (or the placeholder) leaves the following
         // path (escaped or not): "https://host/about" → "/about", "https:\/\/host\/x" → "\/x".
+        // A bare origin ("https://host", "https://host?x", "https://host#top" —
+        // Bricks writes the logo link that way) gets a "/" too: the placeholder
+        // alone becomes "" for a root destination, and an empty href is the
+        // current page (the logo on /about/ pointed at /about/).
         $content = self::replace_origins(
             $content,
-            static fn(bool $json, bool $bare): string => $json ? $escaped : $prefix
+            static function (bool $json, bool $bare, bool $has_path) use ($prefix, $escaped): string {
+                if ($json) {
+                    return $has_path ? $escaped : $escaped . '\/';
+                }
+                return $has_path ? $prefix : $prefix . '/';
+            }
         );
 
         // Now swap the source home sub-path for the placeholder, so e.g.
@@ -183,7 +192,7 @@ final class UrlRewriter {
      *   (quote, whitespace, bracket, comma, semicolon) already holds a `//`.
      *
      * @param string                    $content Document text.
-     * @param callable(bool,bool):string $to      Replacement for (JSON-escaped?, protocol-relative?).
+     * @param callable(bool,bool,bool):string $to Replacement for (JSON-escaped?, protocol-relative?, a path follows?).
      */
     private static function replace_origins(string $content, callable $to): string {
         $hosts = implode('|', array_map(static fn(string $h): string => preg_quote($h, '#'), self::source_hosts()));
@@ -203,7 +212,10 @@ final class UrlRewriter {
                     return $match;
                 }
 
-                return $to($m[2][0] === '\\/', $m[1][0] === '');
+                $next = substr($content, (int) $offset + strlen($match), 2);
+                $path = $next !== '' && ($next[0] === '/' || $next === '\\/');
+
+                return $to($m[2][0] === '\\/', $m[1][0] === '', $path);
             },
             $content,
             -1,

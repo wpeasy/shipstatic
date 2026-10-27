@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ShipStatic 2.4.2\n"
+"Project-Id-Version: ShipStatic 2.4.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shipstatic\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-26T08:46:25+00:00\n"
+"POT-Creation-Date: 2026-10-27T01:32:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shipstatic\n"
@@ -151,7 +151,7 @@ msgstr ""
 
 #: src/Abilities/AbilityRegistry.php:224
 #: src/Support/I18n.php:270
-#: src/Support/I18n.php:642
+#: src/Support/I18n.php:647
 msgid "Sync"
 msgstr ""
 
@@ -432,7 +432,7 @@ msgstr ""
 
 #: src/Bricks/SearchElement.php:174
 #: src/Bricks/SearchElement.php:191
-#: src/Support/I18n.php:766
+#: src/Support/I18n.php:771
 msgid "Text"
 msgstr ""
 
@@ -623,104 +623,116 @@ msgstr ""
 msgid "%1$s doesn’t serve this folder yet (a test file came back as HTTP %2$d). Point the domain at the folder in your hosting panel, or correct the Destination URL."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:65
+#: src/Deploy/WordPressMove.php:68
 msgid "This is a multisite network, which can’t be moved this way."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:68
+#: src/Deploy/WordPressMove.php:71
 msgid "WordPress has already been moved. Undo that move first."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:74
+#: src/Deploy/WordPressMove.php:77
 msgid "WordPress is installed in its own directory (its files and its address are in different folders). Move it by hand instead."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:77
+#: src/Deploy/WordPressMove.php:80
 msgid "WordPress isn’t at the root of its domain."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:81
+#: src/Deploy/WordPressMove.php:84
 msgid "WordPress’s folder isn’t the folder this domain serves."
 msgstr ""
 
 #. translators: %s: folder name.
-#: src/Deploy/WordPressMove.php:85
+#: src/Deploy/WordPressMove.php:88
 #, php-format
 msgid "A file or folder named “%s” already exists next to WordPress."
 msgstr ""
 
 #. translators: %s: slug.
-#: src/Deploy/WordPressMove.php:89
+#: src/Deploy/WordPressMove.php:92
 #, php-format
 msgid "A page or post uses the address /%s/, which WordPress would need."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:93
+#: src/Deploy/WordPressMove.php:96
 msgid "wp-config.php isn’t in WordPress’s folder (it’s one level up). Move it in first, or move WordPress by hand."
 msgstr ""
 
 #. translators: %s: constant name.
-#: src/Deploy/WordPressMove.php:99
+#: src/Deploy/WordPressMove.php:102
 #, php-format
 msgid "wp-config.php sets %s, which would point to the old place. Remove it first."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:103
+#: src/Deploy/WordPressMove.php:106
 msgid "Turn Lockdown off first (it keeps paths that change). Turn it back on after the move."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:106
+#: src/Deploy/WordPressMove.php:109
 msgid "Process all first, so the static site can go live straight after the move."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:111
+#: src/Deploy/WordPressMove.php:114
 msgid "PHP can’t write to WordPress’s folder."
 msgstr ""
 
 #. translators: %s: folder name.
-#: src/Deploy/WordPressMove.php:116
+#: src/Deploy/WordPressMove.php:119
 #, php-format
 msgid "PHP can’t move %s (check its permissions)."
 msgstr ""
 
 #. translators: %s: file name.
-#: src/Deploy/WordPressMove.php:124
+#: src/Deploy/WordPressMove.php:127
 #, php-format
 msgid "%s loads a file from WordPress’s folder before every request (a firewall such as Wordfence). After the move, re-run that plugin’s setup so it uses the new place."
 msgstr ""
 
+#: src/Deploy/WordPressMove.php:141
+msgid "This server runs nginx, which needs one more rule before WordPress can move: add the block below to this site’s server { } block, reload nginx, then check again."
+msgstr ""
+
 #. translators: %s: file name.
-#: src/Deploy/WordPressMove.php:130
+#: src/Deploy/WordPressMove.php:149
 #, php-format
 msgid "A caching plugin installed %s. Purge and re-save that plugin’s settings after the move."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:156
+#: src/Deploy/WordPressMove.php:207
+msgid "Couldn’t create a test folder next to WordPress."
+msgstr ""
+
+#: src/Deploy/WordPressMove.php:223
+msgid "Couldn’t write a test file next to WordPress."
+msgstr ""
+
+#: src/Deploy/WordPressMove.php:244
 msgid "WordPress can’t be moved yet."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:201
+#: src/Deploy/WordPressMove.php:292
 msgid "WordPress moved into /wp."
 msgstr ""
 
 #. translators: %s: new WordPress address.
-#: src/Deploy/WordPressMove.php:215
+#: src/Deploy/WordPressMove.php:306
 #, php-format
 msgid "Moving WordPress to %s. Log in there to continue."
 msgstr ""
 
-#: src/Deploy/WordPressMove.php:306
+#: src/Deploy/WordPressMove.php:402
 msgid "There is no move to undo."
 msgstr ""
 
 #. translators: %s: file name.
-#: src/Deploy/WordPressMove.php:316
+#: src/Deploy/WordPressMove.php:412
 #, php-format
 msgid "%s already exists at the root, so WordPress can’t move back."
 msgstr ""
 
 #. translators: %s: WordPress address.
-#: src/Deploy/WordPressMove.php:387
+#: src/Deploy/WordPressMove.php:483
 #, php-format
 msgid "Moving WordPress back to %s. Log in there again."
 msgstr ""
@@ -1167,12 +1179,12 @@ msgid "Creating gzip files…"
 msgstr ""
 
 #: src/Support/I18n.php:109
-#: src/Support/I18n.php:820
+#: src/Support/I18n.php:825
 msgid "Packaging…"
 msgstr ""
 
 #: src/Support/I18n.php:110
-#: src/Support/I18n.php:988
+#: src/Support/I18n.php:993
 msgid "Saving…"
 msgstr ""
 
@@ -1181,7 +1193,7 @@ msgid "Export ready"
 msgstr ""
 
 #: src/Support/I18n.php:113
-#: src/Support/I18n.php:986
+#: src/Support/I18n.php:991
 msgid "Cancel"
 msgstr ""
 
@@ -1210,7 +1222,7 @@ msgid "Enable a destination to sync this page."
 msgstr ""
 
 #: src/Support/I18n.php:130
-#: src/Support/I18n.php:789
+#: src/Support/I18n.php:794
 msgid "Not pushed"
 msgstr ""
 
@@ -1263,12 +1275,12 @@ msgid "Opening this link adds the address you’re on to the list, so it gets yo
 msgstr ""
 
 #: src/Support/I18n.php:154
-#: src/Support/I18n.php:990
+#: src/Support/I18n.php:995
 msgid "Copy"
 msgstr ""
 
 #: src/Support/I18n.php:155
-#: src/Support/I18n.php:991
+#: src/Support/I18n.php:996
 msgid "Copied"
 msgstr ""
 
@@ -1417,13 +1429,13 @@ msgid "Copy the unlock link"
 msgstr ""
 
 #: src/Support/I18n.php:196
-#: src/Support/I18n.php:894
+#: src/Support/I18n.php:899
 msgid "Check again"
 msgstr ""
 
 #: src/Support/I18n.php:197
-#: src/Support/I18n.php:640
-#: src/Support/I18n.php:895
+#: src/Support/I18n.php:645
+#: src/Support/I18n.php:900
 msgid "Checking…"
 msgstr ""
 
@@ -1452,12 +1464,12 @@ msgid "Label, e.g. Office"
 msgstr ""
 
 #: src/Support/I18n.php:205
-#: src/Support/I18n.php:947
+#: src/Support/I18n.php:952
 msgid "Add"
 msgstr ""
 
 #: src/Support/I18n.php:206
-#: src/Support/I18n.php:697
+#: src/Support/I18n.php:702
 msgid "Remove"
 msgstr ""
 
@@ -1677,7 +1689,7 @@ msgid "Process and Sync automatically on a schedule — the same full sync as th
 msgstr ""
 
 #: src/Support/I18n.php:283
-#: src/Support/I18n.php:638
+#: src/Support/I18n.php:643
 msgid "Enabled"
 msgstr ""
 
@@ -1702,7 +1714,7 @@ msgid "Monthly"
 msgstr ""
 
 #: src/Support/I18n.php:290
-#: src/Support/I18n.php:784
+#: src/Support/I18n.php:789
 msgid "All destinations"
 msgstr ""
 
@@ -1711,7 +1723,7 @@ msgid "Every enabled destination, including ones you add later."
 msgstr ""
 
 #: src/Support/I18n.php:292
-#: src/Support/I18n.php:786
+#: src/Support/I18n.php:791
 msgid "disabled"
 msgstr ""
 
@@ -1738,13 +1750,13 @@ msgstr ""
 #: src/Support/I18n.php:299
 #: src/Support/I18n.php:511
 #: src/Support/I18n.php:538
-#: src/Support/I18n.php:815
-#: src/Support/I18n.php:816
+#: src/Support/I18n.php:820
+#: src/Support/I18n.php:821
 msgid "Done"
 msgstr ""
 
 #: src/Support/I18n.php:300
-#: src/Support/I18n.php:817
+#: src/Support/I18n.php:822
 msgid "Failed"
 msgstr ""
 
@@ -1753,8 +1765,8 @@ msgid "Skipped"
 msgstr ""
 
 #: src/Support/I18n.php:302
-#: src/Support/I18n.php:818
-#: src/Support/I18n.php:825
+#: src/Support/I18n.php:823
+#: src/Support/I18n.php:830
 msgid "Cancelled"
 msgstr ""
 
@@ -1787,7 +1799,7 @@ msgid "Sync all destinations?"
 msgstr ""
 
 #: src/Support/I18n.php:321
-#: src/Support/I18n.php:896
+#: src/Support/I18n.php:901
 msgid "Destination"
 msgstr ""
 
@@ -1982,7 +1994,7 @@ msgid "Excluded"
 msgstr ""
 
 #: src/Support/I18n.php:383
-#: src/Support/I18n.php:985
+#: src/Support/I18n.php:990
 #: templates/admin/docs.php:23
 #: templates/admin/page.php:23
 msgid "Loading…"
@@ -1997,8 +2009,8 @@ msgid "Every published page is in the export."
 msgstr ""
 
 #: src/Support/I18n.php:386
-#: src/Support/I18n.php:674
-#: src/Support/I18n.php:740
+#: src/Support/I18n.php:679
+#: src/Support/I18n.php:745
 msgid "Page"
 msgstr ""
 
@@ -2080,7 +2092,7 @@ msgid "Transport"
 msgstr ""
 
 #: src/Support/I18n.php:426
-#: src/Support/I18n.php:900
+#: src/Support/I18n.php:905
 msgid "Compression"
 msgstr ""
 
@@ -2089,7 +2101,7 @@ msgid "Server target"
 msgstr ""
 
 #: src/Support/I18n.php:428
-#: src/Support/I18n.php:768
+#: src/Support/I18n.php:773
 msgid "Links"
 msgstr ""
 
@@ -2360,7 +2372,7 @@ msgid "Where"
 msgstr ""
 
 #: src/Support/I18n.php:509
-#: src/Support/I18n.php:639
+#: src/Support/I18n.php:644
 msgid "Check"
 msgstr ""
 
@@ -2474,7 +2486,7 @@ msgid "Turn on Lockdown (Lockdown tab) so only your editors can reach WordPress.
 msgstr ""
 
 #: src/Support/I18n.php:542
-#: src/Support/I18n.php:993
+#: src/Support/I18n.php:998
 msgid "Close"
 msgstr ""
 
@@ -2527,997 +2539,1015 @@ msgid "WordPress is now at %1$s and this server publishes the static site at %2$
 msgstr ""
 
 #: src/Support/I18n.php:557
-msgid "Keep it"
+msgid "nginx"
 msgstr ""
 
 #: src/Support/I18n.php:558
-msgid "Undo the move"
+msgid "Add this block inside this site’s server { } block in nginx (next to its other location blocks), reload nginx, then press Check again. Without it, WordPress’s addresses under /wp/ (including this dashboard’s) would stop working after the move. Your host can add it for you."
 msgstr ""
 
 #: src/Support/I18n.php:559
+msgid "nginx is ready: addresses under /wp/ reach WordPress."
+msgstr ""
+
+#. translators: %s: error message.
+#: src/Support/I18n.php:561
+#, php-format
+msgid "The check couldn’t reach the site: %s"
+msgstr ""
+
+#: src/Support/I18n.php:562
+msgid "Keep it"
+msgstr ""
+
+#: src/Support/I18n.php:563
+msgid "Undo the move"
+msgstr ""
+
+#: src/Support/I18n.php:564
 msgid "Move WordPress back?"
 msgstr ""
 
-#: src/Support/I18n.php:560
+#: src/Support/I18n.php:565
 msgid "WordPress couldn’t be moved"
 msgstr ""
 
 #. translators: %s: error message.
-#: src/Support/I18n.php:562
+#: src/Support/I18n.php:567
 #, php-format
 msgid "Nothing was changed: everything was put back. The server said: %s"
 msgstr ""
 
-#: src/Support/I18n.php:563
-#: src/Support/I18n.php:992
+#: src/Support/I18n.php:568
+#: src/Support/I18n.php:997
 msgid "Dismiss"
 msgstr ""
 
-#: src/Support/I18n.php:564
+#: src/Support/I18n.php:569
 msgid "WordPress is being moved. Reload this page in a moment."
 msgstr ""
 
-#: src/Support/I18n.php:565
+#: src/Support/I18n.php:570
 msgid "Taken from the Destination URL."
 msgstr ""
 
-#: src/Support/I18n.php:566
+#: src/Support/I18n.php:571
 msgid "Publishes the site to GitHub Pages by committing it to a branch of your repository — no web host, PHP or FTP account needed. Each sync is one commit with only the files that changed."
 msgstr ""
 
-#: src/Support/I18n.php:567
+#: src/Support/I18n.php:572
 msgid "Owner"
 msgstr ""
 
-#: src/Support/I18n.php:568
+#: src/Support/I18n.php:573
 msgid "Repository"
 msgstr ""
 
-#: src/Support/I18n.php:569
+#: src/Support/I18n.php:574
 msgid "Branch"
 msgstr ""
 
-#: src/Support/I18n.php:570
+#: src/Support/I18n.php:575
 msgid "Folder"
 msgstr ""
 
-#: src/Support/I18n.php:571
+#: src/Support/I18n.php:576
 msgid "Whole branch (/)"
 msgstr ""
 
-#: src/Support/I18n.php:572
+#: src/Support/I18n.php:577
 msgid "The /docs folder"
 msgstr ""
 
 #. translators: 1: Git branch name (e.g. gh-pages), 2: folder ("/" or "/docs").
-#: src/Support/I18n.php:574
+#: src/Support/I18n.php:579
 #, php-format
 msgid "Advanced: branch %1$s, %2$s"
 msgstr ""
 
-#: src/Support/I18n.php:575
+#: src/Support/I18n.php:580
 msgid "Most sites keep <code>gh-pages</code> and the whole branch. Change them when the site should live next to your code — for example <code>main</code> with the <code>/docs</code> folder, so your source files at the root are left alone — or for a user or organisation site (a repository named <code>owner.github.io</code>), which usually publishes from <code>main</code>. Pick the same branch and folder in the repository’s <strong>Settings → Pages</strong>."
 msgstr ""
 
-#: src/Support/I18n.php:576
+#: src/Support/I18n.php:581
 msgid "Access token"
 msgstr ""
 
-#: src/Support/I18n.php:577
+#: src/Support/I18n.php:582
 msgid "Everything in this folder of the branch is replaced by the site on each sync, except CNAME, README, LICENSE and .github/."
 msgstr ""
 
-#: src/Support/I18n.php:578
+#: src/Support/I18n.php:583
 msgid "Create a repository on GitHub with at least one commit (tick <strong>Add a README</strong>). Make it public — GitHub Pages on a private repository needs a paid GitHub plan."
 msgstr ""
 
-#: src/Support/I18n.php:579
+#: src/Support/I18n.php:584
 msgid "Create a fine-grained token (<strong>Settings → Developer settings → Fine-grained tokens → Generate new token</strong>): <strong>Only select repositories</strong> → this repository, with <strong>Contents: Read and write</strong>. Optionally add <strong>Pages: Read-only</strong> so Test can show the Pages status."
 msgstr ""
 
-#: src/Support/I18n.php:580
+#: src/Support/I18n.php:585
 msgid "Enter the owner, repository and token here. With the default branch <code>gh-pages</code> GitHub turns Pages on by itself at the first sync; for another branch or <code>/docs</code> (under <strong>Advanced</strong>), choose it afterwards in the repository’s <strong>Settings → Pages → Deploy from a branch</strong>."
 msgstr ""
 
-#: src/Support/I18n.php:581
+#: src/Support/I18n.php:586
 msgid "Press <strong>Test</strong>. An empty Destination URL is filled with the Pages address — for a project site <code>https://owner.github.io/repository/</code>, whose <code>/repository/</code> part becomes the sub-path links are built for. <strong>Save</strong>, press <strong>Process</strong>, then Check / Sync as usual."
 msgstr ""
 
-#: src/Support/I18n.php:582
+#: src/Support/I18n.php:587
 msgid "For a custom domain, set it in the repository’s <strong>Settings → Pages</strong> (or enter it as the Destination URL); the plugin keeps the <code>CNAME</code> file GitHub uses."
 msgstr ""
 
-#: src/Support/I18n.php:583
+#: src/Support/I18n.php:588
 msgid "<strong>Limits:</strong> 25 MiB per file and 1 GB per site. GitHub allows about 500 uploads an hour, so a first sync with many images pauses and carries on by itself. Pages rebuilds at most about 10 times an hour and sets its own cache headers; on a project site robots.txt has no effect. Forms that post back to WordPress don’t work on a static copy."
 msgstr ""
 
-#: src/Support/I18n.php:584
+#: src/Support/I18n.php:589
 msgid "Re-pair (new file)"
 msgstr ""
 
-#: src/Support/I18n.php:585
+#: src/Support/I18n.php:590
 msgid "Pairing…"
 msgstr ""
 
-#: src/Support/I18n.php:586
+#: src/Support/I18n.php:591
 msgid "Revoke"
 msgstr ""
 
-#: src/Support/I18n.php:587
+#: src/Support/I18n.php:592
 msgid "Yes, revoke"
 msgstr ""
 
 #. translators: %s: connector filename
-#: src/Support/I18n.php:589
+#: src/Support/I18n.php:594
 #, php-format
 msgid "Download %s"
 msgstr ""
 
-#: src/Support/I18n.php:590
+#: src/Support/I18n.php:595
 msgid "Pair"
 msgstr ""
 
-#: src/Support/I18n.php:591
+#: src/Support/I18n.php:596
 msgid "Re-pairing invalidates the file currently on the destination — upload the new one before the next sync."
 msgstr ""
 
-#: src/Support/I18n.php:592
+#: src/Support/I18n.php:597
 msgid "Rebuild push record"
 msgstr ""
 
-#: src/Support/I18n.php:593
+#: src/Support/I18n.php:598
 msgid "Rebuilding…"
 msgstr ""
 
-#: src/Support/I18n.php:594
+#: src/Support/I18n.php:599
 msgid "Ask the connector what is already on the destination and rebuild the push record from it — so after a reset or re-pair, files that are already there and identical don’t upload again."
 msgstr ""
 
-#: src/Support/I18n.php:595
+#: src/Support/I18n.php:600
 msgid "Manual deploy"
 msgstr ""
 
-#: src/Support/I18n.php:596
+#: src/Support/I18n.php:601
 msgid "How it works"
 msgstr ""
 
-#: src/Support/I18n.php:597
+#: src/Support/I18n.php:602
 msgid "No server access needed. <strong>Export ZIP</strong> packages the current render — with this destination’s replacements applied — into a zip you upload and extract yourself. The plugin uploads nothing and the destination’s sync stats are untouched."
 msgstr ""
 
-#: src/Support/I18n.php:598
+#: src/Support/I18n.php:603
 msgid "If the pages list is stale, run <strong>Process</strong> first (Export never renders on its own)."
 msgstr ""
 
-#: src/Support/I18n.php:599
+#: src/Support/I18n.php:604
 msgid "Press <strong>Export ZIP</strong> and download it when it finishes."
 msgstr ""
 
-#: src/Support/I18n.php:600
+#: src/Support/I18n.php:605
 msgid "Extract it into the destination web root — the folder served at the <strong>Destination URL</strong>. If the site lives under a sub-folder, include it in the <strong>Destination URL</strong> (or, with no Destination URL, set <strong>Served from sub-path</strong>) <em>before</em> exporting so links are rewritten for it."
 msgstr ""
 
-#: src/Support/I18n.php:601
+#: src/Support/I18n.php:606
 msgid "The zip includes the <code>.htaccess</code> (Apache/LiteSpeed), <code>.gz</code> siblings where supported, <code>sitemap.xml</code> and <code>robots.txt</code>. On nginx, see the <em>Destination Server Configuration</em> tab for the optional snippet and <strong>Check server</strong>."
 msgstr ""
 
-#: src/Support/I18n.php:602
+#: src/Support/I18n.php:607
 msgid "Enable this destination to export."
 msgstr ""
 
-#: src/Support/I18n.php:603
+#: src/Support/I18n.php:608
 msgid "Saved."
 msgstr ""
 
-#: src/Support/I18n.php:604
+#: src/Support/I18n.php:609
 msgid "Test"
 msgstr ""
 
-#: src/Support/I18n.php:605
+#: src/Support/I18n.php:610
 msgid "Remove this destination?"
 msgstr ""
 
-#: src/Support/I18n.php:606
+#: src/Support/I18n.php:611
 msgid "Yes, remove"
 msgstr ""
 
-#: src/Support/I18n.php:607
+#: src/Support/I18n.php:612
 msgid "Remove destination"
 msgstr ""
 
-#: src/Support/I18n.php:618
+#: src/Support/I18n.php:623
 msgid "All Destinations"
 msgstr ""
 
-#: src/Support/I18n.php:619
+#: src/Support/I18n.php:624
 msgid "Destination name"
 msgstr ""
 
-#: src/Support/I18n.php:620
+#: src/Support/I18n.php:625
 msgid "Double-click to rename"
 msgstr ""
 
-#: src/Support/I18n.php:621
+#: src/Support/I18n.php:626
 msgid "off"
 msgstr ""
 
-#: src/Support/I18n.php:622
+#: src/Support/I18n.php:627
 msgid "Add destination"
 msgstr ""
 
-#: src/Support/I18n.php:633
+#: src/Support/I18n.php:638
 msgid "Enable this destination first"
 msgstr ""
 
-#: src/Support/I18n.php:634
+#: src/Support/I18n.php:639
 msgid "Test the connection first"
 msgstr ""
 
-#: src/Support/I18n.php:635
+#: src/Support/I18n.php:640
 msgid "Connected"
 msgstr ""
 
-#: src/Support/I18n.php:636
+#: src/Support/I18n.php:641
 msgid "Pushed"
 msgstr ""
 
-#: src/Support/I18n.php:637
+#: src/Support/I18n.php:642
 msgid "In sync"
 msgstr ""
 
-#: src/Support/I18n.php:641
+#: src/Support/I18n.php:646
 msgid "Preview what a sync would change on this destination — compares the last render, uploads nothing."
 msgstr ""
 
-#: src/Support/I18n.php:643
+#: src/Support/I18n.php:648
 msgid "Visit site ↗"
 msgstr ""
 
-#: src/Support/I18n.php:644
+#: src/Support/I18n.php:649
 msgid "Export ZIP"
 msgstr ""
 
-#: src/Support/I18n.php:645
+#: src/Support/I18n.php:650
 msgid "Exporting…"
 msgstr ""
 
-#: src/Support/I18n.php:646
+#: src/Support/I18n.php:651
 msgid "Package the current render into a downloadable zip for this destination — an alternative to Sync for manual deploys. Uploads nothing."
 msgstr ""
 
-#: src/Support/I18n.php:647
+#: src/Support/I18n.php:652
 msgid "Download"
 msgstr ""
 
-#: src/Support/I18n.php:658
+#: src/Support/I18n.php:663
 msgid "Replacements"
 msgstr ""
 
 #. translators: %s: destination name
-#: src/Support/I18n.php:660
+#: src/Support/I18n.php:665
 #, php-format
 msgid "Replacements for %s"
 msgstr ""
 
-#: src/Support/I18n.php:661
+#: src/Support/I18n.php:666
 msgid "(applied to this destination only · saved automatically)"
 msgstr ""
 
-#: src/Support/I18n.php:673
+#: src/Support/I18n.php:678
 msgid "Image Replacer"
 msgstr ""
 
-#: src/Support/I18n.php:675
+#: src/Support/I18n.php:680
 msgid "Select a page, or type to filter…"
 msgstr ""
 
 #. translators: %s: page path, e.g. /about/.
-#: src/Support/I18n.php:677
+#: src/Support/I18n.php:682
 #, php-format
 msgid "%s — not in the export"
 msgstr ""
 
 #. translators: %d: number of pages.
-#: src/Support/I18n.php:679
+#: src/Support/I18n.php:684
 #, php-format
 msgid "%d published page(s) aren’t in the export, so they can’t be picked (shown greyed out). Link to them from an exported page, or change Pages to include in Settings, then Process."
 msgstr ""
 
-#: src/Support/I18n.php:680
+#: src/Support/I18n.php:685
 msgid "Select a page above to replace its images."
 msgstr ""
 
-#: src/Support/I18n.php:681
+#: src/Support/I18n.php:686
 msgid "Process the site first, then choose a page to replace its images."
 msgstr ""
 
-#: src/Support/I18n.php:682
+#: src/Support/I18n.php:687
 msgid "No replaceable images on this page."
 msgstr ""
 
-#: src/Support/I18n.php:683
+#: src/Support/I18n.php:688
 msgid "Loading images…"
 msgstr ""
 
-#: src/Support/I18n.php:684
+#: src/Support/I18n.php:689
 msgid "Choose a replacement"
 msgstr ""
 
-#: src/Support/I18n.php:685
+#: src/Support/I18n.php:690
 msgid "Use this image"
 msgstr ""
 
-#: src/Support/I18n.php:686
+#: src/Support/I18n.php:691
 msgid "Click to replace"
 msgstr ""
 
-#: src/Support/I18n.php:687
+#: src/Support/I18n.php:692
 msgid "— no alt —"
 msgstr ""
 
-#: src/Support/I18n.php:688
+#: src/Support/I18n.php:693
 msgid "↳ replaced with"
 msgstr ""
 
-#: src/Support/I18n.php:689
+#: src/Support/I18n.php:694
 msgid "No images match the current filter."
 msgstr ""
 
-#: src/Support/I18n.php:690
+#: src/Support/I18n.php:695
 msgid "Pages with replacements:"
 msgstr ""
 
 #. translators: %d is the number of image sizes.
-#: src/Support/I18n.php:692
+#: src/Support/I18n.php:697
 #, php-format
 msgid "%d sizes"
 msgstr ""
 
-#: src/Support/I18n.php:693
+#: src/Support/I18n.php:698
 msgid "not in library"
 msgstr ""
 
-#: src/Support/I18n.php:694
+#: src/Support/I18n.php:699
 msgid "This image isn’t in the media library, so only this exact URL is swapped — other responsive sizes may remain."
 msgstr ""
 
-#: src/Support/I18n.php:695
+#: src/Support/I18n.php:700
 msgid "The WordPress media library is unavailable on this page."
 msgstr ""
 
-#: src/Support/I18n.php:696
+#: src/Support/I18n.php:701
 msgid "Replace…"
 msgstr ""
 
-#: src/Support/I18n.php:698
+#: src/Support/I18n.php:703
 msgid "Filter by page…"
 msgstr ""
 
-#: src/Support/I18n.php:699
+#: src/Support/I18n.php:704
 msgid "Filter by page"
 msgstr ""
 
-#: src/Support/I18n.php:700
+#: src/Support/I18n.php:705
 msgid "Only replacements"
 msgstr ""
 
-#: src/Support/I18n.php:711
+#: src/Support/I18n.php:716
 msgid "Link replacer"
 msgstr ""
 
 #. translators: %d is a link count (singular).
-#: src/Support/I18n.php:713
+#: src/Support/I18n.php:718
 #, php-format
 msgid "%d link"
 msgstr ""
 
 #. translators: %d is a link count (plural).
-#: src/Support/I18n.php:715
+#: src/Support/I18n.php:720
 #, php-format
 msgid "%d links"
 msgstr ""
 
 #. translators: %d is a count of replaced links.
-#: src/Support/I18n.php:717
+#: src/Support/I18n.php:722
 #, php-format
 msgid ", %d replaced"
 msgstr ""
 
-#: src/Support/I18n.php:718
+#: src/Support/I18n.php:723
 msgid "Search URL or label…"
 msgstr ""
 
-#: src/Support/I18n.php:719
+#: src/Support/I18n.php:724
 msgid "Replace a link target (<code>&lt;a&gt;</code>/button <code>href</code>) with another URL for this destination. Leave blank to keep the original."
 msgstr ""
 
-#: src/Support/I18n.php:720
+#: src/Support/I18n.php:725
 msgid "Loading links…"
 msgstr ""
 
-#: src/Support/I18n.php:721
+#: src/Support/I18n.php:726
 msgid "No links found yet — run a Check or Sync first so the pages are rendered."
 msgstr ""
 
-#: src/Support/I18n.php:722
+#: src/Support/I18n.php:727
 msgid "— no label —"
 msgstr ""
 
 #. translators: %d is a page count (singular).
-#: src/Support/I18n.php:724
+#: src/Support/I18n.php:729
 #, php-format
 msgid "%d page"
 msgstr ""
 
 #. translators: %d is a page count (plural).
-#: src/Support/I18n.php:726
+#: src/Support/I18n.php:731
 #, php-format
 msgid "%d pages"
 msgstr ""
 
-#: src/Support/I18n.php:727
+#: src/Support/I18n.php:732
 msgid "Replacement URL…"
 msgstr ""
 
-#: src/Support/I18n.php:728
+#: src/Support/I18n.php:733
 msgid "No links match the current filter."
 msgstr ""
 
-#: src/Support/I18n.php:739
+#: src/Support/I18n.php:744
 msgid "Video replacer"
 msgstr ""
 
-#: src/Support/I18n.php:741
+#: src/Support/I18n.php:746
 msgid "Select a page above to replace its videos."
 msgstr ""
 
-#: src/Support/I18n.php:742
+#: src/Support/I18n.php:747
 msgid "No replaceable videos on this page."
 msgstr ""
 
 #. translators: %d is a video count (singular).
-#: src/Support/I18n.php:744
+#: src/Support/I18n.php:749
 #, php-format
 msgid "%d video"
 msgstr ""
 
 #. translators: %d is a video count (plural).
-#: src/Support/I18n.php:746
+#: src/Support/I18n.php:751
 #, php-format
 msgid "%d videos"
 msgstr ""
 
-#: src/Support/I18n.php:747
+#: src/Support/I18n.php:752
 msgid "Search URL or title…"
 msgstr ""
 
-#: src/Support/I18n.php:748
+#: src/Support/I18n.php:753
 msgid "Local videos swap via the media library; embeds (YouTube, Vimeo, …) take a URL <em>or</em> a video ID (like Bricks). An embed’s <code>origin=</code> is rewritten to this destination automatically when a Destination URL is set."
 msgstr ""
 
-#: src/Support/I18n.php:749
+#: src/Support/I18n.php:754
 msgid "Loading videos…"
 msgstr ""
 
-#: src/Support/I18n.php:750
+#: src/Support/I18n.php:755
 msgid "No videos found yet — run a Check or Sync first so the pages are rendered."
 msgstr ""
 
-#: src/Support/I18n.php:751
+#: src/Support/I18n.php:756
 msgid "local file"
 msgstr ""
 
-#: src/Support/I18n.php:752
+#: src/Support/I18n.php:757
 msgid "Choose a replacement video"
 msgstr ""
 
-#: src/Support/I18n.php:753
+#: src/Support/I18n.php:758
 msgid "Use this video"
 msgstr ""
 
-#: src/Support/I18n.php:754
+#: src/Support/I18n.php:759
 msgid "Replacement URL or video ID…"
 msgstr ""
 
-#: src/Support/I18n.php:755
+#: src/Support/I18n.php:760
 msgid "No videos match the current filter."
 msgstr ""
 
-#: src/Support/I18n.php:767
+#: src/Support/I18n.php:772
 msgid "Images"
 msgstr ""
 
-#: src/Support/I18n.php:769
+#: src/Support/I18n.php:774
 msgid "Videos"
 msgstr ""
 
-#: src/Support/I18n.php:770
+#: src/Support/I18n.php:775
 msgid "Find and replace visible text on this destination only."
 msgstr ""
 
-#: src/Support/I18n.php:771
+#: src/Support/I18n.php:776
 msgid "Pick a page, then swap any of its images for another library item — responsive variants are rebuilt automatically."
 msgstr ""
 
-#: src/Support/I18n.php:772
+#: src/Support/I18n.php:777
 msgid "Rewrite link and button targets per destination, without touching body text."
 msgstr ""
 
-#: src/Support/I18n.php:773
+#: src/Support/I18n.php:778
 msgid "Swap local or embedded videos and fix embed origins for the destination domain."
 msgstr ""
 
-#: src/Support/I18n.php:785
+#: src/Support/I18n.php:790
 msgid "Render once, then push to every enabled destination in turn."
 msgstr ""
 
-#: src/Support/I18n.php:787
+#: src/Support/I18n.php:792
 msgid "Out of date"
 msgstr ""
 
-#: src/Support/I18n.php:788
+#: src/Support/I18n.php:793
 msgid "Content changed — Process to check"
 msgstr ""
 
-#: src/Support/I18n.php:790
+#: src/Support/I18n.php:795
 msgid "Remove deleted files from each destination (prune)"
 msgstr ""
 
-#: src/Support/I18n.php:791
+#: src/Support/I18n.php:796
 msgid "Working…"
 msgstr ""
 
 #. translators: %d is the number of enabled destinations.
-#: src/Support/I18n.php:793
+#: src/Support/I18n.php:798
 #, php-format
 msgid "Sync all (%d enabled)"
 msgstr ""
 
-#: src/Support/I18n.php:804
+#: src/Support/I18n.php:809
 msgid "Progress"
 msgstr ""
 
-#: src/Support/I18n.php:805
+#: src/Support/I18n.php:810
 msgid "Last sync"
 msgstr ""
 
-#: src/Support/I18n.php:806
+#: src/Support/I18n.php:811
 msgid "Last Process"
 msgstr ""
 
-#: src/Support/I18n.php:807
+#: src/Support/I18n.php:812
 msgid "Collecting URLs"
 msgstr ""
 
-#: src/Support/I18n.php:808
+#: src/Support/I18n.php:813
 msgid "Rendering pages"
 msgstr ""
 
-#: src/Support/I18n.php:809
+#: src/Support/I18n.php:814
 msgid "Processing assets"
 msgstr ""
 
-#: src/Support/I18n.php:810
+#: src/Support/I18n.php:815
 msgid "Finalising"
 msgstr ""
 
-#: src/Support/I18n.php:811
+#: src/Support/I18n.php:816
 msgid "Packaging & deploying"
 msgstr ""
 
-#: src/Support/I18n.php:812
+#: src/Support/I18n.php:817
 msgid "Uploading"
 msgstr ""
 
-#: src/Support/I18n.php:813
+#: src/Support/I18n.php:818
 msgid "Deploying"
 msgstr ""
 
-#: src/Support/I18n.php:814
+#: src/Support/I18n.php:819
 msgid "Removing old files"
 msgstr ""
 
-#: src/Support/I18n.php:819
+#: src/Support/I18n.php:824
 msgid "Uploading…"
 msgstr ""
 
-#: src/Support/I18n.php:821
+#: src/Support/I18n.php:826
 msgid "Uploaded file-by-file: the PHP runtime running this sync has no Zip (ZipArchive) extension, so the faster single-package deploy wasn’t available. The result is identical, just slower. This is common with Local’s bundled WP-CLI PHP — most production hosts include Zip and will package automatically."
 msgstr ""
 
 #. translators: %s is the reason package deploy failed.
-#: src/Support/I18n.php:823
+#: src/Support/I18n.php:828
 #, php-format
 msgid "The faster one-shot package deploy didn’t complete — %s. Files were uploaded individually instead: same result, just slower."
 msgstr ""
 
-#: src/Support/I18n.php:824
+#: src/Support/I18n.php:829
 msgid "Error"
 msgstr ""
 
-#: src/Support/I18n.php:826
+#: src/Support/I18n.php:831
 msgid "View error details"
 msgstr ""
 
-#: src/Support/I18n.php:827
+#: src/Support/I18n.php:832
 msgid "Sync error details"
 msgstr ""
 
-#: src/Support/I18n.php:828
+#: src/Support/I18n.php:833
 msgid "No further detail was recorded for this destination."
 msgstr ""
 
-#: src/Support/I18n.php:829
+#: src/Support/I18n.php:834
 msgid "Pages"
 msgstr ""
 
-#: src/Support/I18n.php:830
+#: src/Support/I18n.php:835
 msgid "Assets"
 msgstr ""
 
-#: src/Support/I18n.php:831
+#: src/Support/I18n.php:836
 msgid "Deploy"
 msgstr ""
 
-#: src/Support/I18n.php:832
+#: src/Support/I18n.php:837
 msgid "Uploads"
 msgstr ""
 
 #. translators: %d is a file count.
-#: src/Support/I18n.php:834
+#: src/Support/I18n.php:839
 #, php-format
 msgid "%d files"
 msgstr ""
 
 #. translators: %1$d is a file count, %2$s a human size (e.g. "1.2 MB").
-#: src/Support/I18n.php:836
+#: src/Support/I18n.php:841
 #, php-format
 msgid "Site: %1$d files · %2$s"
 msgstr ""
 
 #. translators: %d is a count of removed files.
-#: src/Support/I18n.php:838
+#: src/Support/I18n.php:843
 #, php-format
 msgid "%d removed"
 msgstr ""
 
 #. translators: %d is a count of skipped pages.
-#: src/Support/I18n.php:840
+#: src/Support/I18n.php:845
 #, php-format
 msgid "%d skipped"
 msgstr ""
 
 #. translators: %d is a count of pages flagged as not static-friendly.
-#: src/Support/I18n.php:842
+#: src/Support/I18n.php:847
 #, php-format
 msgid "%d not static-friendly"
 msgstr ""
 
 #. translators: %d is a count of errors.
-#: src/Support/I18n.php:844
+#: src/Support/I18n.php:849
 #, php-format
 msgid "%d errors"
 msgstr ""
 
 #. translators: %d is a count of failed uploads (singular).
-#: src/Support/I18n.php:846
+#: src/Support/I18n.php:851
 #, php-format
 msgid "%d failed upload"
 msgstr ""
 
 #. translators: %d is a count of failed uploads (plural).
-#: src/Support/I18n.php:848
+#: src/Support/I18n.php:853
 #, php-format
 msgid "%d failed uploads"
 msgstr ""
 
 #. translators: %d is a count of failed files (singular).
-#: src/Support/I18n.php:850
+#: src/Support/I18n.php:855
 #, php-format
 msgid "%d file failed to upload."
 msgstr ""
 
 #. translators: %d is a count of failed files (plural).
-#: src/Support/I18n.php:852
+#: src/Support/I18n.php:857
 #, php-format
 msgid "%d files failed to upload."
 msgstr ""
 
-#: src/Support/I18n.php:853
+#: src/Support/I18n.php:858
 msgid "Retrying…"
 msgstr ""
 
 #. translators: %d is a count of uploads to retry (singular).
-#: src/Support/I18n.php:855
+#: src/Support/I18n.php:860
 #, php-format
 msgid "Retry %d upload"
 msgstr ""
 
 #. translators: %d is a count of uploads to retry (plural).
-#: src/Support/I18n.php:857
+#: src/Support/I18n.php:862
 #, php-format
 msgid "Retry %d uploads"
 msgstr ""
 
 #. translators: %d is the error count.
-#: src/Support/I18n.php:859
+#: src/Support/I18n.php:864
 #, php-format
 msgid "Errors (%d)"
 msgstr ""
 
 #. translators: %d is the skipped count.
-#: src/Support/I18n.php:861
+#: src/Support/I18n.php:866
 #, php-format
 msgid "Skipped (%d)"
 msgstr ""
 
 #. translators: %d is the count of pages that won't work on static.
-#: src/Support/I18n.php:863
+#: src/Support/I18n.php:868
 #, php-format
 msgid "Won't work on static (%d) — forms / dynamic endpoints (notice only; pages are still uploaded)"
 msgstr ""
 
-#: src/Support/I18n.php:874
+#: src/Support/I18n.php:879
 msgid "Run this in your terminal to render & sync"
 msgstr ""
 
-#: src/Support/I18n.php:875
+#: src/Support/I18n.php:880
 msgid "This host serves only a couple of PHP requests at once, so the browser can't render reliably here. WP-CLI does it without that limit. In Local, right-click the site → <em>Open site shell</em>, then run:"
 msgstr ""
 
-#: src/Support/I18n.php:876
+#: src/Support/I18n.php:881
 msgid "Add <code>--check</code> for a dry run, or <code>--prune</code> to remove deleted files. Progress will appear here automatically once it starts."
 msgstr ""
 
-#: src/Support/I18n.php:887
+#: src/Support/I18n.php:892
 msgid "Server config"
 msgstr ""
 
-#: src/Support/I18n.php:888
+#: src/Support/I18n.php:893
 msgid "Hide"
 msgstr ""
 
-#: src/Support/I18n.php:889
+#: src/Support/I18n.php:894
 msgid "View"
 msgstr ""
 
-#: src/Support/I18n.php:890
+#: src/Support/I18n.php:895
 msgid "The <code>.htaccess</code> is uploaded to the destination automatically (Apache/LiteSpeed). nginx serves the static site as-is; its snippet below is an <em>optional</em> tuning (cache policy + pre-compressed serving) to paste into your server block. Use <strong>Check server</strong> to see what the destination is actually doing."
 msgstr ""
 
-#: src/Support/I18n.php:891
+#: src/Support/I18n.php:896
 msgid "Server check"
 msgstr ""
 
-#: src/Support/I18n.php:892
+#: src/Support/I18n.php:897
 msgid "Fetches the destination’s home page and one asset, and reports the web server and whether the cache rules are in effect."
 msgstr ""
 
-#: src/Support/I18n.php:893
+#: src/Support/I18n.php:898
 msgid "Check server"
 msgstr ""
 
-#: src/Support/I18n.php:897
+#: src/Support/I18n.php:902
 msgid "No destination has a Destination URL yet — set one on the destination to enable the check."
 msgstr ""
 
-#: src/Support/I18n.php:898
+#: src/Support/I18n.php:903
 msgid "Server"
 msgstr ""
 
-#: src/Support/I18n.php:899
+#: src/Support/I18n.php:904
 msgid "Cache policy"
 msgstr ""
 
-#: src/Support/I18n.php:901
+#: src/Support/I18n.php:906
 msgid "HTML"
 msgstr ""
 
-#: src/Support/I18n.php:902
+#: src/Support/I18n.php:907
 msgid "Asset"
 msgstr ""
 
-#: src/Support/I18n.php:903
+#: src/Support/I18n.php:908
 msgid "Applied"
 msgstr ""
 
-#: src/Support/I18n.php:904
+#: src/Support/I18n.php:909
 msgid "Partial"
 msgstr ""
 
-#: src/Support/I18n.php:905
+#: src/Support/I18n.php:910
 msgid "Not applied"
 msgstr ""
 
-#: src/Support/I18n.php:906
+#: src/Support/I18n.php:911
 msgid "Unknown"
 msgstr ""
 
-#: src/Support/I18n.php:907
+#: src/Support/I18n.php:912
 msgid "gzip"
 msgstr ""
 
-#: src/Support/I18n.php:908
+#: src/Support/I18n.php:913
 msgid "none"
 msgstr ""
 
-#: src/Support/I18n.php:909
+#: src/Support/I18n.php:914
 msgid "(no Cache-Control header)"
 msgstr ""
 
-#: src/Support/I18n.php:910
+#: src/Support/I18n.php:915
 msgid "No Destination URL is set, so the host was guessed from the connection — set the URL for an accurate check."
 msgstr ""
 
 #. translators: %s: time the check ran
-#: src/Support/I18n.php:912
+#: src/Support/I18n.php:917
 #, php-format
 msgid "Checked %s"
 msgstr ""
 
-#: src/Support/I18n.php:913
+#: src/Support/I18n.php:918
 msgid "unknown"
 msgstr ""
 
-#: src/Support/I18n.php:914
+#: src/Support/I18n.php:919
 msgid "CDN / proxy"
 msgstr ""
 
-#: src/Support/I18n.php:915
+#: src/Support/I18n.php:920
 msgid "Sent automatically with every Cloudflare deploy — nothing to paste."
 msgstr ""
 
-#: src/Support/I18n.php:926
+#: src/Support/I18n.php:931
 msgid "Text replacements"
 msgstr ""
 
-#: src/Support/I18n.php:927
+#: src/Support/I18n.php:932
 msgid "(optional)"
 msgstr ""
 
-#: src/Support/I18n.php:928
+#: src/Support/I18n.php:933
 msgid "+ Add"
 msgstr ""
 
-#: src/Support/I18n.php:929
+#: src/Support/I18n.php:934
 msgid "Literal find/replace, applied only to visible text content between tags — never attributes, scripts or markup. Be specific to avoid unintended matches."
 msgstr ""
 
-#: src/Support/I18n.php:930
+#: src/Support/I18n.php:935
 msgid "No text replacements yet."
 msgstr ""
 
-#: src/Support/I18n.php:931
+#: src/Support/I18n.php:936
 msgid "Find"
 msgstr ""
 
-#: src/Support/I18n.php:932
+#: src/Support/I18n.php:937
 msgid "Replace"
 msgstr ""
 
-#: src/Support/I18n.php:933
-#: src/Support/I18n.php:934
+#: src/Support/I18n.php:938
+#: src/Support/I18n.php:939
 msgid "(empty)"
 msgstr ""
 
-#: src/Support/I18n.php:935
+#: src/Support/I18n.php:940
 msgid "Confirm delete"
 msgstr ""
 
-#: src/Support/I18n.php:936
+#: src/Support/I18n.php:941
 msgid "Keep"
 msgstr ""
 
-#: src/Support/I18n.php:937
+#: src/Support/I18n.php:942
 msgid "Edit"
 msgstr ""
 
-#: src/Support/I18n.php:938
+#: src/Support/I18n.php:943
 msgid "Delete"
 msgstr ""
 
-#: src/Support/I18n.php:939
+#: src/Support/I18n.php:944
 msgid "Add text replacement"
 msgstr ""
 
-#: src/Support/I18n.php:940
+#: src/Support/I18n.php:945
 msgid "Edit text replacement"
 msgstr ""
 
-#: src/Support/I18n.php:941
+#: src/Support/I18n.php:946
 msgid "Text to find"
 msgstr ""
 
-#: src/Support/I18n.php:942
-#: src/Support/I18n.php:946
+#: src/Support/I18n.php:947
+#: src/Support/I18n.php:951
 msgid "Replace with"
 msgstr ""
 
-#: src/Support/I18n.php:943
+#: src/Support/I18n.php:948
 msgid "Replacement format"
 msgstr ""
 
-#: src/Support/I18n.php:944
+#: src/Support/I18n.php:949
 msgid "Plain"
 msgstr ""
 
-#: src/Support/I18n.php:945
+#: src/Support/I18n.php:950
 msgid "Rich"
 msgstr ""
 
-#: src/Support/I18n.php:958
+#: src/Support/I18n.php:963
 msgid "Paragraph"
 msgstr ""
 
-#: src/Support/I18n.php:959
+#: src/Support/I18n.php:964
 msgid "Heading 1"
 msgstr ""
 
-#: src/Support/I18n.php:960
+#: src/Support/I18n.php:965
 msgid "Heading 2"
 msgstr ""
 
-#: src/Support/I18n.php:961
+#: src/Support/I18n.php:966
 msgid "Heading 3"
 msgstr ""
 
-#: src/Support/I18n.php:962
+#: src/Support/I18n.php:967
 msgid "Bold"
 msgstr ""
 
-#: src/Support/I18n.php:963
+#: src/Support/I18n.php:968
 msgid "Italic"
 msgstr ""
 
-#: src/Support/I18n.php:964
+#: src/Support/I18n.php:969
 msgid "Underline"
 msgstr ""
 
-#: src/Support/I18n.php:965
+#: src/Support/I18n.php:970
 msgid "Bullet list"
 msgstr ""
 
-#: src/Support/I18n.php:966
+#: src/Support/I18n.php:971
 msgid "Numbered list"
 msgstr ""
 
-#: src/Support/I18n.php:967
+#: src/Support/I18n.php:972
 msgid "Link"
 msgstr ""
 
-#: src/Support/I18n.php:968
+#: src/Support/I18n.php:973
 msgid "Clear formatting"
 msgstr ""
 
-#: src/Support/I18n.php:969
+#: src/Support/I18n.php:974
 msgid "HTML source"
 msgstr ""
 
-#: src/Support/I18n.php:970
+#: src/Support/I18n.php:975
 msgid "Visual editor"
 msgstr ""
 
-#: src/Support/I18n.php:971
+#: src/Support/I18n.php:976
 msgid "Edit HTML"
 msgstr ""
 
-#: src/Support/I18n.php:972
+#: src/Support/I18n.php:977
 msgid "Link URL"
 msgstr ""
 
-#: src/Support/I18n.php:973
+#: src/Support/I18n.php:978
 msgid "Replace with…"
 msgstr ""
 
-#: src/Support/I18n.php:974
+#: src/Support/I18n.php:979
 msgid "Formatting"
 msgstr ""
 
-#: src/Support/I18n.php:987
+#: src/Support/I18n.php:992
 msgid "Save"
 msgstr ""
 
-#: src/Support/I18n.php:989
+#: src/Support/I18n.php:994
 msgid "Testing…"
 msgstr ""
 

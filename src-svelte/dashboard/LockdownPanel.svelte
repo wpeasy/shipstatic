@@ -148,11 +148,16 @@
     probing = false;
   }
 
-  /** Whether a probe found the strongest layer this server can have working. */
+  /**
+   * Whether a probe's answer is final for now: the strongest layer is working,
+   * or (with .user.ini) WordPress stops strangers while PHP takes its up-to-5-minute
+   * cache to read .user.ini — retrying for seconds can't change that, and the
+   * notice says to check again later.
+   */
   function probeSettled(p: LockdownProbe | null): boolean {
     if (!p) return false;
     if (p.result === 'server' || p.result === 'gate' || p.result === 'allowed') return true;
-    return p.result === 'wordpress' && ld?.method === 'wordpress';
+    return p.result === 'wordpress' && (ld?.method === 'wordpress' || ld?.method === 'userIni');
   }
 
   // Ask for the home page as a stranger with this browser's address would:

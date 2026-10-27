@@ -246,6 +246,15 @@
         <p class="bs-docs__muted">
           Most sites start with WordPress installed at the root of the domain. Run <strong>Process all</strong>, turn Lockdown off, then open the wizard (<strong>This server</strong> → <strong>Set up the folder</strong>): it checks the site and offers <strong>Move WordPress into /wp</strong>. WordPress’s own files (<code>wp-admin</code>, <code>wp-includes</code>, <code>wp-content</code>, <code>wp-config.php</code> and the core PHP files) move into <code>/wp</code>, its address and the links in your content get <code>/wp</code>, and anything else at the root (<code>ads.txt</code>, verification files, <code>.well-known</code>) stays. You log in again at <code>https://example.com/wp/</code> and run <strong>Sync</strong>; a holding page shows at the root until then. The dashboard offers <strong>Undo the move</strong> until you choose <strong>Keep it</strong>. It refuses to start when <code>wp-config.php</code> pins the site’s address or folders, a page already uses <code>/wp</code>, or the site is multisite, and warns about plugins that keep the old folder (security firewalls loaded from <code>.user.ini</code>, cache drop-ins). Take a backup first. WP-CLI: <code>wp shipstatic move-wordpress check|run|undo</code>.
         </p>
+        <p class="bs-docs__muted">
+          <strong>On nginx</strong> there’s no <code>.htaccess</code>, so the site’s <code>server {'{'} {'}'}</code> block needs one more rule before the move, or WordPress’s addresses under <code>/wp/</code> (this dashboard included) stop working. The wizard shows it and checks that it’s working before it lets you move; add it next to the other <code>location</code> blocks and reload nginx (or ask your host):
+        </p>
+        <pre class="bs-docs__code">location /wp/ {'{'}
+    try_files $uri $uri/ /wp/index.php?$args;
+{'}'}</pre>
+        <p class="bs-docs__muted">
+          Optional: if your static site has a 404 page (<code>404.html</code> in the export), add <code>error_page 404 /404.html;</code> to the same server block so missing addresses show it instead of nginx’s plain one.
+        </p>
         <h3>The most separated setup: WordPress on a subdomain</h3>
         <p class="bs-docs__muted">
           Point the main domain at one folder (for example <code>public_html/static</code>) and a subdomain such as <code>wp.example.com</code> at WordPress’s folder (<code>public_html/wp</code>). In the wizard choose the folder beside WordPress. The two are then separate sites to the browser. Already publishing that folder over FTP or the Connector? Choose <em>It’s my static site already</em>: files that already match aren’t written again.

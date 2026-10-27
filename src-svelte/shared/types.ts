@@ -228,6 +228,11 @@ export interface WpMoveCheck {
   from: string;
   to: string;
   entries: string[];
+  /**
+   * On nginx: the server-block rule WordPress needs in /wp, and whether a
+   * live probe found it (null = not checked yet; another problem comes first).
+   */
+  nginx?: { rule: string; ok: boolean | null; detail: string } | null;
 }
 
 export interface Status {

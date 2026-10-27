@@ -136,10 +136,12 @@ final class SerializedReplace {
      * A callback that adds a sub-path to every URL on a host, also in its
      * JSON-escaped form (https:\/\/host), never twice: "https://example.com"
      * and "https://example.com/about/" get "/wp", "https://example.com/wp/…"
-     * and "https://example.com.au" don't. With $remove it takes the sub-path
-     * off again.
+     * and "https://example.com.au" don't. A port is part of the host: with
+     * "example.com:8090" the sub-path goes after the port, and without one a
+     * URL with a port ("https://example.com:8443/") is another site and is
+     * left alone. With $remove it takes the sub-path off again.
      *
-     * @param string $host   Host (www. is matched too).
+     * @param string $host   Host, with ":port" when the site uses one (www. is matched too).
      * @param string $sub    Sub-path name, e.g. "wp".
      * @param bool   $remove Take it off instead.
      * @return callable(string):string
@@ -153,7 +155,7 @@ final class SerializedReplace {
 
             return static fn(string $v): string => (string) preg_replace($re, '$1', $v);
         }
-        $re = '~((?:https?:)?(//|\\\\/\\\\/)(?:www\.)?' . $h . ')(?![\w.-])(?!(?:/|\\\\/)' . $s . $end . ')~i';
+        $re = '~((?:https?:)?(//|\\\\/\\\\/)(?:www\.)?' . $h . ')(?![\w.-])(?!:\d)(?!(?:/|\\\\/)' . $s . $end . ')~i';
 
         return static function (string $v) use ($re, $sub): string {
             return (string) preg_replace_callback($re, static fn(array $m): string => $m[1] . ($m[2] === '//' ? '/' : '\\/') . $sub, $v);

@@ -444,7 +444,16 @@
     "msgid": "%s loads a file from WordPress’s folder before every request (a firewall such as Wordfence). After the move, re-run that plugin’s setup so it uses the new place."
   },
   {
+    "msgid": "This server runs nginx, which needs one more rule before WordPress can move: add the block below to this site’s server { } block, reload nginx, then check again."
+  },
+  {
     "msgid": "A caching plugin installed %s. Purge and re-save that plugin’s settings after the move."
+  },
+  {
+    "msgid": "Couldn’t create a test folder next to WordPress."
+  },
+  {
+    "msgid": "Couldn’t write a test file next to WordPress."
   },
   {
     "msgid": "WordPress can’t be moved yet."
@@ -1699,6 +1708,18 @@
   },
   {
     "msgid": "WordPress is now at %1$s and this server publishes the static site at %2$s. Run Sync to put the site live, then turn on Lockdown so only your editors reach WordPress."
+  },
+  {
+    "msgid": "nginx"
+  },
+  {
+    "msgid": "Add this block inside this site’s server { } block in nginx (next to its other location blocks), reload nginx, then press Check again. Without it, WordPress’s addresses under /wp/ (including this dashboard’s) would stop working after the move. Your host can add it for you."
+  },
+  {
+    "msgid": "nginx is ready: addresses under /wp/ reach WordPress."
+  },
+  {
+    "msgid": "The check couldn’t reach the site: %s"
   },
   {
     "msgid": "Keep it"

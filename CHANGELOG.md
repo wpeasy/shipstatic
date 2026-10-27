@@ -5,6 +5,22 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.5] - 2026-10-27
+
+### Fixed
+- Export: a link to the site with nothing after its address (`https://host` — how Bricks writes the logo link — or `https://host?x`, `https://host#top`) became an empty `href`, which browsers read as the current page: on `/about/` the logo linked to `/about/`. `UrlRewriter::rewrite()` now keeps a `/` after the base placeholder when no path follows (`/` or `/sub/` per destination). `Runner::RENDER_FORMAT` is 3, so the dashboard asks for Process all once after updating.
+- Export: on destinations at a domain root, JSON-escaped site links (inline scripts, JSON-LD) were left with a stray backslash (`"\/about"`, or `"\"` for the home page), corrupting the JSON. `Url::rebase()` now replaces the escaped placeholder before the plain one.
+- Move WordPress into /wp, nginx: nginx has no `.htaccess`, so after the move every non-file address under `/wp/` (pretty links, the REST API — so the dashboard and its Undo) fell to the root's moved `index.php` and returned the static site's page ("Unexpected token '<' … is not valid JSON"). The pre-flight now shows the `location /wp/ { … }` rule to add, with Copy and Check again, and blocks the move until a probe (a temporary `/wp/index.php`, removed afterwards) proves it's live. Also in `wp shipstatic move-wordpress check`.
+- Move WordPress into /wp: a site on a non-standard port got URLs like `/wp:8090` (the port is now part of the host in `SerializedReplace::url_subpath()`).
+- Move WordPress into /wp: Sync is ready straight after the move, without a connection Test.
+- Undo the move refused with "wp-includes already exists": the export publishes its own copies of `wp-content/`/`wp-includes/` assets at the root. Undo now accepts folders that hold only published files.
+- Process and Sync from the dashboard waited at 0/N forever on servers where PHP-FPM runs with an empty environment (common on VPSs): the background WP-CLI process was started as a bare `wp`, which only the command line could find. It now runs by absolute path with a safe `PATH`.
+- Lockdown on nginx / PHP-FPM: the check right after turning it on took ~25 s, retrying the expected first answer ("stopped inside WordPress", while `.user.ini` takes up to 5 minutes to apply) as if it were a failure. It reports it straight away with the existing "check again in 5 minutes" note.
+- "This server" folder wizard: its messages had no styling; they are proper notices now.
+
+### Added
+- Documentation: the nginx rule for Move WordPress into /wp, and the optional `error_page 404 /404.html;`.
+
 ## [2.4.4] - 2026-10-27
 
 ### Fixed

@@ -453,6 +453,9 @@ final class SyncCommand {
             foreach ($c['problems'] as $p) {
                 \WP_CLI::log('  ✗ ' . $p);
             }
+            if (!empty($c['nginx']) && $c['nginx']['ok'] !== true) {
+                \WP_CLI::log("\nnginx rule for this site's server { } block:\n" . $c['nginx']['rule']);
+            }
             $c['ok']
                 ? \WP_CLI::success(sprintf('Ready: %s → %s (%d entries move).', $c['from'], $c['to'], count($c['entries'])))
                 : \WP_CLI::error('Not ready to move.');

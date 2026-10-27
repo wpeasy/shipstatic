@@ -554,6 +554,11 @@ final class I18n {
             'wmMovedTitle'     => __('WordPress moved into /wp', 'shipstatic'),
             /* translators: 1: new WordPress address, 2: static site address. */
             'wmMovedBody'      => __('WordPress is now at %1$s and this server publishes the static site at %2$s. Run Sync to put the site live, then turn on Lockdown so only your editors reach WordPress.', 'shipstatic'),
+            'wmNginxHeading'   => __('nginx', 'shipstatic'),
+            'wmNginxHelp'      => __('Add this block inside this site’s server { } block in nginx (next to its other location blocks), reload nginx, then press Check again. Without it, WordPress’s addresses under /wp/ (including this dashboard’s) would stop working after the move. Your host can add it for you.', 'shipstatic'),
+            'wmNginxOk'        => __('nginx is ready: addresses under /wp/ reach WordPress.', 'shipstatic'),
+            /* translators: %s: error message. */
+            'wmNginxDetail'    => __('The check couldn’t reach the site: %s', 'shipstatic'),
             'wmKeep'           => __('Keep it', 'shipstatic'),
             'wmUndo'           => __('Undo the move', 'shipstatic'),
             'wmUndoConfirm'    => __('Move WordPress back?', 'shipstatic'),

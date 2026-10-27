@@ -32,8 +32,17 @@ final class WpCli {
     public const TRANSIENT_KEY = 'shipstatic_wpcli_status';
     public const CACHE_TTL     = HOUR_IN_SECONDS;
 
-    /** Cache schema version — bump when the cached array shape changes. */
-    private const CACHE_SCHEMA = 1;
+    /**
+     * Cache schema version — bump when the cached array shape changes.
+     * 2: a system runtime records the absolute `bin` (2.4.5).
+     */
+    private const CACHE_SCHEMA = 2;
+
+    /** Where a system `wp` usually lives, tried after whatever `command -v wp` finds. */
+    private const SYSTEM_CANDIDATES = ['/usr/local/bin/wp', '/usr/bin/wp', '/opt/homebrew/bin/wp', '/snap/bin/wp'];
+
+    /** A PATH that finds `php` for the phar's `#!/usr/bin/env php` on common hosts. */
+    private const SAFE_PATH = '/usr/local/bin:/usr/bin:/bin';
 
     public const RUNTIME_SYSTEM = 'system';
     public const RUNTIME_LOCAL  = 'local';
@@ -79,7 +88,9 @@ final class WpCli {
         $type    = (string) ($runtime['type'] ?? '');
 
         if ($type === self::RUNTIME_SYSTEM) {
-            return 'wp ' . $args;
+            $bin = (string) ($runtime['bin'] ?? '');
+
+            return $bin !== '' ? self::system_command($bin, $args) : 'wp ' . $args;
         }
 
         if ($type === self::RUNTIME_LOCAL) {
@@ -140,15 +151,49 @@ final class WpCli {
     }
 
     /**
-     * @return array{version:?string,runtime:array{type:string}}|null
+     * @return array{version:?string,runtime:array{type:string,bin?:string}}|null
      */
     private static function probe_system(): ?array {
-        $result = self::try_command('wp --version');
-        if (!$result['ok']) {
-            return null;
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $result = self::try_command('wp --version');
+
+            return $result['ok'] ? ['version' => self::parse_version($result['stdout']), 'runtime' => ['type' => self::RUNTIME_SYSTEM]] : null;
         }
 
-        return ['version' => self::parse_version($result['stdout']), 'runtime' => ['type' => self::RUNTIME_SYSTEM]];
+        // Record the absolute path. The status is cached for every context,
+        // and PHP-FPM usually runs with an empty environment, so a bare `wp`
+        // that works from WP-CLI (where /usr/local/bin is on PATH) isn't
+        // found when the dashboard spawns the runner — the job then waits
+        // for a process that never started.
+        $candidates = [];
+        $which      = self::try_command('command -v wp');
+        $found      = trim($which['stdout']);
+        if ($which['ok'] && $found !== '' && $found[0] === '/') {
+            $candidates[] = $found;
+        }
+        foreach (array_unique(array_merge($candidates, self::SYSTEM_CANDIDATES)) as $bin) {
+            if (!@is_file($bin)) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- open_basedir may hide it; that just means not here.
+                continue;
+            }
+            $result = self::try_command(self::system_command($bin, '--version'));
+            if ($result['ok']) {
+                return ['version' => self::parse_version($result['stdout']), 'runtime' => ['type' => self::RUNTIME_SYSTEM, 'bin' => $bin]];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * `wp <args>` from an absolute path, with a PATH of its own: the phar
+     * starts with `#!/usr/bin/env php`, so php must be findable too, whatever
+     * environment the caller (PHP-FPM, cron) has.
+     *
+     * @param string $bin  Absolute path to wp.
+     * @param string $args WP-CLI arguments (already escaped where needed).
+     */
+    private static function system_command(string $bin, string $args): string {
+        return 'env PATH=' . escapeshellarg(dirname($bin) . ':' . self::SAFE_PATH) . ' ' . escapeshellarg($bin) . ' ' . $args;
     }
 
     /**

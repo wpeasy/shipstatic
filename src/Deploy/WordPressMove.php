@@ -11,6 +11,9 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\Deploy;
 
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
+use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
+use WPEasy\ShipStatic\REST\DestinationsController;
+use WPEasy\ShipStatic\Render\PageRenderer;
 use WPEasy\ShipStatic\Settings\Destinations;
 use WPEasy\ShipStatic\Support\SerializedReplace;
 use WPEasy\ShipStatic\Sync\HtaccessBuilder;
@@ -124,6 +127,22 @@ final class WordPressMove {
                 $warnings[] = sprintf(__('%s loads a file from WordPress’s folder before every request (a firewall such as Wordfence). After the move, re-run that plugin’s setup so it uses the new place.', 'shipstatic'), $ini);
             }
         }
+        // nginx has no .htaccess: the move can't give WordPress its rules in
+        // /wp, so the site's server block needs them first, or every address
+        // under /wp/ that isn't a file (the REST API, so this dashboard and its
+        // Undo button) would 404 after the move.
+        $nginx = null;
+        if (self::on_nginx()) {
+            // ok: null = not checked yet (something else blocks the move first).
+            $nginx = ['rule' => self::nginx_rule(), 'ok' => null, 'detail' => ''];
+            if ($problems === []) {
+                $nginx = array_merge($nginx, self::probe_nginx($root));
+                if (!$nginx['ok']) {
+                    $problems[] = __('This server runs nginx, which needs one more rule before WordPress can move: add the block below to this site’s server { } block, reload nginx, then check again.', 'shipstatic');
+                }
+            }
+        }
+
         foreach (['advanced-cache.php', 'object-cache.php'] as $dropin) {
             if (is_file(WP_CONTENT_DIR . '/' . $dropin)) {
                 /* translators: %s: file name. */
@@ -139,7 +158,76 @@ final class WordPressMove {
             'from'     => $home,
             'to'       => $home . '/' . self::FOLDER,
             'entries'  => $entries,
+            'nginx'    => $nginx,
         ];
+    }
+
+    /**
+     * Whether this site runs on nginx (from the web request; WP-CLI falls back
+     * to what Lockdown remembered from one).
+     */
+    private static function on_nginx(): bool {
+        $software = isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field(wp_unslash((string) $_SERVER['SERVER_SOFTWARE'])) : '';
+        if ($software === '') {
+            $software = (string) (LockdownWriter::environment()['server'] ?? '');
+        }
+
+        return stripos($software, 'nginx') !== false;
+    }
+
+    /**
+     * The nginx rule WordPress needs once it lives in /wp.
+     */
+    public static function nginx_rule(): string {
+        $dir = '/' . self::FOLDER . '/';
+
+        return "# WordPress lives in {$dir} (ShipStatic: Move WordPress into /wp).\n"
+            . "location {$dir} {\n"
+            . "    try_files \$uri \$uri/ {$dir}index.php?\$args;\n"
+            . "}\n";
+    }
+
+    /**
+     * Prove the nginx rule is live before anything moves: a temporary
+     * /wp/index.php answers a random token, and an address under /wp/ that
+     * isn't a file must reach it. Without the rule nginx hands that address to
+     * the root's index.php (WordPress's 404 page). Both are removed again.
+     *
+     * @param string $root WordPress's folder.
+     * @return array{ok:bool,detail:string}
+     */
+    private static function probe_nginx(string $root): array {
+        $dir = $root . '/' . self::FOLDER;
+        if (file_exists($dir)) {
+            return ['ok' => false, 'detail' => ''];
+        }
+        $fs    = ServerFolder::fs();
+        $token = wp_generate_password(24, false, false);
+        if (!$fs->mkdir($dir, ServerFolder::dir_mode())) {
+            return ['ok' => false, 'detail' => __('Couldn’t create a test folder next to WordPress.', 'shipstatic')];
+        }
+        $detail = '';
+        $body   = '';
+        try {
+            if ($fs->put_contents($dir . '/index.php', "<?php\necho '" . $token . "';\n", ServerFolder::file_mode())) {
+                $args                = PageRenderer::request_args();
+                $args['redirection'] = 0;
+                $args['timeout']     = 10;
+                $response            = wp_remote_get(home_url('/' . self::FOLDER . '/shipstatic-nginx-check-' . wp_generate_password(6, false, false) . '/'), $args);
+                if (is_wp_error($response)) {
+                    $detail = $response->get_error_message();
+                } else {
+                    $body = trim((string) wp_remote_retrieve_body($response));
+                }
+            } else {
+                $detail = __('Couldn’t write a test file next to WordPress.', 'shipstatic');
+            }
+        } finally {
+            wp_delete_file($dir . '/index.php');
+            $fs->rmdir($dir);
+        }
+
+        return ['ok' => $body === $token, 'detail' => $detail];
     }
 
     /**
@@ -179,6 +267,9 @@ final class WordPressMove {
             'destBefore' => ['transport' => (string) $dest->get('transport'), 'destinationUrl' => (string) $dest->get('destinationUrl'), 'enabled' => (bool) $dest->get('enabled')],
             'time'       => time(),
             'error'      => '',
+            // Written once the files have moved (DestinationsController can't
+            // load then: it moves too).
+            'connOption' => DestinationsController::conn_state_option($dest_id),
         ];
         // Everything written after the files move is prepared now: the
         // plugin's own templates move with wp-content.
@@ -285,6 +376,11 @@ final class WordPressMove {
             file_put_contents($root . '/index.html', (string) $record['holding']);
         }
         file_put_contents($root . '/' . ServerFolder::MARKER, (string) $record['destId']);
+        // The folder is set up and marked: the destination counts as tested,
+        // so Sync is ready straight away.
+        if (!empty($record['connOption'])) {
+            update_option((string) $record['connOption'], ['ok' => true, 'time' => time(), 'message' => ''], false);
+        }
 
         $record['state'] = 'moved';
         update_option(self::OPTION, $record, false);
@@ -308,19 +404,24 @@ final class WordPressMove {
         foreach ([SerializedReplace::class, HtaccessBuilder::class, Destinations::class, Manifest::class] as $class) {
             class_exists($class);
         }
-        $root = (string) $record['root'];
-        $dir  = $root . '/' . self::FOLDER;
+        $root      = (string) $record['root'];
+        $dir       = $root . '/' . self::FOLDER;
+        $dest_id   = (string) $record['destId'];
+        $published = array_keys(Manifest::load(Destinations::pushed_option($dest_id)));
+        // The static site publishes its own wp-content/ and wp-includes/
+        // (copies of the assets its pages use). Those go below, so they don't
+        // block the way back; anything else at the root with WordPress's
+        // names does.
         foreach ((array) $record['entries'] as $entry) {
-            if (file_exists($root . '/' . $entry)) {
+            if (file_exists($root . '/' . $entry) && !self::only_published($root, (string) $entry, $published)) {
                 /* translators: %s: file name. */
                 return ['ok' => false, 'message' => sprintf(__('%s already exists at the root, so WordPress can’t move back.', 'shipstatic'), $entry)];
             }
         }
 
         // The static site goes: only files ShipStatic published there.
-        $dest_id = (string) $record['destId'];
-        $dirs    = [];
-        foreach (array_keys(Manifest::load(Destinations::pushed_option($dest_id))) as $rel) {
+        $dirs = [];
+        foreach ($published as $rel) {
             $file = $root . '/' . $rel;
             if (strpos($rel, '..') === false && strpos($rel, self::FOLDER . '/') !== 0 && is_file($file) && !preg_match('/\.php\d*$/i', $rel)) {
                 wp_delete_file($file);
@@ -388,6 +489,40 @@ final class WordPressMove {
     }
 
     /**
+     * Whether a root entry holds nothing but files ShipStatic published (and
+     * their .gz siblings), so removing the static site clears it.
+     *
+     * @param string            $root      WordPress's old folder (the static root).
+     * @param string            $entry     Entry name at the root.
+     * @param array<int,string> $published Published keys, relative to the root.
+     */
+    private static function only_published(string $root, string $entry, array $published): bool {
+        $path = $root . '/' . $entry;
+        $ours = array_fill_keys($published, true);
+        if (is_link($path)) {
+            return false;
+        }
+        if (is_file($path)) {
+            return isset($ours[$entry]);
+        }
+        if (!is_dir($path)) {
+            return false;
+        }
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS));
+        foreach ($files as $file) {
+            if ($file->isDir()) {
+                continue;
+            }
+            $rel = substr((string) $file->getPathname(), strlen($root) + 1);
+            if ($file->isLink() || !(isset($ours[$rel]) || (substr($rel, -3) === '.gz' && isset($ours[substr($rel, 0, -3)])))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Forget a finished move (it can no longer be undone from the dashboard).
      */
     public static function forget(): void {
@@ -432,6 +567,11 @@ final class WordPressMove {
         $host = (string) wp_parse_url((string) $record['from'], PHP_URL_HOST);
         if ($root === '' || $root[0] !== '/' || $host === '') {
             return; // Never run a replacement without both.
+        }
+        // "/wp" goes after the port, not between host and port.
+        $port = wp_parse_url((string) $record['from'], PHP_URL_PORT);
+        if ($port) {
+            $host .= ':' . (int) $port;
         }
         $url  = SerializedReplace::url_subpath($host, self::FOLDER, $back);
         $old  = [];

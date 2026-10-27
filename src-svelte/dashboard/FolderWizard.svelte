@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Alert, Button, Checkbox, Input, RadioGroup, Wizard } from '@wpeasy/ab-ui';
+  import { Alert, Button, Checkbox, CopyButton, Input, RadioGroup, Wizard } from '@wpeasy/ab-ui';
   import type { WizardStep } from '@wpeasy/ab-ui';
   import Modal from '../lib/Modal.svelte';
   import ListSkeleton from '../lib/ListSkeleton.svelte';
@@ -47,6 +47,18 @@
   let moveMessage = $state('');
   let moveOk = $state(true);
   let moveProblems = $state<string[]>([]);
+  let rechecking = $state(false);
+
+  // Run the move's pre-flight again (after adding the nginx rule, say).
+  async function recheck(): Promise<void> {
+    rechecking = true;
+    try {
+      check = await api.serverFolderCheck({ id: destId });
+    } catch (e) {
+      loadError = (e as Error).message;
+    }
+    rechecking = false;
+  }
 
   async function moveWordPress(): Promise<void> {
     moving = true;
@@ -223,7 +235,7 @@
       <Button variant="primary" onclick={create} disabled={creating || created}>{creating ? __('fwCreating') : created ? __('fwCreated') : __('fwCreate')}</Button>
     </div>
     {#if result}
-      <p class="bs-msg bs-msg--{resultOk ? 'ok' : 'err'}">{result}</p>
+      <Alert tone={resultOk ? 'success' : 'danger'} description={result} />
     {/if}
     {#each warnings as w (w)}
       <Alert tone="warning" description={w} />
@@ -257,6 +269,24 @@
     {#each m.warnings as w (w)}
       <Alert tone="warning" description={w} />
     {/each}
+    {#if m.nginx}
+      <div class="bs-stack bs-stack--sm">
+        <h4 class="bs-wiz__h">{__('wmNginxHeading')}</h4>
+        {#if m.nginx.ok}
+          <Alert tone="success" description={__('wmNginxOk')} />
+        {:else}
+          <p class="bs-wiz__muted">{__('wmNginxHelp')}</p>
+          <pre class="bs-wiz__pre">{m.nginx.rule}</pre>
+          <div class="bs-row">
+            <CopyButton text={m.nginx.rule} variant="button" label={__('ldCopy')} copiedLabel={__('ldCopied')} />
+            <Button variant="secondary" size="sm" onclick={recheck} disabled={rechecking}>{rechecking ? __('ldChecking') : __('ldCheckAgain')}</Button>
+          </div>
+          {#if m.nginx.detail}
+            <p class="bs-wiz__muted">{__f('wmNginxDetail', m.nginx.detail)}</p>
+          {/if}
+        {/if}
+      </div>
+    {/if}
     {#if m.ok}
       <Checkbox label={__('wmBackup')} checked={backedUp ? 1 : 0} onchange={(c) => (backedUp = c === 1)} />
       <div class="bs-row">
@@ -264,7 +294,7 @@
       </div>
     {/if}
     {#if moveMessage}
-      <p class="bs-msg bs-msg--{moveOk ? 'ok' : 'err'}">{moveMessage}</p>
+      <Alert tone={moveOk ? 'success' : 'danger'} description={moveMessage} />
     {/if}
     {#each moveProblems as p (p)}
       <Alert tone="danger" description={p} />
@@ -313,5 +343,19 @@
 
   .bs-wiz-step {
     min-height: 6rem;
+  }
+
+  .bs-wiz__h {
+    margin: 0;
+  }
+
+  .bs-wiz__pre {
+    margin: 0;
+    padding: var(--ab-space-3);
+    overflow-x: auto;
+    font-size: var(--ab-text-xs);
+    background: var(--ab-color-bg);
+    border: 1px solid var(--ab-color-border);
+    border-radius: var(--ab-radius-md);
   }
 </style>

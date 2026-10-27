@@ -67,10 +67,12 @@ final class Runner {
     /**
      * Version of the render's layout. 2 = destination-neutral: files at their
      * plain paths and links carrying Url::BASE_TOKEN, both given each
-     * destination's sub-path at deploy. A render in an older layout is not
-     * current, so the dashboard asks for Process (render_is_current()).
+     * destination's sub-path at deploy. 3 = a bare origin ("https://host", the
+     * Bricks logo link) keeps its "/" — in 2 it became an empty href, i.e. the
+     * current page. A render in an older layout is not current, so the
+     * dashboard asks for Process (render_is_current()).
      */
-    private const RENDER_FORMAT = 2;
+    private const RENDER_FORMAT = 3;
 
     /**
      * Option holding the RENDER_FORMAT the current render was built with.

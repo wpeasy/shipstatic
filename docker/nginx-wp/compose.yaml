@@ -1,0 +1,84 @@
+# ShipStatic test host: WordPress on nginx + PHP-FPM, laid out like a typical
+# nginx VPS. See README.md.
+#
+#   docker compose up -d                 start
+#   docker compose run --rm cli wp …     WP-CLI
+#   docker compose down                  stop (keeps the site)
+#   docker compose down -v && rm -rf www reset completely
+
+name: shipstatic-nginx
+
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db:/var/lib/mysql
+
+  # nginx owns the network: php and cli share it (network_mode below), so
+  # inside every container site.localhost:8090 is this nginx on loopback, the
+  # same address the browser uses. ShipStatic renders pages by requesting its
+  # own site, so that address must work from PHP too.
+  web:
+    image: nginx:1.27
+    ports:
+      - "8090:8090"
+    extra_hosts:
+      - "site.localhost:127.0.0.1"
+      - "static.localhost:127.0.0.1"
+    volumes:
+      - ./www:/var/www
+      # The folder, not the file: editors save by replacing the file, which a
+      # single-file mount wouldn't see.
+      - ./nginx:/etc/nginx/conf.d:ro
+
+  php:
+    image: wordpress:php8.3-fpm
+    # Start PHP-FPM directly. The image's own entrypoint copies a fresh
+    # WordPress into /var/www/html whenever it finds none there, which is
+    # exactly the state after "Move WordPress into /wp". WordPress is
+    # installed with WP-CLI instead (README.md), as on a VPS.
+    entrypoint: ["docker-php-entrypoint"]
+    command: ["php-fpm"]
+    network_mode: "service:web"
+    depends_on: [web, db]
+    # Your Mac user, so the files in ./www stay yours (editable in Finder) and
+    # PHP can create folders beside WordPress, as on a VPS where /var/www
+    # belongs to the web user.
+    user: "${UID}:${GID}"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./www:/var/www
+      # The image declares /var/www/html a volume; mount it explicitly or an
+      # empty Docker volume hides ./www/html.
+      - ./www/html:/var/www/html
+
+  cli:
+    image: wordpress:cli-php8.3
+    profiles: [cli]
+    network_mode: "service:web"
+    user: "${UID}:${GID}"
+    working_dir: /var/www/html
+    environment:
+      # A cache it can write (HOME is / for this user).
+      WP_CLI_CACHE_DIR: /tmp/wp-cli-cache
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./www:/var/www
+      - ./www/html:/var/www/html
+      - ../../dist:/dist:ro
+      - ./php/cli.ini:/usr/local/etc/php/conf.d/zz-shipstatic-cli.ini:ro
+
+volumes:
+  db:

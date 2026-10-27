@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.4
+Stable tag: 2.4.5
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,13 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.5 =
+* Fix: a link to your site's home written without a trailing slash (such as the Bricks logo) pointed at the current page in the export. After updating, use Process all once.
+* Fix: links to your site inside page scripts and structured data could be corrupted on sites published at a domain root.
+* Fix: on nginx, Move WordPress into /wp now shows the server rule WordPress needs and waits until it's in place, instead of leaving the dashboard unable to load. Undo the move works again.
+* Fix: Process and Sync from the dashboard could wait forever at 0 on some VPS servers.
+* Fix: the Lockdown check on nginx answers straight away instead of after ~25 seconds.
 
 = 2.4.4 =
 * Fix: a live static site no longer shows the "Currently synchronising" page while an update uploads. It only appears on a destination's first Sync, before it has a home page.
