@@ -5,6 +5,12 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.8] - 2026-10-28
+
+### Changed
+- "This server" wizard: with WordPress at its domain's root, the first step is now **Layout** — "At <domain>, with WordPress moved into /wp" (→ a Move WordPress step) or "On another domain or subdomain, with WordPress left where it is" (→ Where / Check / Create and test / Done). Before, it opened on the move flow with a "Publish to another domain" button, and the other path's "← Move WordPress into /wp instead" button sat beside a Back that was disabled on its first step — users found Back confusing. The choice is a real wizard step, so Back from either path returns to it. The other-domain option is pre-selected when the Destination URL is on another host.
+- "This server" wizard: the other-domain choice and the Where step now say what the host must provide — a domain served from a folder on this server (cPanel: Domains → document root; a VPS: a second nginx server block or Apache virtual host), otherwise use Connector or FTP. Translated into fr/de/it/es/nl.
+
 ## [2.4.7] - 2026-10-27
 
 ### Fixed

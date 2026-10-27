@@ -1,4 +1,6 @@
 <h1>Changelog</h1>
-<h2>v2.4.7 (2026-10-27)</h2>
-<h3>Fixed</h3>
-<p><strong>The static home page no longer stays on &quot;Currently synchronising&quot;.</strong> With WordPress in a sub-folder (such as <code>/wp</code>) and &quot;This server&quot; publishing to the domain root, your static home page could be replaced by the &quot;Currently synchronising&quot; page. A link to <code>/</code> on your pages (a logo or Home link) pointed at the published site instead of WordPress, and the export saved what it found there as the home page. Update and sync again to put the real home page back.</p>
+<h2>v2.4.8 (2026-10-28)</h2>
+<h3>Improved</h3>
+<p><strong>The &quot;This server&quot; wizard starts with a clear choice.</strong> When WordPress sits at the root of its domain, the wizard now first asks where the static site should go: at your domain, with WordPress moved into <code>/wp</code>, or on another domain or subdomain, with WordPress left where it is. <strong>Back</strong> always returns to that choice, instead of being greyed out or jumping between the two options.</p>
+<h3>Improved</h3>
+<p><strong>Clearer help for publishing to another domain.</strong> The wizard now explains what your host needs: a domain or subdomain served from a folder on this server (on cPanel, set under Domains; on a VPS, a second site in nginx or Apache). If the other domain is hosted somewhere else, it points you to Connector or FTP instead.</p>

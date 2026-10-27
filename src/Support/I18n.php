@@ -521,7 +521,7 @@ final class I18n {
             'fwUrlHint'       => __('The address visitors use for the static site. It becomes this destination’s Destination URL.', 'shipstatic'),
             'fwOneOrigin'     => __('The static site and WordPress will share one domain. That’s the easiest setup, but any third-party script on your public pages (an embed, analytics, a chat widget) then runs on the same domain as wp-admin. If you can set up a subdomain for WordPress, that keeps them apart.', 'shipstatic'),
             'fwNginxRoot'     => __('This server runs nginx, which ignores .htaccess. Its configuration must serve this folder at the domain root and pass the WordPress sub-folder to PHP. Ask your host, or use a folder that another domain points at.', 'shipstatic'),
-            'fwSeparateHelp'  => __('A domain or subdomain must point at this folder (in cPanel: Domains, then set its document root). Test checks that it does.', 'shipstatic'),
+            'fwSeparateHelp'  => __('A domain or subdomain must serve this folder: on cPanel, set its document root under Domains; on a VPS, a server block or virtual host with this folder as its root. Test checks that it does.', 'shipstatic'),
             'fwEmpty'         => __('The folder is empty.', 'shipstatic'),
             'fwHasFiles'      => __('The folder already has files. ShipStatic only ever replaces or removes files it published itself.', 'shipstatic'),
             'fwWillCreate'    => __('The folder will be created.', 'shipstatic'),
@@ -540,10 +540,18 @@ final class I18n {
             'fwDoneSync'      => __('Run Sync to publish the site there.', 'shipstatic'),
             'fwDoneLockdown'  => __('Turn on Lockdown (Lockdown tab) so only your editors can reach WordPress.', 'shipstatic'),
             'fwFinish'        => __('Close', 'shipstatic'),
+            /* translators: %s: site address. */
+            'fwChooseLead'     => __('WordPress is installed at the root of %s. Where should the static site go?', 'shipstatic'),
+            /* translators: %s: site address. */
+            'fwChooseMove'     => __('At %s, with WordPress moved into /wp', 'shipstatic'),
+            /* translators: %s: new WordPress address. */
+            'fwChooseMoveHelp' => __('One domain: the static site takes the root and WordPress moves to %s. ShipStatic does the move for you, and you can undo it.', 'shipstatic'),
+            'fwChooseFolder'   => __('On another domain or subdomain, with WordPress left where it is', 'shipstatic'),
+            'fwChooseFolderHelp' => __('Such as static.example.com, served from a folder on this server.', 'shipstatic'),
+            'fwChooseFolderHost' => __('Your host must serve that domain from a folder on this server. On cPanel, add it under Domains and set its document root (usually a folder beside public_html). On a VPS, add a second site (an nginx server block or Apache virtual host) whose root is that folder. If the other domain is hosted elsewhere, use another deploy method instead, such as Connector or FTP.', 'shipstatic'),
+            'fwStepLayout'     => __('Layout', 'shipstatic'),
+            'fwStepMove'       => __('Move WordPress', 'shipstatic'),
             /* translators: 1: site address, 2: new WordPress address. */
-            'wmOtherDomainHelp' => __('Or leave WordPress where it is and publish to another domain or subdomain (such as static.example.com) whose folder sits beside WordPress on this server.', 'shipstatic'),
-            'wmOtherDomain'    => __('Publish to another domain', 'shipstatic'),
-            'fwMoveInstead'    => __('← Move WordPress into /wp instead', 'shipstatic'),
             'wmLead'           => __('WordPress is installed at the root of %1$s, so the static site has nowhere to go there yet. ShipStatic can move WordPress into a /wp folder: WordPress will then be at %2$s, and the static site at the root.', 'shipstatic'),
             /* translators: %s: new WordPress address. */
             'wmStep1'          => __('WordPress’s files move into /wp and its address becomes %s. Links in your content follow.', 'shipstatic'),

@@ -50,8 +50,12 @@
   let moveProblems = $state<string[]>([]);
   let rechecking = $state(false);
   // …or keep WordPress where it is and publish to another domain whose folder
-  // sits beside it (the wizard's ordinary steps).
-  let otherDomain = $state(false);
+  // sits beside it (the wizard's ordinary steps). With WordPress at its
+  // domain's root the wizard's first step is this choice, so Back from
+  // either path returns to it.
+  let layout = $state<'move' | 'folder'>('move');
+  // Steps before "Where": the layout choice, when there is one.
+  let offset = $derived(check?.move ? 1 : 0);
 
   function hostOf(u: string): string {
     try {
@@ -128,7 +132,7 @@
     warnings = [];
     customPath = '';
     url = destUrl;
-    otherDomain = false;
+    layout = 'move';
     api
       .serverFolderCheck({ id: destId, url: destUrl })
       .then((c) => {
@@ -138,7 +142,7 @@
         if (first?.url) url = first.url;
         // A Destination URL on another domain already says which layout.
         const host = hostOf(destUrl);
-        otherDomain = !!c.move && host !== '' && host !== hostOf(c.move.from);
+        if (c.move && host !== '' && host !== hostOf(c.move.from)) layout = 'folder';
       })
       .catch((e) => (loadError = (e as Error).message));
   }
@@ -187,7 +191,7 @@
   }
 
   function onStep(index: number): void {
-    if (index === 1) void runCheck();
+    if (layout === 'folder' && index === offset + 1) void runCheck();
   }
 </script>
 
@@ -321,32 +325,63 @@
     {#each moveProblems as p (p)}
       <Alert tone="danger" description={p} />
     {/each}
-    <div class="bs-wiz__alt bs-stack bs-stack--sm">
-      <p class="bs-wiz__muted">{__('wmOtherDomainHelp')}</p>
-      <div class="bs-row">
-        <Button variant="secondary" size="sm" onclick={() => (otherDomain = true)} disabled={moving}>{__('wmOtherDomain')}</Button>
-      </div>
-    </div>
+  </div>
+{/snippet}
+
+{#snippet optMove()}
+  <span class="bs-wiz__opt">
+    <strong>{__f('fwChooseMove', check?.move?.from ?? '')}</strong>
+    <span class="bs-wiz__muted">{__f('fwChooseMoveHelp', check?.move?.to ?? '')}</span>
+  </span>
+{/snippet}
+
+{#snippet optFolder()}
+  <span class="bs-wiz__opt">
+    <strong>{__('fwChooseFolder')}</strong>
+    <span class="bs-wiz__muted">{__('fwChooseFolderHelp')}</span>
+  </span>
+{/snippet}
+
+{#snippet layoutStep()}
+  {#if check?.move}{@render chooseLayout(check.move)}{/if}
+{/snippet}
+
+{#snippet moveStep()}
+  {#if check?.move}{@render moveFlow(check.move)}{/if}
+{/snippet}
+
+{#snippet chooseLayout(m: NonNullable<FolderCheck['move']>)}
+  <div class="bs-wiz-step bs-stack bs-stack--sm">
+    <p>{__f('fwChooseLead', m.from)}</p>
+    <RadioGroup
+      options={[
+        { value: 'move', label: optMove },
+        { value: 'folder', label: optFolder },
+      ]}
+      bind:value={layout}
+    />
+    {#if layout === 'folder'}
+      <Alert tone="info" description={__('fwChooseFolderHost')} />
+    {/if}
   </div>
 {/snippet}
 
 <Modal bind:open title={__('fwTitle')} size="lg">
   <div class="bs-wiz">
-    {#if check?.move && !otherDomain}
-      {@render moveFlow(check.move)}
-    {:else}
     <p class="bs-wiz__intro">{__('fwIntro')}</p>
-    {#if check?.move && step === 0}
-      <div class="bs-row">
-        <Button variant="ghost" size="sm" onclick={() => (otherDomain = false)}>{__('fwMoveInstead')}</Button>
-      </div>
-    {/if}
     <Wizard
       steps={[
-        { label: __('fwStepWhere'), content: whereStep, nextDisabled: !check || !path || !/^https?:\/\//i.test(url.trim()) },
-        { label: __('fwStepCheck'), content: checkStep, nextDisabled: checking || !info?.ok },
-        { label: __('fwStepCreate'), content: createStep, nextDisabled: !created },
-        { label: __('fwStepDone'), content: doneStep },
+        ...(check?.move
+          ? [{ label: __('fwStepLayout'), content: layoutStep, nextDisabled: moving }]
+          : []),
+        ...(check?.move && layout === 'move'
+          ? [{ label: __('fwStepMove'), content: moveStep, nextDisabled: moving }]
+          : [
+              { label: __('fwStepWhere'), content: whereStep, nextDisabled: !check || !path || !/^https?:\/\//i.test(url.trim()) },
+              { label: __('fwStepCheck'), content: checkStep, nextDisabled: checking || !info?.ok },
+              { label: __('fwStepCreate'), content: createStep, nextDisabled: !created },
+              { label: __('fwStepDone'), content: doneStep },
+            ]),
       ] as WizardStep[]}
       bind:current={step}
       orientation="vertical"
@@ -356,7 +391,6 @@
       onchange={onStep}
       oncomplete={() => (open = false)}
     />
-    {/if}
   </div>
 </Modal>
 
@@ -382,9 +416,10 @@
     margin: 0;
   }
 
-  .bs-wiz__alt {
-    padding-top: var(--ab-space-3);
-    border-top: 1px solid var(--ab-color-border);
+  .bs-wiz__opt {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ab-space-1);
   }
 
   .bs-wiz__pre {

@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.7
+Stable tag: 2.4.8
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,9 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.8 =
+* Improved: the "This server" wizard starts by asking where the static site goes (move WordPress into /wp, or another domain), and Back always returns to that choice. It also explains what your host needs for another domain.
 
 = 2.4.7 =
 * Fix: with WordPress in a sub-folder (such as /wp) and "This server" publishing to the domain root, the static home page stayed on "Currently synchronising" after the first sync.
