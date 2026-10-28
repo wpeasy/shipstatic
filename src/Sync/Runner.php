@@ -1784,6 +1784,49 @@ final class Runner {
     }
 
     /**
+     * Replacers that only make sense on a whole exported page: Media and
+     * Videos are saved per page, and the Bricks relay edits `bricksData`.
+     */
+    private const PAGE_ONLY_REPLACERS = ['media', 'video', 'bricksRelay'];
+
+    /**
+     * Turn HTML or CSS that WordPress produced just now (a Bricks query
+     * result sent through the relay) into what it would be on a destination's
+     * pages: links to this site rewritten as the render does, then the
+     * destination's whole-export replacements (text, links), then its
+     * sub-path — the same order as build_deploy_manifest().
+     *
+     * @param string      $content HTML or CSS.
+     * @param Destination $dest    Destination.
+     * @param string      $ext     'html' or 'css'.
+     */
+    public static function transform_for_destination(string $content, Destination $dest, string $ext = 'html'): string {
+        static $prepared = [];
+
+        $content = UrlRewriter::rewrite($content);
+        if ($ext === 'html') {
+            if (!isset($prepared[$dest->id()])) {
+                $prepared[$dest->id()] = [];
+                $dest_base             = PackageDeployer::base_url($dest);
+                foreach (Pipeline::replacers() as $replacer) {
+                    if (in_array($replacer->key(), self::PAGE_ONLY_REPLACERS, true)) {
+                        continue;
+                    }
+                    $ctx = $replacer->prepare($dest, $dest_base)['ctx'] ?? null;
+                    if ($ctx !== null) {
+                        $prepared[$dest->id()][] = [$replacer, $ctx];
+                    }
+                }
+            }
+            foreach ($prepared[$dest->id()] as [$replacer, $ctx]) {
+                $content = $replacer->apply($content, $ctx, '');
+            }
+        }
+
+        return Url::rebase($content, Url::normalize_base($dest->served_base_path()));
+    }
+
+    /**
      * Folder a destination's files go in, relative to where it uploads: its
      * served sub-path ("blog/" for a site at example.com/blog/), or "" when it
      * is served from the domain root — or publishes with the sub-path as its

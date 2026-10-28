@@ -61,6 +61,35 @@ if (!defined('SHIPSTATIC_LOCKDOWN_GATE')) {
             return;
         }
 
+        // Form submissions from the static site: a POST to WordPress's own
+        // admin-ajax.php (that exact path, and that file running), for one of
+        // the listed actions only. Not from the query string or a cookie:
+        // admin-ajax.php reads the action from $_REQUEST, which can include them.
+        if ($cfg['forms'] !== null
+            && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST'
+            && $path === $cfg['forms']['path']
+            && !isset($_GET['action'])
+            && !isset($_COOKIE['action'])
+            && isset($_POST['action']) && is_string($_POST['action'])
+            && in_array($_POST['action'], $cfg['forms']['actions'], true)
+            && realpath((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === $cfg['forms']['script']) {
+            return;
+        }
+
+        // Bricks filters and AJAX loops on the static site: the relay route,
+        // exactly (prefix, destination id, endpoint), run by WordPress's
+        // index.php. Nothing may pick another route: WordPress takes
+        // rest_route from the query string or a POST field over the address,
+        // so neither may be there (only Bricks' ?lang= for WPML).
+        if ($cfg['forms'] !== null && $cfg['forms']['rest'] !== ''
+            && in_array($_SERVER['REQUEST_METHOD'] ?? '', ['POST', 'OPTIONS'], true)
+            && preg_match($cfg['forms']['restPattern'], $path) === 1
+            && array_diff(array_keys($_GET), ['lang']) === []
+            && !isset($_POST['rest_route'])
+            && in_array(realpath((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')), $cfg['forms']['restScripts'], true)) {
+            return;
+        }
+
         // The allowed addresses.
         $ip = @inet_pton((string) $_SERVER['REMOTE_ADDR']);
         if ($ip !== false) {

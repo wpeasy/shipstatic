@@ -5,6 +5,21 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.9] - 2026-10-28
+
+### Added
+- **Bricks forms, query filters and AJAX loops work on the static site** (experimental; setting "Bricks forms and filters use WordPress", option `shipstatic_bricks_relay`, on by default; `wp shipstatic relay on|off|status`). The render rewrote `bricksData.ajaxUrl` and `restApiUrl` onto the static site, where they don't exist, so forms silently did nothing and filters 404'd. A new deploy replacer (`Bricks\RelayReplacer`, part of `sync_signature()`) points `ajaxUrl` back at WordPress's `admin-ajax.php` (root-relative on WordPress's own origin, else the full URL) and `restApiUrl` at a per-destination relay.
+  - **Forms:** submissions run on WordPress as usual. Bricks' fresh-nonce retry (`bricks_regenerate_form_nonce`) heals the stale exported nonce. A Redirect action's address is mapped to the same page on the destination the form came from (`bricks/form/response`). Destination origins are added to `allowed_http_origins` so a static site on another domain can read the reply.
+  - **Filters, sorting, live search, AJAX pagination, load more, infinite scroll and AJAX popups:** `POST /shipstatic/v1/bricks/<destination id>/(query_result|load_query_page|load_popup_content)` (`REST\BricksRelayController`, the second public route) hands the request unchanged to Bricks' own route (its nonce and visibility checks), then rewrites the reply's HTML/CSS for that destination (`Runner::transform_for_destination()`: addresses, Text/Link replacements, sub-path), so results link to and show images from the static site.
+  - **Filtered links** (`?brx_…`) opened directly now show filtered results: an inline script, added only to pages with Bricks filters, applies them on load.
+  - **Images:** when any page has filters, load more or infinite scroll, each sync uploads every size of every published post's featured image, so results never shown on an exported page have their pictures.
+  - **Lockdown** lets these requests through and nothing else (SECURITY_PATTERNS.md §11): POSTs to the exact `admin-ajax.php` path for the form/nonce actions only (no `action` from the query string or a cookie), and POST/OPTIONS to the exact relay route (no `rest_route` and no query parameter but `lang`), in the gate, `.htaccess` and the nginx snippet. Toggling the setting rewrites the Lockdown files (`Writer::VERSION` 6). Marked experimental in Settings, the Lockdown tab and the Docs.
+- Documentation: "Forms & filters".
+
+### Changed
+- The pages overview no longer flags Bricks forms as "won't work statically" while the setting is on.
+- Needs pretty permalinks for the filters relay (as the export does).
+
 ## [2.4.8] - 2026-10-28
 
 ### Changed

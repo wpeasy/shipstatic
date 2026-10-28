@@ -180,6 +180,20 @@
     }
   }
 
+  async function setRelayEnabled(enabled: boolean): Promise<void> {
+    if (!status) return;
+    const previous = status.relayEnabled;
+    status.relayEnabled = enabled; // optimistic
+    try {
+      status.relayEnabled = (await api.setRelayEnabled(enabled)).relayEnabled;
+      // Deploy-time only: the render stays current, destinations need a Sync.
+      void loadStatus();
+    } catch (e) {
+      status.relayEnabled = previous;
+      loadError = (e as Error).message;
+    }
+  }
+
   async function setFabEnabled(enabled: boolean): Promise<void> {
     if (!status) return;
     const previous = status.fabEnabled;
@@ -490,6 +504,7 @@
     onSetFabEnabled={setFabEnabled}
     onSetSearchEnabled={setSearchEnabled}
     onSetSearchLive={setSearchLive}
+    onSetRelayEnabled={setRelayEnabled}
     onSetAiToggles={setAiToggles}
     onSetConcurrentSyncs={setConcurrentSyncs}
     onOpenWizard={openWizard}

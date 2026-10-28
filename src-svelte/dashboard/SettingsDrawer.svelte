@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Drawer, Switch, ThemeCustomizer, Segmented, Select, Slider } from '@wpeasy/ab-ui';
+  import { Alert, Button, Drawer, Switch, ThemeCustomizer, Segmented, Select, Slider } from '@wpeasy/ab-ui';
   import { Sun, Moon } from '@wpeasy/ab-ui/icons';
   import DiscoveryToggle from './DiscoveryToggle.svelte';
   import AiToolsPanel from './AiToolsPanel.svelte';
@@ -16,6 +16,7 @@
     onSetFabEnabled,
     onSetSearchEnabled,
     onSetSearchLive,
+    onSetRelayEnabled,
     onSetAiToggles,
     onSetConcurrentSyncs,
     onOpenWizard,
@@ -28,6 +29,7 @@
     onSetFabEnabled: (enabled: boolean) => void;
     onSetSearchEnabled: (enabled: boolean) => void;
     onSetSearchLive: (enabled: boolean) => void;
+    onSetRelayEnabled: (enabled: boolean) => void;
     onSetAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) => void;
     onSetConcurrentSyncs: (n: number) => void;
     /** Re-run the first-run setup wizard (closes this drawer). */
@@ -150,6 +152,17 @@
           onchange={(c) => onSetSearchLive(c === 1)}
         />
         <p class="bs-set__help">{__('siteSearchLiveHelp')}</p>
+      </section>
+
+      <!-- Bricks forms, filters and AJAX loops use WordPress (experimental) -->
+      <section class="bs-set__group bs-stack bs-stack--sm">
+        <Switch
+          label={__('relayEnabled')}
+          checked={status.relayEnabled ? 1 : 0}
+          onchange={(c) => onSetRelayEnabled(c === 1)}
+        />
+        <p class="bs-set__help">{__('relayEnabledHelp')}</p>
+        <Alert tone="warning" title={__('experimental')} description={__('relayExperimental')} />
       </section>
 
       <!-- Sync (concurrent destination uploads) -->

@@ -14,11 +14,14 @@ use WPEasy\ShipStatic\Abilities\AbilityRegistry;
 use WPEasy\ShipStatic\Admin\Editor;
 use WPEasy\ShipStatic\Admin\Menu;
 use WPEasy\ShipStatic\Export\ExportDownload;
+use WPEasy\ShipStatic\Bricks\RelayReplacer;
+use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Frontend\Fab;
 use WPEasy\ShipStatic\Frontend\Search;
 use WPEasy\ShipStatic\Lockdown\Guard;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
+use WPEasy\ShipStatic\REST\BricksRelayController;
 use WPEasy\ShipStatic\REST\ScheduleController;
 use WPEasy\ShipStatic\REST\SearchIndexController;
 use WPEasy\ShipStatic\Sync\Scheduler;
@@ -96,6 +99,8 @@ final class Plugin {
         // Frontend "Sync this page" FAB (self-gates to admins on public pages).
         Fab::init();
         Search::init();
+        // Bricks forms, filters and AJAX loops on the static site use WordPress.
+        Relay::init();
 
         // Watch content edits so the dashboard can flag the render stale.
         \WPEasy\ShipStatic\Sync\ChangeTracker::init();
@@ -130,7 +135,8 @@ final class Plugin {
     }
 
     /**
-     * Register the deploy-pipeline replacers (text, media, links, videos) and the
+     * Register the deploy-pipeline replacers (text, media, links, videos, the
+     * Bricks relay addresses) and the
      * sitemap/robots.txt extra-file emitter onto {@see Pipeline}.
      */
     private static function register_pipeline(): void {
@@ -138,6 +144,7 @@ final class Plugin {
         Pipeline::register_replacer(new MediaDeployReplacer());
         Pipeline::register_replacer(new LinkDeployReplacer());
         Pipeline::register_replacer(new VideoDeployReplacer());
+        Pipeline::register_replacer(new RelayReplacer());
 
         Pipeline::register_extra_files(static function (array $page_urls): array {
             if (!apply_filters('shipstatic_generate_sitemaps', true)) {
@@ -240,5 +247,6 @@ final class Plugin {
         ScheduleController::register();
         LockdownController::register();
         SearchIndexController::register();
+        BricksRelayController::register();
     }
 }

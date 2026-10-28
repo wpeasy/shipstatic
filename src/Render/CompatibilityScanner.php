@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace WPEasy\ShipStatic\Render;
 
+use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Search\IndexBuilder;
 
 defined('ABSPATH') || exit;
@@ -54,6 +55,12 @@ final class CompatibilityScanner {
                 $type = preg_match('#\b(role="search"|class="[^"]*\bsearch)#i', $tag) ? 'search-form' : 'form';
                 // With site search on, the export's search script handles it.
                 if ($type === 'search-form' && IndexBuilder::enabled()) {
+                    continue;
+                }
+                // A Bricks form posts through Bricks' script, which the export
+                // points at WordPress (Bricks\Relay). Its password form has
+                // an action (wp-login.php) and is still listed.
+                if ($type === 'form' && $action === '' && Relay::enabled() && preg_match('#\bclass\s*=\s*"[^"]*\bbrxe-form\b#i', $tag)) {
                     continue;
                 }
                 self::add($found, $seen, $type, $action);

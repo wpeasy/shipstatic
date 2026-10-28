@@ -13,6 +13,7 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 # Only plain paths: no ".." or other dot segments, no %-escapes, no query.
 # Each segment starts with its "/", so the pattern can't backtrack.
 RewriteCond %{THE_REQUEST} !^[A-Z]+\s/\.well-known(?:/[A-Za-z0-9_~-][A-Za-z0-9._~-]*)*/?\s
+__BS_FORMS__
 RewriteCond %{HTTP:X-BS-Render-Token} !^__BS_TOKEN__$
 RewriteCond %{QUERY_STRING} !(^|&)unlock=__BS_KEY__(&|$)
 RewriteCond %{HTTP:Authorization} !^[Bb][Ee][Aa][Rr][Ee][Rr]\s+__BS_KEY__\s*$

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { Alert } from '@wpeasy/ab-ui';
 
   const version = (window as unknown as { shipStaticData?: { version?: string } }).shipStaticData?.version ?? '';
 
@@ -9,6 +10,7 @@
     { id: 'how', label: 'How it works' },
     { id: 'process-changes', label: 'Process changes' },
     { id: 'search', label: 'Site search' },
+    { id: 'forms', label: 'Forms & filters' },
     { id: 'schedule', label: 'Scheduled sync' },
     { id: 'lockdown', label: 'Lockdown' },
     { id: 'server-folder', label: 'Publish on this server' },
@@ -67,6 +69,10 @@
     {
       title: 'Site search',
       body: 'Search boxes keep working on the static site. Each sync builds a search index for each destination — with that destination’s own text and addresses — and a small script searches it in the visitor’s browser, results as you type. No server, no outside service. Includes a fully styleable ShipStatic Search element for Bricks and a [shipstatic_search] shortcode.',
+    },
+    {
+      title: 'Bricks forms & filters (experimental)',
+      body: 'Bricks forms, query filters, AJAX pagination, load more and AJAX popups keep working on the static site: each sync points them at your WordPress site, which answers them as usual — results come back with static-site links and images — even with Lockdown on.',
     },
     {
       title: 'Scheduled sync',
@@ -216,6 +222,40 @@
         </ul>
       </section>
 
+      <!-- Forms -->
+      <section id="forms" class="bs-docs__section bs-stack bs-stack--sm">
+        <h2>Forms &amp; filters</h2>
+        <Alert tone="warning" title="Experimental">
+          <p>This feature, and letting it through Lockdown, is experimental and has only had basic testing: a Bricks form (with Save submission and Redirect), a search filter, a checkbox filter and AJAX pagination, on Apache (cPanel) and nginx, with WordPress in <code>/wp</code>. Other filter types, infinite scroll, load more, AJAX popups, multilingual sites and other hosts haven’t been tested yet. Try your own forms and filters on the static site — as a visitor who isn’t on the Lockdown list — before relying on them, and check again after Bricks updates.</p>
+        </Alert>
+        <p class="bs-docs__muted">
+          Bricks forms, query filters, AJAX pagination, load more, infinite scroll and AJAX popups all ask WordPress for something while the visitor is on the page. On a plain static copy those requests go to the static site, where there is no WordPress, so nothing happens. With <strong>Bricks forms and filters use WordPress</strong> (in <strong>Settings</strong>, on by default) every sync points them back at your WordPress site, so they work exactly as they do there.
+        </p>
+        <h3>Forms</h3>
+        <ul class="bs-docs__list">
+          <li>Submissions reach WordPress, which runs the form’s actions: emails, saved submissions, webhooks, Mailchimp and the rest.</li>
+          <li><strong>Redirect after submit</strong> goes to the same page on the static site the form was sent from, not to WordPress.</li>
+          <li><strong>reCAPTCHA, hCaptcha and Turnstile</strong> check the domain: add your static site’s domain to the key’s allowed domains.</li>
+          <li><strong>Login, registration and password-reset forms</strong> don’t belong on a static site: they sign people in to WordPress.</li>
+          <li><strong>Only Bricks forms.</strong> Comment forms and other plugins’ forms still post to pages that only exist on WordPress, so ShipStatic keeps flagging them.</li>
+        </ul>
+        <h3>Filters, pagination and load more</h3>
+        <ul class="bs-docs__list">
+          <li>WordPress finds the results, so they are always current — even posts published since your last sync. Their links and images point at your static site, with that destination’s text and link replacements applied.</li>
+          <li><strong>Images.</strong> When a page has filters or a loop that loads more, each sync also uploads every size of every published post’s featured image, so results that never appeared on an exported page still have their pictures. Other images in a result (inside the post’s content, say) are only there if an exported page used them.</li>
+          <li><strong>Filtered links work.</strong> Opening a link like <code>/shop/?brx_abc123=red</code> shows the filtered results, as on WordPress.</li>
+          <li><strong>A result whose post isn’t in the export</strong> links to a page your static site doesn’t have. Set <strong>Pages to include</strong> to <strong>All published</strong> (or include those posts) so every result has its page.</li>
+          <li><strong>Needs pretty permalinks</strong> (Settings → Permalinks, anything but Plain) — which the export needs anyway.</li>
+        </ul>
+        <h3>Good to know</h3>
+        <ul class="bs-docs__list">
+          <li><strong>Sync after changing the setting.</strong> It changes what each sync uploads, not the render, so there’s no need to Process.</li>
+          <li><strong>With Lockdown on</strong>, these requests still get through, and nothing else does: POSTs to WordPress’s <code>admin-ajax.php</code> for Bricks’ form and fresh-token actions only, and ShipStatic’s relay address for filter results (<code>/wp-json/shipstatic/v1/bricks/…</code>), which hands the request to Bricks and changes only the addresses in the answer.</li>
+          <li><strong>A static site on another domain</strong> works too: WordPress lets that destination read the replies. Its Destination URL must be set.</li>
+          <li><strong>WordPress must be reachable</strong> by your visitors. A WordPress site on your own computer (a local development site) can’t answer them.</li>
+        </ul>
+      </section>
+
       <!-- Scheduled sync -->
       <section id="schedule" class="bs-docs__section bs-stack bs-stack--sm">
         <h2>Scheduled sync</h2>
@@ -289,7 +329,7 @@
           <strong>On nginx, that covers pages and PHP files only.</strong> nginx serves uploaded files (images, PDFs), CSS and JavaScript itself, without running PHP, so anyone who has a file’s address can still open it. Most of those are public on your static site anyway, but files uploaded for drafts or private pages are not. To lock those too, paste the snippet from the Lockdown tab (<em>Optional: block in nginx too</em>) into the site’s <code>server {'{'} {'}'}</code> block and reload nginx, and paste it again whenever the list changes.
         </p>
         <p class="bs-docs__muted">
-          The site’s own requests still get through, so Process, Sync, scheduled syncs, WP-Cron and Site Health keep working, and so do certificate renewals (<code>/.well-known/</code>). WP-CLI is never affected.
+          The site’s own requests still get through, so Process, Sync, scheduled syncs, WP-Cron and Site Health keep working, and so do certificate renewals (<code>/.well-known/</code>) and <a href="#forms">Bricks forms and filters on the static site</a>. WP-CLI is never affected.
         </p>
         <h3 id="lockdown-cron">Server cron jobs</h3>
         <p class="bs-docs__muted">

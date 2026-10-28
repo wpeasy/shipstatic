@@ -412,6 +412,10 @@
           onchange={(v) => save({ redirect: String(v) })}
         />
         <p class="bs-ld__help">{ld.redirectTarget ? __f('ldRedirectTarget', ld.redirectTarget) : __('ldRedirect403')}</p>
+        <p class="bs-ld__help">{ld.relay ? __('ldRelayOn') : __('ldRelayOff')}</p>
+        {#if ld.relay}
+          <Alert tone="warning" title={__('experimental')} description={__('ldRelayExperimental')} />
+        {/if}
       </div>
 
       <Switch label={__('ldNotify')} checked={ld.notify ? 1 : 0} disabled={saving} onchange={(c) => save({ notify: c === 1 })} />

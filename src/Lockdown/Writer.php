@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace WPEasy\ShipStatic\Lockdown;
 
+use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Render\PageRenderer;
 
 defined('ABSPATH') || exit;
@@ -30,7 +31,7 @@ defined('ABSPATH') || exit;
 final class Writer {
 
     /** Bump when a template changes, so existing sites rewrite their files. */
-    public const VERSION = '4';
+    public const VERSION = '6';
 
     private const BEGIN = 'BEGIN ShipStatic Lockdown';
     private const END   = 'END ShipStatic Lockdown';
@@ -347,6 +348,7 @@ final class Writer {
             '__BS_IPS__'         => implode("\n", $ips),
             '__BS_RULE__'        => $rule,
             '__BS_INHERIT__'     => $inherit,
+            '__BS_FORMS__'       => self::htaccess_forms(),
         ]);
     }
 
@@ -381,6 +383,23 @@ final class Writer {
         $lines[] = 'if ($cookie_' . Settings::COOKIE . ' = "' . Settings::cookie_value() . '") { set $shipstatic_locked 0; }';
         $lines[] = 'if ($http_x_bs_render_token = "' . PageRenderer::token() . '") { set $shipstatic_locked 0; }';
         $lines[] = 'if ($uri ~ "^/\.well-known/") { set $shipstatic_locked 0; }';
+        $forms = self::forms_config();
+        if ($forms !== null) {
+            // nginx's if can't combine tests: build "PU" from the method and the
+            // exact path (plus Bricks' "?t=" on a new-nonce request). PHP's gate
+            // then checks the action.
+            $lines[] = 'set $shipstatic_form "";';
+            $lines[] = 'if ($request_method = POST) { set $shipstatic_form P; }';
+            $lines[] = 'if ($request_uri ~ "^' . str_replace('.', '\\.', $forms['path']) . '(\\?t=[0-9]+)?$") { set $shipstatic_form "${shipstatic_form}U"; }';
+            $lines[] = 'if ($shipstatic_form = PU) { set $shipstatic_locked 0; }';
+            if ($forms['rest'] !== '') {
+                // The filters relay: the exact route (PHP's gate checks it again).
+                $lines[] = 'set $shipstatic_relay "";';
+                $lines[] = 'if ($request_method ~ "^(POST|OPTIONS)$") { set $shipstatic_relay M; }';
+                $lines[] = 'if ($request_uri ~ "^' . self::relay_regex($forms) . '(\\?lang=[A-Za-z_-]+)?$") { set $shipstatic_relay "${shipstatic_relay}U"; }';
+                $lines[] = 'if ($shipstatic_relay = MU) { set $shipstatic_locked 0; }';
+            }
+        }
         if ($home !== '') {
             $lines[] = 'if ($uri !~ "^' . $home_re . '(/|$)") { set $shipstatic_locked 0; }';
         }
@@ -464,6 +483,7 @@ final class Writer {
             'ranges'     => $ranges,
             'redirect'   => Settings::redirect_base(),
             'home'       => untrailingslashit((string) wp_parse_url(home_url('/'), PHP_URL_PATH)),
+            'forms'      => self::forms_config(),
         ];
 
         return strtr(self::template('gate.php.txt'), [
@@ -472,6 +492,87 @@ final class Writer {
             // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export -- as above.
             '__BS_CHAIN__'  => var_export(self::chained_prepend(), true),
         ]);
+    }
+
+    /**
+     * What the gate lets through for the static site's Bricks forms, filters
+     * and AJAX loops (Bricks\Relay), or null when that is off:
+     *
+     * - POSTs to this exact admin-ajax.php path, running that file, for these
+     *   actions (form submissions, fresh nonces);
+     * - POST/OPTIONS to the relay route — the exact prefix, a destination id
+     *   and one of the endpoints — running WordPress's index.php ('' rest
+     *   prefix without pretty REST addresses: then the relay is off).
+     *
+     * Paths, actions and endpoints are checked against strict character
+     * sets, since they go into generated files.
+     *
+     * @return array{path:string,script:string,actions:array<int,string>,rest:string,restPattern:string,restScripts:array<int,string>,endpoints:array<int,string>}|null
+     */
+    private static function forms_config(): ?array {
+        if (!Relay::enabled()) {
+            return null;
+        }
+        $path    = Relay::endpoint_path();
+        $script  = realpath(ABSPATH . 'wp-admin/admin-ajax.php');
+        $actions = Relay::actions();
+        if (!preg_match('#^/[A-Za-z0-9._~/-]*/admin-ajax\.php$#', $path) || strpos($path, '..') !== false || $script === false || $actions === []) {
+            return null;
+        }
+
+        $rest    = Relay::rest_prefix();
+        $scripts = array_values(array_unique(array_filter([realpath(ABSPATH . 'index.php'), realpath(self::root() . 'index.php')])));
+        if (!preg_match('#^/[A-Za-z0-9._~/-]*/$#', $rest) || strpos($rest, '..') !== false || $scripts === []) {
+            $rest = '';
+        }
+        $config = [
+            'path'        => $path,
+            'script'      => $script,
+            'actions'     => $actions,
+            'rest'        => $rest,
+            'restPattern' => '',
+            'restScripts' => $scripts,
+            'endpoints'   => array_values(array_filter(Relay::ENDPOINTS, static fn(string $e): bool => preg_match('/^[a-z_]+$/', $e) === 1)),
+        ];
+        if ($rest !== '') {
+            $config['restPattern'] = '#^' . self::relay_regex($config) . '$#';
+        }
+
+        return $config;
+    }
+
+    /**
+     * The relay route as a regex (no anchors): prefix, destination id, endpoint.
+     * Each part starts with a fixed character, so it can't backtrack.
+     *
+     * @param array{rest:string,endpoints:array<int,string>} $config From forms_config().
+     */
+    private static function relay_regex(array $config): string {
+        return str_replace('.', '\\.', $config['rest']) . Relay::DEST_ID . '/(?:' . implode('|', $config['endpoints']) . ')';
+    }
+
+    /**
+     * The `.htaccess` exemptions for the static site's Bricks requests ('' when
+     * off). Apache can't read the action from a POST body, so this lets POSTs
+     * to the exact admin-ajax.php path reach PHP, where the gate (prepended,
+     * or the mu-plugin) refuses every other action; likewise the exact relay
+     * route. THE_REQUEST, as for /.well-known/: the raw request line, so no
+     * rewrite or dot segment can change it.
+     */
+    private static function htaccess_forms(): string {
+        $forms = self::forms_config();
+        if ($forms === null) {
+            return '';
+        }
+
+        $lines = "# Form submissions from the static site: the gate allows only its actions.\n"
+            . 'RewriteCond %{THE_REQUEST} !^POST\s' . str_replace('.', '\\.', $forms['path']) . '(?:\?t=[0-9]+)?\s';
+        if ($forms['rest'] !== '') {
+            $lines .= "\n# Bricks filters and AJAX loops on the static site (the relay route; the gate checks it again).\n"
+                . 'RewriteCond %{THE_REQUEST} !^(?:POST|OPTIONS)\s' . self::relay_regex($forms) . '(?:\?lang=[A-Za-z_-]+)?\s';
+        }
+
+        return $lines;
     }
 
     /**

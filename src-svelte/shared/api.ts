@@ -85,6 +85,8 @@ export const api = {
     request<{ searchEnabled: boolean; renderCurrent?: boolean }>('/settings', 'POST', { searchEnabled: enabled }),
   setSearchLive: (enabled: boolean) =>
     request<{ searchLive: boolean }>('/settings', 'POST', { searchLive: enabled }),
+  setRelayEnabled: (enabled: boolean) =>
+    request<{ relayEnabled: boolean }>('/settings', 'POST', { relayEnabled: enabled }),
   setAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) =>
     request<{ aiAllowChanges: boolean; aiAllowSync: boolean }>('/settings', 'POST', toggles),
   setConcurrentSyncs: (n: number) =>

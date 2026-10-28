@@ -13,6 +13,7 @@ namespace WPEasy\ShipStatic\CLI;
 use WPEasy\ShipStatic\Deploy\ConnectorScript;
 use WPEasy\ShipStatic\Deploy\ServerFolder;
 use WPEasy\ShipStatic\Deploy\WordPressMove;
+use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\Settings\Destinations;
@@ -740,6 +741,7 @@ final class SyncCommand {
             case 'status':
                 $s = LockdownSettings::get();
                 \WP_CLI::log('Lockdown: ' . ($s['enabled'] ? 'on' : 'off'));
+                \WP_CLI::log('Bricks forms and filters from the static site: ' . (Relay::enabled() ? 'let through' : 'blocked (wp shipstatic relay on)'));
                 foreach ($s['entries'] as $e) {
                     \WP_CLI::log(sprintf('  %-24s %-8s %s', \WPEasy\ShipStatic\Lockdown\Cidr::display($e['cidr']), $e['via'], $e['label']));
                 }
@@ -801,6 +803,50 @@ final class SyncCommand {
     private function lockdown_apply(): void {
         foreach (LockdownWriter::apply() as $problem) {
             \WP_CLI::warning($problem);
+        }
+    }
+
+    /**
+     * Bricks forms, query filters and AJAX loops on the static site: send
+     * their requests to this WordPress site (on by default). Each Sync points
+     * the pages at it; with Lockdown on, those requests are let through.
+     *
+     * ## OPTIONS
+     *
+     * [<action>]
+     * : What to do.
+     * ---
+     * default: status
+     * options:
+     *   - status
+     *   - on
+     *   - off
+     * ---
+     *
+     * ## EXAMPLES
+     *
+     *     wp shipstatic relay status
+     *     wp shipstatic relay off
+     *
+     * @param array<int,string>    $args       [action].
+     * @param array<string,string> $assoc_args Flags (unused).
+     * @when after_wp_load
+     */
+    public function relay(array $args, array $assoc_args): void {
+        $action = (string) ($args[0] ?? 'status');
+        if ($action === 'on' || $action === 'off') {
+            Relay::set_enabled($action === 'on');
+            if (LockdownSettings::enabled()) {
+                $this->lockdown_apply();
+            }
+        }
+
+        \WP_CLI::log('Bricks forms and filters use WordPress: ' . (Relay::enabled() ? 'on' : 'off'));
+        \WP_CLI::log('Forms (admin-ajax.php): ' . Relay::endpoint());
+        \WP_CLI::log('Filters and AJAX loops: ' . (Relay::rest_prefix() !== '' ? rest_url('shipstatic/v1/' . Relay::ROUTE . '/<destination id>/') : 'off (needs pretty permalinks)'));
+        \WP_CLI::log('Actions let through Lockdown: ' . implode(', ', Relay::actions()));
+        if ($action !== 'status') {
+            \WP_CLI::success('Sync each destination to update its pages.');
         }
     }
 

@@ -13,6 +13,7 @@ namespace WPEasy\ShipStatic\REST;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
+use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Lockdown\Cidr;
 use WPEasy\ShipStatic\Lockdown\Guard;
 use WPEasy\ShipStatic\Lockdown\Probe;
@@ -174,6 +175,8 @@ final class LockdownController {
             'cronCommand'    => Settings::cron_command(),
             'cronWebCommand' => Settings::cron_web_command(),
             'bearer'         => 'Authorization: Bearer ' . Settings::key(),
+            // The static site's Bricks forms and filters get through (Writer::forms_config()).
+            'relay'          => Relay::enabled(),
         ];
     }
 }

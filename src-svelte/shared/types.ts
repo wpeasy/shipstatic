@@ -269,6 +269,8 @@ export interface Status {
   searchEnabled: boolean;
   /** Live WordPress site: the ShipStatic Search element searches as you type too (needs searchEnabled). */
   searchLive: boolean;
+  /** Bricks forms, filters and AJAX loops on the static site use WordPress (Settings). */
+  relayEnabled: boolean;
   /** Max destinations deployed at once during a multi-destination sync (1–10). */
   concurrentSyncs: number;
   /** Whether the host WordPress exposes the Abilities API (WP 6.9+). */
@@ -588,6 +590,8 @@ export interface LockdownSettings {
   cronCommand: string;
   /** The same job over the web, with the unlock key as a bearer token. */
   cronWebCommand: string;
+  /** The static site's Bricks forms and filters get through Lockdown (Settings → Bricks forms and filters use WordPress). */
+  relay: boolean;
   /** The unlock key as a request header (`Authorization: Bearer <key>`). */
   bearer: string;
   errors?: string[];

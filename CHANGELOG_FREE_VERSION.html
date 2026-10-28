@@ -1,6 +1,10 @@
 <h1>Changelog</h1>
-<h2>v2.4.8 (2026-10-28)</h2>
+<h2>v2.4.9 (2026-10-28)</h2>
+<h3>New</h3>
+<p><strong>Bricks forms work on your static site (experimental).</strong> Before, a Bricks form on the static site did nothing when submitted. Now each sync points your forms back at your WordPress site, which runs their actions as usual — emails, saved submissions, webhooks, Mailchimp and the rest. A Redirect after submit goes to the matching page on the static site, not to WordPress. It&#8217;s on by default under <strong>Settings → Bricks forms and filters use WordPress</strong>; sync after changing it.</p>
+<h3>New</h3>
+<p><strong>Bricks query filters, AJAX pagination, load more and AJAX popups work on your static site (experimental).</strong> WordPress finds the results, so they&#8217;re always current, and they come back with links and images that point at your static site, including that destination&#8217;s text and link replacements. Filtered links (such as <code>/shop/?brx_abc123=red</code>) open with the filters applied. When a page has filters or loads more posts, each sync also uploads every size of every published post&#8217;s featured image, so new results have their pictures.</p>
+<h3>New</h3>
+<p><strong>Forms and filters keep working with Lockdown on (experimental).</strong> Lockdown lets exactly these requests through to WordPress and still turns everything else away, on Apache, LiteSpeed and nginx (including the optional nginx snippet).</p>
 <h3>Improved</h3>
-<p><strong>The &quot;This server&quot; wizard starts with a clear choice.</strong> When WordPress sits at the root of its domain, the wizard now first asks where the static site should go: at your domain, with WordPress moved into <code>/wp</code>, or on another domain or subdomain, with WordPress left where it is. <strong>Back</strong> always returns to that choice, instead of being greyed out or jumping between the two options.</p>
-<h3>Improved</h3>
-<p><strong>Clearer help for publishing to another domain.</strong> The wizard now explains what your host needs: a domain or subdomain served from a folder on this server (on cPanel, set under Domains; on a VPS, a second site in nginx or Apache). If the other domain is hosted somewhere else, it points you to Connector or FTP instead.</p>
+<p><strong>Fewer false warnings.</strong> While the setting is on, the processed-pages list no longer warns that Bricks forms won&#8217;t work on the static site.</p>

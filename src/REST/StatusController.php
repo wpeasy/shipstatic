@@ -14,6 +14,9 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WPEasy\ShipStatic\Abilities\AbilityRegistry;
 use WPEasy\ShipStatic\Discovery\UrlCollector;
+use WPEasy\ShipStatic\Bricks\Relay;
+use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
+use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\Render\CompatibilityScanner;
 use WPEasy\ShipStatic\Render\UrlRewriter;
 use WPEasy\ShipStatic\Settings\Destinations;
@@ -125,6 +128,8 @@ final class StatusController {
             'fabEnabled'    => get_option('shipstatic_fab_enabled', '1') !== '0',
             'searchEnabled' => IndexBuilder::enabled(),
             'searchLive'    => LiveIndex::chosen(),
+            // Bricks forms, filters and AJAX loops on the static site use WordPress.
+            'relayEnabled'  => Relay::enabled(),
             // Max destinations deployed at once during a multi-destination sync.
             'concurrentSyncs' => DeployPool::concurrency(),
             // AI/MCP opt-ins. `aiAvailable` reflects whether the host WordPress
@@ -313,6 +318,18 @@ final class StatusController {
             LiveIndex::set_enabled(!empty($params['searchLive']));
         }
 
+        if (array_key_exists('relayEnabled', $params)) {
+            $on = !empty($params['relayEnabled']);
+            if ($on !== Relay::enabled()) {
+                // Deploy-time only (the render is unchanged): destinations just
+                // read as out of sync. Lockdown's files carry the exemption.
+                Relay::set_enabled($on);
+                if (LockdownSettings::enabled()) {
+                    LockdownWriter::apply();
+                }
+            }
+        }
+
         if (array_key_exists('aiAllowChanges', $params)) {
             update_option(AbilityRegistry::OPT_CHANGES, !empty($params['aiAllowChanges']), false);
         }
@@ -337,6 +354,7 @@ final class StatusController {
             'fabEnabled'      => get_option('shipstatic_fab_enabled', '1') !== '0',
             'searchEnabled'   => IndexBuilder::enabled(),
             'searchLive'      => LiveIndex::chosen(),
+            'relayEnabled'    => Relay::enabled(),
             'aiAllowChanges'  => AbilityRegistry::changes_enabled(),
             'aiAllowSync'     => AbilityRegistry::sync_enabled(),
             'concurrentSyncs' => DeployPool::concurrency(),
