@@ -7,8 +7,10 @@ import App from './App.svelte';
 const target = document.getElementById('bs-dashboard');
 
 if (target) {
-  // mount() appends rather than replacing, so clear the server-rendered
-  // placeholder (the "Loading…" / noscript fallback) before mounting.
-  target.replaceChildren();
+  // Mount first, then drop the server-rendered placeholder (the "Loading…" /
+  // noscript fallback, which also carries the startup watchdog's #bs-loading).
+  // If mount() throws, the placeholder stays and the watchdog explains why.
   mount(App, { target });
+  document.getElementById('bs-loading')?.remove();
+  target.querySelector(':scope > noscript')?.remove();
 }

@@ -16,12 +16,11 @@ defined('ABSPATH') || exit;
 <div class="wrap">
 	<div class="bs">
 		<div id="bs-dashboard">
-			<noscript>
-				<?php echo esc_html__('ShipStatic requires JavaScript.', 'shipstatic'); ?>
-			</noscript>
-			<p style="color: var(--bs-color-text--muted);">
-				<?php echo esc_html__('Loading…', 'shipstatic'); ?>
-			</p>
+			<?php
+			$shipstatic_noscript = __('ShipStatic requires JavaScript.', 'shipstatic');
+			$shipstatic_entry = 'dashboard';
+			require __DIR__ . '/loading.php';
+			?>
 		</div>
 	</div>
 </div>

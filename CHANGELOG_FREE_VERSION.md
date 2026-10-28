@@ -1,12 +1,12 @@
 # Changelog
 
-## v2.4.10 (2026-10-28)
+## v2.4.11 (2026-10-29)
 
 ### New
-**Include pages straight from the Pages and Posts lists.** In “Manual selection” mode, each published page in the Static column has a check icon: grey when the page isn’t in your static export, green when it is. One click includes or removes the page, without opening it.
+**A clear message when the dashboard can't start.** Instead of staying on “Loading…”, ShipStatic now tells you what went wrong — a missing or blocked file, a server returning the wrong file type, or a JavaScript error — and what to try: deactivate other plugins (caching, minification and security plugins are the usual cause), then reload.
 
 ### New
-**Include in static export from Quick Edit.** In “Manual selection” mode, Quick Edit has an “Include in static export” checkbox, so you can change it alongside the title, slug and status.
+**Copy diagnostics button.** If it still won’t load, one click copies the details support needs (versions, server, active plugins and the problems found) so you can paste them into a support request on WordPress.org.
 
-### Fixed
-**Page titles with an ampersand or quotes show correctly.** Titles such as “Facets & Forms” appeared as “Facets &#038; Forms” in the processed-pages list and other ShipStatic lists.
+### New
+**Missing files are spotted straight away.** If part of the plugin didn’t upload or has the wrong permissions, ShipStatic names the exact file immediately, and a new ShipStatic check appears under Tools → Site Health.

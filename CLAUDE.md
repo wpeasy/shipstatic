@@ -171,6 +171,12 @@ When Vite splits scoped Svelte CSS into shared chunks, browsers do **not** auto-
 
 ---
 
+## Admin Startup Watchdog
+
+The dashboard/Docs placeholder lives in `templates/admin/loading.php`: `Menu::assets_problem()` (PHP pre-check of the manifest + every built file, also a Site Health test) prints the cause immediately, otherwise an inline watchdog (independent of the bundle) replaces "Loading…" 4 s after `load` with captured errors + a Copy diagnostics button. `main.ts` entries must remove `#bs-loading` only **after** `mount()` succeeds. Any new admin entry should use the same partial.
+
+---
+
 ## Deviation Reporting
 
 When deviating from established patterns (vanilla JS instead of Svelte, new pattern instead of an existing one, anything against this file for a technical reason), tell the user **before** implementing, using:

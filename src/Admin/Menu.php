@@ -64,6 +64,113 @@ final class Menu {
         add_action('admin_menu', [self::class, 'register_menu']);
         add_action('admin_enqueue_scripts', [self::class, 'enqueue_assets']);
         add_filter('script_loader_tag', [self::class, 'script_as_module'], 10, 3);
+        add_filter('site_status_tests', [self::class, 'site_health_tests']);
+    }
+
+    /**
+     * Vite entries the admin apps ship, by label (used by the pre-check).
+     */
+    private const ENTRIES = [
+        'dashboard' => 'src-svelte/dashboard/main.ts',
+        'docs'      => 'src-svelte/docs/main.ts',
+    ];
+
+    /**
+     * Pre-check an entry's built files: the Vite manifest, the entry script, every
+     * script chunk it imports and every stylesheet must exist and be readable.
+     * A partial upload, a bad zip extraction or wrong permissions otherwise only
+     * show up as a page stuck on "Loading…".
+     *
+     * @param string $entry_key Vite manifest input key.
+     * @return string|null A plain-text description of the problem, or null when fine.
+     */
+    public static function assets_problem(string $entry_key): ?string {
+        $dist = SHIPSTATIC_PLUGIN_DIR . 'assets/dist/';
+
+        if (!is_readable($dist . '.vite/manifest.json')) {
+            return __('The admin assets are not built (assets/dist/.vite/manifest.json is missing). Reinstall the plugin from a fresh download, or run "npm run build" in the plugin directory.', 'shipstatic');
+        }
+
+        $manifest = self::manifest_entry($entry_key);
+        if ($manifest === null) {
+            return __('The built admin assets are out of date (the manifest has no entry for this page). Reinstall the plugin from a fresh download.', 'shipstatic');
+        }
+
+        $files = [];
+        $seen  = [];
+        $all   = json_decode((string) file_get_contents($dist . '.vite/manifest.json'), true);
+        $walk  = static function (string $key) use (&$walk, &$files, &$seen, $all): void {
+            if (isset($seen[$key]) || !isset($all[$key]) || !is_array($all[$key])) {
+                return;
+            }
+            $seen[$key] = true;
+            if (isset($all[$key]['file'])) {
+                $files[] = (string) $all[$key]['file'];
+            }
+            foreach ((array) ($all[$key]['css'] ?? []) as $css) {
+                $files[] = (string) $css;
+            }
+            foreach ((array) ($all[$key]['imports'] ?? []) as $import) {
+                $walk((string) $import);
+            }
+        };
+        $walk($entry_key);
+
+        foreach ($files as $file) {
+            if (!is_readable($dist . $file)) {
+                /* translators: %s: file path inside the plugin, e.g. assets/dist/assets/dashboard-abc.js */
+                return sprintf(__('A built file is missing or unreadable: %s. The plugin may have been uploaded incompletely or its file permissions are wrong. Reinstall it from a fresh download.', 'shipstatic'), 'assets/dist/' . $file);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Site Health: report missing/unreadable admin assets.
+     *
+     * @param array<string,mixed> $tests Registered tests.
+     * @return array<string,mixed>
+     */
+    public static function site_health_tests(array $tests): array {
+        $tests['direct']['shipstatic_assets'] = [
+            'label' => __('ShipStatic admin assets', 'shipstatic'),
+            'test'  => [self::class, 'site_health_assets'],
+        ];
+
+        return $tests;
+    }
+
+    /**
+     * Site Health result for the ShipStatic admin assets.
+     *
+     * @return array<string,mixed>
+     */
+    public static function site_health_assets(): array {
+        $problems = [];
+        foreach (self::ENTRIES as $key) {
+            $problem = self::assets_problem($key);
+            if ($problem !== null) {
+                $problems[$problem] = true;
+            }
+        }
+
+        $result = [
+            'label'       => __('ShipStatic admin assets are present', 'shipstatic'),
+            'status'      => 'good',
+            'badge'       => ['label' => 'ShipStatic', 'color' => 'blue'],
+            'description' => '<p>' . esc_html__('The files the ShipStatic dashboard needs are installed and readable.', 'shipstatic') . '</p>',
+            'actions'     => '',
+            'test'        => 'shipstatic_assets',
+        ];
+
+        if ($problems !== []) {
+            $result['label']       = __('ShipStatic admin assets are missing', 'shipstatic');
+            $result['status']      = 'critical';
+            $result['description'] = '<p>' . implode('</p><p>', array_map('esc_html', array_keys($problems))) . '</p>';
+        }
+
+        return $result;
     }
 
     /**
@@ -134,13 +241,13 @@ final class Menu {
             wp_deregister_script('heartbeat');
             // The media replacer opens the WordPress media library (wp.media).
             wp_enqueue_media();
-            self::enqueue_app('src-svelte/dashboard/main.ts', self::SCRIPT_HANDLE, [
+            self::enqueue_app(self::ENTRIES['dashboard'], self::SCRIPT_HANDLE, [
                 // Whether the setup wizard has never been shown/dismissed yet —
                 // dashboard-only, so it never leaks onto the docs page's shipStaticData.
                 'isFirstRun' => get_option('shipstatic_wizard_seen', '0') === '0',
             ]);
         } elseif ($hook === self::$docs_hook) {
-            self::enqueue_app('src-svelte/docs/main.ts', self::DOCS_HANDLE);
+            self::enqueue_app(self::ENTRIES['docs'], self::DOCS_HANDLE);
         }
     }
 
@@ -153,11 +260,16 @@ final class Menu {
      * @param array<string,mixed>  $extra     Extra key/value pairs merged into `shipStaticData`.
      */
     private static function enqueue_app(string $entry_key, string $handle, array $extra = []): void {
-        $entry = self::manifest_entry($entry_key);
+        $problem = self::assets_problem($entry_key);
+        $entry   = $problem === null ? self::manifest_entry($entry_key) : null;
         if ($entry === null) {
-            add_action('admin_notices', static function (): void {
+            add_action('admin_notices', static function () use ($problem): void {
                 echo '<div class="notice notice-error"><p>'
-                    . esc_html__('ShipStatic: the admin assets are not built. Run "npm run build" in the plugin directory.', 'shipstatic')
+                    . esc_html(sprintf(
+                        /* translators: %s: what is wrong with the built admin files. */
+                        __('ShipStatic: %s', 'shipstatic'),
+                        $problem ?? __('the admin assets could not be read.', 'shipstatic')
+                    ))
                     . '</p></div>';
             });
             return;
