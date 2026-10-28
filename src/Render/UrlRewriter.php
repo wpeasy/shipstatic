@@ -166,9 +166,12 @@ final class UrlRewriter {
 
         foreach ([$origin, '//' . $authority] as $anchor) {
             $content = str_replace($anchor . $home . '/', $anchor . $base . '/', $content);
-            $content = (string) preg_replace(
+            // A callback, not a replacement string: the base comes from the
+            // Destination URL, and "$0" or "\1" in it would expand (§12).
+            $with    = $anchor . $base . '/';
+            $content = (string) preg_replace_callback(
                 '#' . preg_quote($anchor . $home, '#') . '(?![\w/-])#',
-                $anchor . $base . '/',
+                static fn(): string => $with,
                 $content
             );
         }

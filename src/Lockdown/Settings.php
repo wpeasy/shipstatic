@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace WPEasy\ShipStatic\Lockdown;
 
+use WPEasy\ShipStatic\Render\PageRenderer;
 use WPEasy\ShipStatic\Settings\Destinations;
 
 defined('ABSPATH') || exit;
@@ -105,6 +106,8 @@ final class Settings {
     public static function regenerate_key(): string {
         $key = wp_generate_password(32, false, false);
         self::update(['key' => $key]);
+        // The render token passes every layer too: a new link replaces it as well.
+        PageRenderer::rotate_token();
 
         return $key;
     }

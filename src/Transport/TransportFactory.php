@@ -62,7 +62,7 @@ final class TransportFactory {
     /**
      * Which transports are usable on this server.
      *
-     * @return array{sftp:bool,ftps:bool,ftp:bool,connector:bool,cloudflare:bool,github:bool,folder:bool}
+     * @return array{sftp:bool,ftps:bool,ftp:bool,connector:bool,cloudflare:bool,github:bool,folder:bool,multisite:bool}
      */
     public static function capabilities(): array {
         return [
@@ -73,6 +73,8 @@ final class TransportFactory {
             'cloudflare' => CloudflareTransport::is_available(),
             'github'     => GitHubTransport::is_available(),
             'folder'     => FolderTransport::is_available(),
+            // Why "This server" is off: the panel says "Disabled on Multisite".
+            'multisite'  => \WPEasy\ShipStatic\Support\Environment::is_multisite(),
         ];
     }
 

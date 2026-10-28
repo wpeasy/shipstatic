@@ -65,9 +65,12 @@ if (!defined('SHIPSTATIC_LOCKDOWN_GATE')) {
         // admin-ajax.php (that exact path, and that file running), for one of
         // the listed actions only. Not from the query string or a cookie:
         // admin-ajax.php reads the action from $_REQUEST, which can include them.
+        // No query string but Bricks' "?t=" (a fresh-nonce request). Every
+        // plugin's admin_init still runs before the action — keep this narrow.
         if ($cfg['forms'] !== null
             && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST'
             && $path === $cfg['forms']['path']
+            && array_diff(array_keys($_GET), ['t']) === []
             && !isset($_GET['action'])
             && !isset($_COOKIE['action'])
             && isset($_POST['action']) && is_string($_POST['action'])
@@ -80,9 +83,14 @@ if (!defined('SHIPSTATIC_LOCKDOWN_GATE')) {
         // exactly (prefix, destination id, endpoint), run by WordPress's
         // index.php. Nothing may pick another route: WordPress takes
         // rest_route from the query string or a POST field over the address,
-        // so neither may be there (only Bricks' ?lang= for WPML).
+        // so neither may be there (only Bricks' ?lang= for WPML). Bricks sends
+        // JSON, so a POST must too, with no form fields or files: those would
+        // reach other plugins' init handlers (logins, registrations).
+        $method = (string) ($_SERVER['REQUEST_METHOD'] ?? '');
+        $type   = strtolower((string) ($_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? ''));
         if ($cfg['forms'] !== null && $cfg['forms']['rest'] !== ''
-            && in_array($_SERVER['REQUEST_METHOD'] ?? '', ['POST', 'OPTIONS'], true)
+            && in_array($method, ['POST', 'OPTIONS'], true)
+            && ($method === 'OPTIONS' || (strpos($type, 'application/json') === 0 && $_POST === [] && $_FILES === []))
             && preg_match($cfg['forms']['restPattern'], $path) === 1
             && array_diff(array_keys($_GET), ['lang']) === []
             && !isset($_POST['rest_route'])

@@ -61,9 +61,12 @@ function shipstatic_uninstall_site(): void {
 
     // Staging cache (rendered pages, packages, exports). Only removed when it is
     // the plugin's own folder — a custom SHIPSTATIC_CACHE_DIR / filter could
-    // point somewhere shared, so anything not named `shipstatic` is left alone.
-    $dir = \WPEasy\ShipStatic\Support\Paths::cache_dir();
-    if ($dir !== '' && basename($dir) === 'shipstatic' && is_dir($dir)) {
+    // point somewhere shared, so anything not named `shipstatic` is left alone
+    // (on multisite each site has its own `shipstatic/site-<id>`).
+    $dir  = \WPEasy\ShipStatic\Support\Paths::cache_dir();
+    $ours = basename($dir) === 'shipstatic'
+        || (preg_match('/^site-\d+$/', basename($dir)) === 1 && basename(dirname($dir)) === 'shipstatic');
+    if ($dir !== '' && $ours && is_dir($dir)) {
         require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
         require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
         (new WP_Filesystem_Direct(null))->rmdir($dir, true);

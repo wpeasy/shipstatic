@@ -128,7 +128,7 @@
   async function load(): Promise<void> {
     try {
       take(await api.getLockdown());
-      if (ld?.enabled) runProbe();
+      if (ld?.enabled && !ld.multisite) runProbe();
     } catch (e) {
       error = (e as Error).message;
     }
@@ -273,6 +273,9 @@
 
   {#if !ld}
     <ListSkeleton />
+  {:else if ld.multisite}
+    <!-- Off on multisite: its server files are shared by the whole network. -->
+    <Alert tone="warning" title={__('multisiteDisabled')} description={__('ldMultisite')} />
   {:else}
     <div class="bs-stack bs-stack--md" in:fadeUp>
       <!-- 1. The unlock link: saved before Lockdown can be turned on. -->

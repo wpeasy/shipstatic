@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\Transport;
 
 use WPEasy\ShipStatic\Deploy\ServerFolder;
+use WPEasy\ShipStatic\Support\Environment;
+use WPEasy\ShipStatic\Support\Url;
 
 defined('ABSPATH') || exit;
 
@@ -67,13 +69,18 @@ final class FolderTransport implements TransportInterface {
      * Always usable: it only needs PHP's filesystem functions.
      */
     public static function is_available(): bool {
-        return true;
+        // Off on multisite: it writes folders beside WordPress that the whole
+        // network shares (Environment::is_multisite()).
+        return !Environment::is_multisite();
     }
 
     /**
      * @inheritdoc
      */
     public function connect(): void {
+        if (Environment::is_multisite()) {
+            throw new \RuntimeException(Environment::multisite_notice() . '.');
+        }
         if ($this->folder === '') {
             throw new \RuntimeException(__('No folder is set up for this destination yet. Use “Set up the folder”.', 'shipstatic'));
         }
@@ -261,6 +268,13 @@ final class FolderTransport implements TransportInterface {
             if (strpos($name, '.htaccess') === 0 && count($segments) > 1) {
                 /* translators: %s: file path. */
                 throw new \RuntimeException(sprintf(__('Refused %s.', 'shipstatic'), $rel));
+            }
+            // Every extension, not just the last (x.php.html runs as PHP on
+            // hosts that map handlers by any extension) — the same rule as the
+            // export's own paths. The merged top-level .htaccess is ours.
+            if ($rel !== '.htaccess' && Url::is_unsafe_path('/' . $rel)) {
+                /* translators: %s: file path. */
+                throw new \RuntimeException(sprintf(__('Refused %s: PHP files are never published.', 'shipstatic'), $rel));
             }
         }
 

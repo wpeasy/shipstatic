@@ -243,6 +243,7 @@
         <ul class="bs-docs__list">
           <li>WordPress finds the results, so they are always current — even posts published since your last sync. Their links and images point at your static site, with that destination’s text and link replacements applied.</li>
           <li><strong>Images.</strong> When a page has filters or a loop that loads more, each sync also uploads every size of every published post’s featured image, so results that never appeared on an exported page still have their pictures. Other images in a result (inside the post’s content, say) are only there if an exported page used them.</li>
+          <li><strong>Only the first request of a visit is slower.</strong> The security token in an exported page has usually expired, so Bricks fetches a fresh one and sends again. ShipStatic remembers the fresh token in the browser for 11 hours, so later pages and filters don’t repeat that.</li>
           <li><strong>Filtered links work.</strong> Opening a link like <code>/shop/?brx_abc123=red</code> shows the filtered results, as on WordPress.</li>
           <li><strong>A result whose post isn’t in the export</strong> links to a page your static site doesn’t have. Set <strong>Pages to include</strong> to <strong>All published</strong> (or include those posts) so every result has its page.</li>
           <li><strong>Needs pretty permalinks</strong> (Settings → Permalinks, anything but Plain) — which the export needs anyway.</li>
@@ -270,6 +271,7 @@
       <!-- Publish on this server -->
       <section id="server-folder" class="bs-docs__section bs-stack bs-stack--sm">
         <h2>Publish on this server</h2>
+        <p class="bs-docs__muted"><strong>Disabled on Multisite.</strong> “This server” and Move WordPress into /wp write folders and server files every site on a multisite network shares, so they’re switched off there. The other deploy methods work as usual.</p>
         <p class="bs-docs__muted">
           The <strong>This server</strong> deploy method writes the static site straight into a folder on the same server as WordPress: no FTP account, Connector or outside service. With <strong>Lockdown</strong> on, WordPress is reachable only by your editors and the static site next to it is what the public sees. Choose <strong>This server</strong> in a destination and click <strong>Set up the folder</strong>; the wizard checks the folder, creates it if needed, and tests that its address really serves it.
         </p>
@@ -312,6 +314,7 @@
       <!-- Lockdown -->
       <section id="lockdown" class="bs-docs__section bs-stack bs-stack--sm">
         <h2>Lockdown</h2>
+        <p class="bs-docs__muted"><strong>Disabled on Multisite.</strong> On a multisite network, Lockdown would write server files every site shares, so it’s switched off there.</p>
         <p class="bs-docs__muted">
           Once your visitors use the static site, your WordPress site only needs to reach its editors. <strong>Lockdown</strong> locks it to a list of IP addresses and sends everyone else to the same page on your static site. A WordPress site no stranger can reach can’t be attacked through its plugins, login page or forms.
         </p>

@@ -17,6 +17,7 @@ use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\Settings\Destinations;
+use WPEasy\ShipStatic\Support\Environment;
 use WPEasy\ShipStatic\Sync\Runner;
 use WPEasy\ShipStatic\Transport\CloudflareTransport;
 use WPEasy\ShipStatic\Transport\GitHubTransport;
@@ -443,6 +444,7 @@ final class SyncCommand {
      * @when after_wp_load
      */
     public function move_wordpress(array $args, array $assoc_args): void {
+        $this->refuse_on_multisite();
         $action = (string) ($args[0] ?? 'check');
 
         if ($action === 'check') {
@@ -515,6 +517,7 @@ final class SyncCommand {
      * @when after_wp_load
      */
     public function folder(array $args, array $assoc_args): void {
+        $this->refuse_on_multisite();
         $action  = (string) ($args[0] ?? 'suggest');
         $dest_id = (string) ($args[1] ?? Destinations::primary()->id());
         $path    = (string) ($assoc_args['folder'] ?? '');
@@ -736,11 +739,14 @@ final class SyncCommand {
      */
     public function lockdown(array $args, array $assoc_args): void {
         $action = (string) ($args[0] ?? 'status');
+        if ($action !== 'status') {
+            $this->refuse_on_multisite();
+        }
 
         switch ($action) {
             case 'status':
                 $s = LockdownSettings::get();
-                \WP_CLI::log('Lockdown: ' . ($s['enabled'] ? 'on' : 'off'));
+                \WP_CLI::log('Lockdown: ' . (Environment::is_multisite() ? Environment::multisite_notice() : ($s['enabled'] ? 'on' : 'off')));
                 \WP_CLI::log('Bricks forms and filters from the static site: ' . (Relay::enabled() ? 'let through' : 'blocked (wp shipstatic relay on)'));
                 foreach ($s['entries'] as $e) {
                     \WP_CLI::log(sprintf('  %-24s %-8s %s', \WPEasy\ShipStatic\Lockdown\Cidr::display($e['cidr']), $e['via'], $e['label']));
@@ -795,6 +801,16 @@ final class SyncCommand {
 
         $this->lockdown_apply();
         \WP_CLI::success('Lockdown is ' . (LockdownSettings::enabled() ? 'on' : 'off') . '.');
+    }
+
+    /**
+     * Stop a command for a feature that is off on multisite (server files and
+     * folders the whole network shares).
+     */
+    private function refuse_on_multisite(): void {
+        if (Environment::is_multisite()) {
+            \WP_CLI::error(Environment::multisite_notice() . '.');
+        }
     }
 
     /**

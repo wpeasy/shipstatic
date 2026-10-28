@@ -123,6 +123,8 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 
 = 2.4.9 =
 * New (experimental): Bricks forms, query filters, AJAX pagination, load more and AJAX popups work on the static site. They send their requests to your WordPress site, results link to the static site, and filtered links open filtered. With Lockdown on, these requests still get through.
+* Changed: on a multisite network, Lockdown, "This server" and Move WordPress into /wp are disabled (they write server files every site shares). Each site now keeps its own render cache.
+* Security: Lockdown's internal render token now changes with a new unlock link and is never sent to another site; Lockdown's cleanup can no longer leave PHP failing on every request.
 
 = 2.4.8 =
 * Improved: the "This server" wizard starts by asking where the static site goes (move WordPress into /wp, or another domain), and Back always returns to that choice. It also explains what your host needs for another domain.

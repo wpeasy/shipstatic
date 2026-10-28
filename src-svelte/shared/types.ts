@@ -47,6 +47,8 @@ export interface Capabilities {
   cloudflare: boolean;
   github: boolean;
   folder: boolean;
+  /** Multisite network: "This server" (and Move WordPress into /wp) is off. */
+  multisite: boolean;
 }
 
 /** POST /destinations/{id}/connector/pair */
@@ -566,6 +568,8 @@ export interface LockdownEntry {
 export type LockdownLayerState = 'ok' | 'missing' | 'notFirst' | 'old' | 'na';
 
 export interface LockdownSettings {
+  /** Multisite network: Lockdown is off (the tab shows only the notice). */
+  multisite: boolean;
   enabled: boolean;
   entries: LockdownEntry[];
   /** '' = first enabled destination with a URL, 'none' = 403, else a destination id. */

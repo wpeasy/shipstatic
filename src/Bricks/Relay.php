@@ -37,8 +37,9 @@ defined('ABSPATH') || exit;
  * images, its replacements). This class holds the setting and the WordPress
  * side:
  *
- * - lets a destination on another domain read admin-ajax.php's reply (CORS,
- *   via `allowed_http_origins`; the REST API sends its own CORS headers);
+ * - lets a destination on another domain read admin-ajax.php's reply to
+ *   these actions only, without credentials (cors_for_destination(); the
+ *   REST API sends its own CORS headers);
  * - maps a form's Redirect action to the same page on the destination the
  *   form was sent from;
  * - gives Lockdown the exact addresses and actions to let through
@@ -65,7 +66,8 @@ final class Relay {
      * Hook in (always: the hooks themselves check the setting).
      */
     public static function init(): void {
-        add_filter('allowed_http_origins', [self::class, 'allow_destination_origins']);
+        // admin_init runs in admin-ajax.php before the action is dispatched.
+        add_action('admin_init', [self::class, 'cors_for_destination'], 0);
         add_filter('bricks/form/response', [self::class, 'map_redirect'], 20);
     }
 
@@ -160,25 +162,30 @@ final class Relay {
     }
 
     /**
-     * `allowed_http_origins`: the destinations' origins, so a static site on
-     * another domain can read admin-ajax.php's reply. (Without it a form is
-     * still processed, but the visitor sees nothing.)
-     *
-     * @param mixed $origins Allowed origins.
-     * @return mixed
+     * Let a destination on another domain read the reply to one of
+     * actions() — and nothing else. Not through `allowed_http_origins`: core
+     * then sends `Access-Control-Allow-Credentials: true` for every admin-ajax
+     * action, so a script on the static site could read a logged-in editor's
+     * nonces (Heartbeat hands out a fresh REST nonce) and act as them. Bricks
+     * sends these requests without credentials, so none are allowed here.
      */
-    public static function allow_destination_origins($origins) {
-        if (!self::enabled() || !is_array($origins)) {
-            return $origins;
+    public static function cors_for_destination(): void {
+        if (!self::enabled() || !wp_doing_ajax() || headers_sent()) {
+            return;
+        }
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- only picks whether to add a CORS header; Bricks checks its own nonce.
+        $action = isset($_REQUEST['action']) && is_string($_REQUEST['action']) ? sanitize_key(wp_unslash($_REQUEST['action'])) : '';
+        $origin = strtolower((string) get_http_origin());
+        if ($origin === '' || !in_array($action, self::actions(), true)) {
+            return;
         }
         foreach (self::destination_bases() as $base) {
-            $origin = self::origin($base);
-            if ($origin !== '') {
-                $origins[] = $origin;
+            if (self::origin($base) === $origin) {
+                header('Access-Control-Allow-Origin: ' . self::origin($base));
+                header('Vary: Origin', false);
+                return;
             }
         }
-
-        return array_values(array_unique($origins));
     }
 
     /**

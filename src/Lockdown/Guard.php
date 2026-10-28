@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\Lockdown;
 
 use WPEasy\ShipStatic\Render\PageRenderer;
+use WPEasy\ShipStatic\Support\Environment;
 
 defined('ABSPATH') || exit;
 
@@ -37,7 +38,13 @@ final class Guard {
      * Hook in (from Plugin::init(), on plugins_loaded).
      */
     public static function init(): void {
-        if (!Settings::enabled()) {
+        // Every loopback carries the render token (PageRenderer::request_args()),
+        // so it comes off a redirect to another host even while Lockdown is off:
+        // a token that leaked then would still open the site once it's on.
+        add_action('requests-requests.before_redirect', [self::class, 'unsign_on_redirect'], 10, 2);
+
+        // Off on multisite: its files are shared by the whole network.
+        if (!Settings::enabled() || Environment::is_multisite()) {
             return;
         }
 
@@ -47,7 +54,6 @@ final class Guard {
 
         add_action('init', [self::class, 'handle_unlock'], 0);
         add_filter('http_request_args', [self::class, 'sign_own_requests'], 10, 2);
-        add_action('requests-requests.before_redirect', [self::class, 'unsign_on_redirect'], 10, 2);
         add_action('admin_init', [self::class, 'refresh_files']);
     }
 
@@ -213,6 +219,23 @@ final class Guard {
     private static function same_host(string $url): bool {
         $host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
 
-        return $host !== '' && $host === strtolower((string) wp_parse_url(home_url(), PHP_URL_HOST));
+        return $host !== ''
+            && $host === strtolower((string) wp_parse_url(home_url(), PHP_URL_HOST))
+            && self::port($url) === self::port(home_url());
+    }
+
+    /**
+     * A URL's port, with the scheme's default filled in (another port on the
+     * same host can be another service).
+     *
+     * @param string $url URL.
+     */
+    private static function port(string $url): int {
+        $port = wp_parse_url($url, PHP_URL_PORT);
+        if (is_int($port)) {
+            return $port;
+        }
+
+        return strtolower((string) wp_parse_url($url, PHP_URL_SCHEME)) === 'http' ? 80 : 443;
     }
 }

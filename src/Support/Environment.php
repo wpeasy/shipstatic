@@ -68,6 +68,31 @@ final class Environment {
     }
 
     /**
+     * Whether this is a multisite network. Features that write server files
+     * or folders the whole network shares — Lockdown (.htaccess, .user.ini,
+     * the gate), "This server" and Move WordPress into /wp — are off there:
+     * a sub-site administrator holds manage_options, so they would control
+     * files for every site (SECURITY_PATTERNS.md §0).
+     */
+    public static function is_multisite(): bool {
+        return function_exists('is_multisite') && is_multisite();
+    }
+
+    /**
+     * The notice shown wherever a feature is off on multisite.
+     */
+    public static function multisite_notice(): string {
+        return __('Disabled on Multisite', 'shipstatic');
+    }
+
+    /**
+     * A REST error for a feature that is off on multisite (403).
+     */
+    public static function multisite_error(): \WP_Error {
+        return new \WP_Error('shipstatic_multisite', self::multisite_notice(), ['status' => 403]);
+    }
+
+    /**
      * The WP-CLI command users should run for a reliable sync.
      */
     public static function cli_command(): string {

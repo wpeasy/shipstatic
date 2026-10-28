@@ -124,7 +124,13 @@ final class Background {
      * @param string $subcommand The shipstatic subcommand.
      */
     private static function build(string $subcommand): ?string {
-        return WpCli::build_command('shipstatic ' . $subcommand . ' --path=' . escapeshellarg(rtrim((string) ABSPATH, '/\\')));
+        $args = 'shipstatic ' . $subcommand . ' --path=' . escapeshellarg(rtrim((string) ABSPATH, '/\\'));
+        // Without --url, WP-CLI runs on a network's main site, not this one.
+        if (\WPEasy\ShipStatic\Support\Environment::is_multisite()) {
+            $args .= ' --url=' . escapeshellarg(home_url('/'));
+        }
+
+        return WpCli::build_command($args);
     }
 
     /**

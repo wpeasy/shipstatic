@@ -33,9 +33,10 @@ if (time() > $EXPIRES) {
     exit;
 }
 
+// Same checks as the Connector receiver's bs_safe() — keep the two in sync.
 $safe = static function ($rel) {
     $rel = str_replace('\\', '/', (string) $rel);
-    if ($rel === '' || $rel[0] === '/' || strpos($rel, '../') !== false || strpos($rel, ':') !== false) {
+    if ($rel === '' || $rel[0] === '/' || strpos($rel, '../') !== false || strpos($rel, '/..') !== false || $rel === '..' || strpos($rel, ':') !== false || strpos($rel, "\0") !== false) {
         return null;
     }
     return ltrim($rel, '/');

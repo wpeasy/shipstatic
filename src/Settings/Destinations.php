@@ -282,6 +282,9 @@ final class Destinations {
      * @param string $url  Destination URL ('' keeps the current one).
      */
     public static function set_folder(string $id, string $path, string $url = ''): ?Destination {
+        if (\WPEasy\ShipStatic\Support\Environment::is_multisite()) {
+            return null; // "This server" is off on multisite.
+        }
         $list = self::all();
         foreach ($list as $i => $data) {
             if ((string) ($data['id'] ?? '') !== $id) {

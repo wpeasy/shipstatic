@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\Bricks;
 
 use WPEasy\ShipStatic\Render\UrlRewriter;
+use WPEasy\ShipStatic\Search\LiveIndex;
 use WPEasy\ShipStatic\Settings\Destination;
 use WPEasy\ShipStatic\Support\Paths;
 use WPEasy\ShipStatic\Support\Url;
@@ -34,9 +35,13 @@ defined('ABSPATH') || exit;
  * - adds a small script to pages with Bricks filters, which applies the
  *   filters in the page's address (`?brx_…`) — WordPress does that while it
  *   renders, a static copy can't;
+ * - adds one to pages with Bricks forms, filters or AJAX loops that keeps
+ *   Bricks' fresh nonces between pages (the exported ones have expired, so
+ *   otherwise every page's first request is refused and retried);
  * - when any page has filters or an AJAX loop, uploads the featured images
- *   (every size) of every published post, so the results WordPress sends
- *   back — posts never shown on an exported page — have their images.
+ *   (every size) of every post in the export, so the results WordPress sends
+ *   back — posts never shown on a listing page — have their images. Only
+ *   posts in the export: one left out stays unpublished, images included.
  *
  * Only the rewriter inserts the placeholder, so nothing else can match.
  */
@@ -97,10 +102,17 @@ final class RelayReplacer implements DeployReplacer {
             );
         }
 
-        if ($ctx['script'] && strpos($html, 'data-brx-filter') !== false && stripos($html, '</body>') !== false) {
-            $script = wp_get_inline_script_tag(self::filters_script(), ['id' => 'shipstatic-bricks-filters']);
-            $at     = (int) strripos($html, '</body>');
-            $html   = substr($html, 0, $at) . $script . substr($html, $at);
+        $scripts = '';
+        // Fresh nonces kept between pages, wherever Bricks asks WordPress for something.
+        if (strpos($html, 'bricksData') !== false && self::asks_wordpress($html)) {
+            $scripts .= wp_get_inline_script_tag(self::template('nonce-cache.js'), ['id' => 'shipstatic-bricks-nonces']);
+        }
+        if ($ctx['script'] && strpos($html, 'data-brx-filter') !== false) {
+            $scripts .= wp_get_inline_script_tag(self::template('filters-from-url.js'), ['id' => 'shipstatic-bricks-filters']);
+        }
+        if ($scripts !== '' && stripos($html, '</body>') !== false) {
+            $at   = (int) strripos($html, '</body>');
+            $html = substr($html, 0, $at) . $scripts . substr($html, $at);
         }
 
         return $html;
@@ -116,7 +128,7 @@ final class RelayReplacer implements DeployReplacer {
 
         // Not the featured-image list: this runs on every dashboard status
         // check. A new image is picked up by the next Sync anyway.
-        return [Relay::endpoint(), Relay::rest_base($dest->id()), md5(self::filters_script()), self::has_dynamic_loops()];
+        return [Relay::endpoint(), Relay::rest_base($dest->id()), md5(self::template('filters-from-url.js') . self::template('nonce-cache.js')), self::has_dynamic_loops()];
     }
 
     /**
@@ -156,8 +168,9 @@ final class RelayReplacer implements DeployReplacer {
     }
 
     /**
-     * Every size of every published post's featured image, as export path =>
-     * local file. Read once per request.
+     * Every size of the featured image of every post in the current render
+     * (LiveIndex::OBJECTS_OPTION: what each exported page is), as export path
+     * => local file. Read once per request.
      *
      * @return array<string,string>
      */
@@ -168,15 +181,19 @@ final class RelayReplacer implements DeployReplacer {
         }
         $files = [];
 
-        $ids = get_posts([
-            'post_type'        => array_values(get_post_types(['public' => true])),
-            'post_status'      => 'publish',
-            'has_password'     => false,
-            'meta_key'         => '_thumbnail_id', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- one query per sync, ids only.
-            'fields'           => 'ids',
-            'numberposts'      => -1, // get_posts() suppresses filters by default.
-        ]);
-        foreach ($ids as $post_id) {
+        $ids     = [];
+        $objects = get_option(LiveIndex::OBJECTS_OPTION, []);
+        foreach (is_array($objects) ? $objects : [] as $object) {
+            if (is_string($object) && preg_match('/^post:(\d+)$/', $object, $m)) {
+                $ids[(int) $m[1]] = true;
+            }
+        }
+        foreach (array_keys($ids) as $post_id) {
+            // Still public now (it may have been unpublished since the render).
+            $post = get_post($post_id);
+            if (!$post || $post->post_status !== 'publish' || $post->post_password !== '') {
+                continue;
+            }
             $attachment = (int) get_post_thumbnail_id((int) $post_id);
             $url        = $attachment > 0 ? wp_get_attachment_url($attachment) : false;
             if (!is_string($url) || $url === '') {
@@ -203,9 +220,30 @@ final class RelayReplacer implements DeployReplacer {
     }
 
     /**
-     * The script that applies `?brx_…` filters on a static page.
+     * Whether a page has a Bricks form, filter or AJAX loop (which ask
+     * WordPress for something, with a nonce).
+     *
+     * @param string $html Page HTML.
      */
-    private static function filters_script(): string {
-        return (string) file_get_contents(__DIR__ . '/templates/filters-from-url.js');
+    private static function asks_wordpress(string $html): bool {
+        foreach (self::DYNAMIC_MARKERS as $marker) {
+            if (strpos($html, $marker) !== false) {
+                return true;
+            }
+        }
+
+        // A real Bricks form tag — "brxe-form" alone also appears in the CSS.
+        return preg_match('/<form\b[^>]*\bclass="[^"]*\bbrxe-form\b/i', $html) === 1;
+    }
+
+    /**
+     * A script from templates/: `filters-from-url.js` (applies `?brx_…`
+     * filters on a static page) or `nonce-cache.js` (keeps Bricks' fresh
+     * nonces between pages).
+     *
+     * @param string $name File name.
+     */
+    private static function template(string $name): string {
+        return (string) file_get_contents(__DIR__ . '/templates/' . $name);
     }
 }

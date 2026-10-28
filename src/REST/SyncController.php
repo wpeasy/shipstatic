@@ -389,6 +389,8 @@ final class SyncController {
         $url            = home_url('/');
         $args           = PageRenderer::request_args($url);
         $args['timeout'] = 8;
+        // It carries the render token: never follow the home page off the site.
+        $args['redirection'] = 0;
 
         $start    = microtime(true);
         $response = wp_remote_get($url, $args);
@@ -399,11 +401,13 @@ final class SyncController {
         }
 
         $code = (int) wp_remote_retrieve_response_code($response);
+        // A redirect still proves a worker answered (redirects aren't followed).
+        $ok = $code === 200 || ($code >= 300 && $code < 400);
 
         return new WP_REST_Response([
-            'ok'      => $code === 200,
+            'ok'      => $ok,
             'ms'      => $ms,
-            'message' => $code === 200 ? "Rendered the homepage in {$ms}ms." : "Unexpected response (HTTP {$code}).",
+            'message' => $ok ? "Rendered the homepage in {$ms}ms." : "Unexpected response (HTTP {$code}).",
         ]);
     }
 

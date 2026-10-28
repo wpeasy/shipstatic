@@ -15,6 +15,7 @@ use WP_REST_Response;
 use WPEasy\ShipStatic\Deploy\ServerFolder;
 use WPEasy\ShipStatic\Deploy\WordPressMove;
 use WPEasy\ShipStatic\Settings\Destinations;
+use WPEasy\ShipStatic\Support\Environment;
 use WPEasy\ShipStatic\Sync\Runner;
 
 defined('ABSPATH') || exit;
@@ -59,7 +60,18 @@ final class ServerFolderController {
         ]);
     }
 
-    public static function can_manage(): bool {
+    /**
+     * Admins, and never on multisite: "This server" and Move WordPress into
+     * /wp write folders and server files the whole network shares, and a
+     * sub-site administrator holds manage_options (Environment::is_multisite()).
+     *
+     * @return bool|\WP_Error
+     */
+    public static function can_manage() {
+        if (Environment::is_multisite()) {
+            return Environment::multisite_error();
+        }
+
         return current_user_can('manage_options');
     }
 

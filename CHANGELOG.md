@@ -9,16 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Bricks forms, query filters and AJAX loops work on the static site** (experimental; setting "Bricks forms and filters use WordPress", option `shipstatic_bricks_relay`, on by default; `wp shipstatic relay on|off|status`). The render rewrote `bricksData.ajaxUrl` and `restApiUrl` onto the static site, where they don't exist, so forms silently did nothing and filters 404'd. A new deploy replacer (`Bricks\RelayReplacer`, part of `sync_signature()`) points `ajaxUrl` back at WordPress's `admin-ajax.php` (root-relative on WordPress's own origin, else the full URL) and `restApiUrl` at a per-destination relay.
-  - **Forms:** submissions run on WordPress as usual. Bricks' fresh-nonce retry (`bricks_regenerate_form_nonce`) heals the stale exported nonce. A Redirect action's address is mapped to the same page on the destination the form came from (`bricks/form/response`). Destination origins are added to `allowed_http_origins` so a static site on another domain can read the reply.
+  - **Forms:** submissions run on WordPress as usual. Bricks' fresh-nonce retry (`bricks_regenerate_form_nonce`) heals the stale exported nonce. A Redirect action's address is mapped to the same page on the destination the form came from (`bricks/form/response`). A static site on another domain can read the reply to these actions only, without credentials (`Relay::cors_for_destination()`).
   - **Filters, sorting, live search, AJAX pagination, load more, infinite scroll and AJAX popups:** `POST /shipstatic/v1/bricks/<destination id>/(query_result|load_query_page|load_popup_content)` (`REST\BricksRelayController`, the second public route) hands the request unchanged to Bricks' own route (its nonce and visibility checks), then rewrites the reply's HTML/CSS for that destination (`Runner::transform_for_destination()`: addresses, Text/Link replacements, sub-path), so results link to and show images from the static site.
   - **Filtered links** (`?brx_…`) opened directly now show filtered results: an inline script, added only to pages with Bricks filters, applies them on load.
-  - **Images:** when any page has filters, load more or infinite scroll, each sync uploads every size of every published post's featured image, so results never shown on an exported page have their pictures.
-  - **Lockdown** lets these requests through and nothing else (SECURITY_PATTERNS.md §11): POSTs to the exact `admin-ajax.php` path for the form/nonce actions only (no `action` from the query string or a cookie), and POST/OPTIONS to the exact relay route (no `rest_route` and no query parameter but `lang`), in the gate, `.htaccess` and the nginx snippet. Toggling the setting rewrites the Lockdown files (`Writer::VERSION` 6). Marked experimental in Settings, the Lockdown tab and the Docs.
+  - **Images:** when any page has filters, load more or infinite scroll, each sync uploads every size of the featured image of every post in the export, so results never shown on a listing page have their pictures.
+  - **Fresh nonces are kept between pages** (`templates/nonce-cache.js`, on pages with Bricks forms, filters or AJAX loops): each nonce Bricks refreshes is stored in `localStorage` for 11 hours and reused, so only the first request of a visit is refused and retried.
+  - **Lockdown** lets these requests through and nothing else (SECURITY_PATTERNS.md §11): POSTs to the exact `admin-ajax.php` path for the form/nonce actions only (no `action` from the query string or a cookie, no query parameter but `t`), and POST/OPTIONS to the exact relay route (POSTs JSON-only with no form fields or files, no `rest_route`, no query parameter but `lang`), in the gate, `.htaccess` and the nginx snippet. Toggling the setting rewrites the Lockdown files (`Writer::VERSION` 7). Marked experimental in Settings, the Lockdown tab and the Docs.
 - Documentation: "Forms & filters".
 
 ### Changed
+- **Multisite: Lockdown, "This server" and Move WordPress into /wp are disabled** ("Disabled on Multisite" in the Lockdown tab, the deploy-method choice, the Docs, REST 403 and the CLI). On a network a sub-site administrator holds `manage_options`, so they controlled server files (root `.htaccess`, `.user.ini`, the shared gate and mu-plugin) and folders the whole network shares (`Support\Environment::is_multisite()`).
 - The pages overview no longer flags Bricks forms as "won't work statically" while the setting is on.
 - Needs pretty permalinks for the filters relay (as the export does).
+
+### Fixed
+- Multisite: every site shared one cache folder, so sub-sites overwrote each other's renders — each now has `shipstatic/site-<id>` (uninstall removes it). Background WP-CLI runs had no `--url`, so they ran on the main site.
+- `UrlRewriter::to_absolute()` passed the Destination URL's path to `preg_replace()` as a replacement string, so a `$0` in it expanded inside `sitemap.xml`/`robots.txt` (SECURITY_PATTERNS.md §12); now a callback.
+
+### Security
+- Lockdown: the render token (it passes every layer) was never rotated and, with Lockdown off, followed off-site redirects (the Sync preflight followed up to 5). A new unlock link now rotates it too, `Guard::unsign_on_redirect` always strips it from redirects to another host, preflight uses `redirection => 0`, and `same_host()` compares the port.
+- Lockdown: if removing the `.user.ini` block failed, the scheduled cleanup still deleted the gate it pointed at — a fatal error on every PHP request. The gate is only deleted once no `.user.ini` names it.
+- "This server": uploads check every extension of a file name (`Url::is_unsafe_path()`), not just the last; the deploy helper's (`UnzipScript`) path check matches the Connector receiver's again (NUL, `/..`, `..`).
 
 ## [2.4.8] - 2026-10-28
 

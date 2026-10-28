@@ -19,6 +19,7 @@ use WPEasy\ShipStatic\Lockdown\Guard;
 use WPEasy\ShipStatic\Lockdown\Probe;
 use WPEasy\ShipStatic\Lockdown\Settings;
 use WPEasy\ShipStatic\Lockdown\Writer;
+use WPEasy\ShipStatic\Support\Environment;
 
 defined('ABSPATH') || exit;
 
@@ -43,23 +44,37 @@ final class LockdownController {
             [
                 'methods'             => 'POST',
                 'callback'            => [self::class, 'save'],
-                'permission_callback' => [self::class, 'can_manage'],
+                'permission_callback' => [self::class, 'can_change'],
             ],
         ]);
         register_rest_route(self::NS, '/lockdown/key', [
             'methods'             => 'POST',
             'callback'            => [self::class, 'new_key'],
-            'permission_callback' => [self::class, 'can_manage'],
+            'permission_callback' => [self::class, 'can_change'],
         ]);
         register_rest_route(self::NS, '/lockdown/probe', [
             'methods'             => 'POST',
             'callback'            => [self::class, 'probe'],
-            'permission_callback' => [self::class, 'can_manage'],
+            'permission_callback' => [self::class, 'can_change'],
         ]);
     }
 
     public static function can_manage(): bool {
         return current_user_can('manage_options');
+    }
+
+    /**
+     * Changing Lockdown: admins, and never on multisite — its files are shared
+     * by every site on the network (Environment::is_multisite()).
+     *
+     * @return bool|WP_Error
+     */
+    public static function can_change() {
+        if (Environment::is_multisite()) {
+            return Environment::multisite_error();
+        }
+
+        return self::can_manage();
     }
 
     /**
@@ -157,6 +172,8 @@ final class LockdownController {
         $env      = Writer::environment();
 
         return [
+            // Lockdown is off on multisite; the tab shows only the notice.
+            'multisite'      => Environment::is_multisite(),
             'enabled'        => $settings['enabled'],
             'entries'        => array_map(static fn(array $e): array => $e + ['display' => Cidr::display((string) $e['cidr'])], $settings['entries']),
             'redirect'       => $settings['redirect'],

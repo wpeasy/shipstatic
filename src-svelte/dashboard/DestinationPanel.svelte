@@ -332,6 +332,9 @@
     disabled={d.transport.fromConstant || busy}
     onchange={selectMethod}
   />
+  {#if capabilities.multisite}
+    <Alert tone="info" title={__('folderMultisiteTitle')} description={__('folderMultisite')} />
+  {/if}
 
   {#key method}
     <div class="bs-stack bs-stack--sm" in:fadeUp>

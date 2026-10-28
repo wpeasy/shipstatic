@@ -12,6 +12,7 @@ namespace WPEasy\ShipStatic\Lockdown;
 
 use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Render\PageRenderer;
+use WPEasy\ShipStatic\Support\Environment;
 
 defined('ABSPATH') || exit;
 
@@ -31,7 +32,7 @@ defined('ABSPATH') || exit;
 final class Writer {
 
     /** Bump when a template changes, so existing sites rewrite their files. */
-    public const VERSION = '6';
+    public const VERSION = '7';
 
     private const BEGIN = 'BEGIN ShipStatic Lockdown';
     private const END   = 'END ShipStatic Lockdown';
@@ -126,6 +127,15 @@ final class Writer {
      * @return array<int,string> Problems (empty when everything was written).
      */
     public static function apply(): array {
+        // Off on multisite: .htaccess, .user.ini and the gate are shared by
+        // every site on the network. Whatever was written comes off.
+        if (Environment::is_multisite()) {
+            if (Settings::enabled()) {
+                Settings::update(['enabled' => false]);
+            }
+            return array_merge([Environment::multisite_notice()], self::remove_all());
+        }
+
         if (!Settings::enabled()) {
             return self::remove_all();
         }
@@ -191,9 +201,11 @@ final class Writer {
 
         // PHP caches .user.ini per worker for up to user_ini.cache_ttl (5 min),
         // and a missing auto_prepend_file is a fatal error on every request. So
-        // the gate becomes a harmless stub for a while instead of disappearing.
+        // the gate becomes a harmless stub for a while instead of disappearing —
+        // and stays one while a .user.ini still points at it (its block
+        // couldn't be removed: disk full, permissions).
         $files = [self::mu_path()];
-        if ($had_user_ini) {
+        if ($had_user_ini || self::user_ini_points_here()) {
             self::write(self::gate_path(), self::stub_source());
             wp_schedule_single_event(time() + self::STUB_SECONDS, self::CLEANUP_HOOK);
         } elseif (!self::is_fresh_stub()) {
@@ -218,9 +230,30 @@ final class Writer {
      * {@see CLEANUP_HOOK}; also safe to call any time).
      */
     public static function cleanup(): void {
-        if (!Settings::enabled() && self::is_stub() && !self::is_fresh_stub()) {
-            wp_delete_file(self::gate_path());
+        if (Settings::enabled() || !self::is_stub() || self::is_fresh_stub()) {
+            return;
         }
+        if (self::user_ini_points_here()) {
+            // Still the prepend file somewhere: deleting it now would stop PHP.
+            wp_schedule_single_event(time() + self::STUB_SECONDS, self::CLEANUP_HOOK);
+            return;
+        }
+        wp_delete_file(self::gate_path());
+    }
+
+    /**
+     * Whether a `.user.ini` in the site root still names the gate — the one
+     * PHP reads now, and the default name (the saved server facts can be out
+     * of date).
+     */
+    private static function user_ini_points_here(): bool {
+        foreach (array_unique(array_filter([self::user_ini_path(), self::root() . '.user.ini'])) as $file) {
+            if (strpos(self::read($file), self::gate_path()) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

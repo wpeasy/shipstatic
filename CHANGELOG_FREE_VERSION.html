@@ -3,8 +3,18 @@
 <h3>New</h3>
 <p><strong>Bricks forms work on your static site (experimental).</strong> Before, a Bricks form on the static site did nothing when submitted. Now each sync points your forms back at your WordPress site, which runs their actions as usual — emails, saved submissions, webhooks, Mailchimp and the rest. A Redirect after submit goes to the matching page on the static site, not to WordPress. It&#8217;s on by default under <strong>Settings → Bricks forms and filters use WordPress</strong>; sync after changing it.</p>
 <h3>New</h3>
-<p><strong>Bricks query filters, AJAX pagination, load more and AJAX popups work on your static site (experimental).</strong> WordPress finds the results, so they&#8217;re always current, and they come back with links and images that point at your static site, including that destination&#8217;s text and link replacements. Filtered links (such as <code>/shop/?brx_abc123=red</code>) open with the filters applied. When a page has filters or loads more posts, each sync also uploads every size of every published post&#8217;s featured image, so new results have their pictures.</p>
+<p><strong>Bricks query filters, AJAX pagination, load more and AJAX popups work on your static site (experimental).</strong> WordPress finds the results, so they&#8217;re always current, and they come back with links and images that point at your static site, including that destination&#8217;s text and link replacements. Filtered links (such as <code>/shop/?brx_abc123=red</code>) open with the filters applied. When a page has filters or loads more posts, each sync also uploads every size of the featured image of every post in your export, so new results have their pictures.</p>
+<h3>New</h3>
+<p><strong>Faster forms and filters after the first page.</strong> The security token in an exported page has usually expired, so Bricks has to fetch a fresh one before its first request goes through. ShipStatic now remembers the fresh token in the visitor&#8217;s browser for 11 hours, so later pages and filters answer straight away.</p>
 <h3>New</h3>
 <p><strong>Forms and filters keep working with Lockdown on (experimental).</strong> Lockdown lets exactly these requests through to WordPress and still turns everything else away, on Apache, LiteSpeed and nginx (including the optional nginx snippet).</p>
+<h3>Fixed</h3>
+<p><strong>Multisite: each site keeps its own export.</strong> On a multisite network every site shared one render cache, so sites overwrote each other&#8217;s pages, and background syncs ran on the main site. Each site now has its own.</p>
+<h3>Fixed</h3>
+<p><strong>Sitemap addresses with unusual characters.</strong> A Destination URL whose path contained <code>$0</code> or similar could corrupt that destination&#8217;s <code>sitemap.xml</code> and <code>robots.txt</code>.</p>
 <h3>Improved</h3>
-<p><strong>Fewer false warnings.</strong> While the setting is on, the processed-pages list no longer warns that Bricks forms won&#8217;t work on the static site.</p>
+<p><strong>Multisite: features that change the server are disabled.</strong> On a multisite network, Lockdown, “This server” and Move WordPress into /wp would write server files and folders every site on the network shares, so any site&#8217;s administrator could affect all of them. They now show <strong>Disabled on Multisite</strong>. The other deploy methods work as usual.</p>
+<h3>Improved</h3>
+<p><strong>Lockdown is harder to get around.</strong> Making a new unlock link now also replaces Lockdown&#8217;s internal token, which is never sent on to another site. The requests Lockdown lets through for forms and filters are narrower. Turning Lockdown off can no longer leave PHP failing on every request if a file couldn&#8217;t be updated.</p>
+<h3>Improved</h3>
+<p><strong>Fewer false warnings.</strong> While the forms and filters setting is on, the processed-pages list no longer warns that Bricks forms won&#8217;t work on the static site.</p>

@@ -89,6 +89,15 @@ final class PageRenderer {
     }
 
     /**
+     * Replace the render token (with a new unlock link: both open a locked
+     * site, so one leak is remedied by changing both). The caller rewrites
+     * the Lockdown files, which hold it.
+     */
+    public static function rotate_token(): void {
+        update_option(self::TOKEN_OPTION, wp_generate_password(40, false, false), false);
+    }
+
+    /**
      * The site's render token, generated on first use.
      */
     public static function token(): string {

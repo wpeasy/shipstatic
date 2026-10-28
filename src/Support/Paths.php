@@ -216,6 +216,11 @@ final class Paths {
             }
         }
 
+        // One folder per site on a network: every site renders its own pages.
+        if (Environment::is_multisite()) {
+            $dir .= '/site-' . get_current_blog_id();
+        }
+
         /**
          * Filters the absolute path to the staging cache directory.
          *
