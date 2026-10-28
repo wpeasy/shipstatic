@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shipstatic\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shipstatic\n"
-"POT-Creation-Date: 2026-10-28T04:47:39+00:00\n"
+"POT-Creation-Date: 2026-10-28T22:42:00+00:00\n"
 "PO-Revision-Date: 2026-06-22 00:00+0000\n"
 "Last-Translator: Claude Code (machine translation)\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,8 +18,8 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: shipstatic.php src/Abilities/AbilityRegistry.php:104
-#: src/Admin/Editor.php:93 src/Admin/Menu.php:94 src/Admin/Menu.php:95
-#: src/Admin/Menu.php:107 src/Frontend/Search.php:57
+#: src/Admin/Editor.php:93 src/Admin/Menu.php:201 src/Admin/Menu.php:202
+#: src/Admin/Menu.php:214 src/Frontend/Search.php:57
 msgid "ShipStatic"
 msgstr "ShipStatic"
 
@@ -313,21 +313,73 @@ msgstr "Ejecuta una comprobación o sincronización para ver el estado"
 msgid "Could not change this page. Please try again."
 msgstr "No se pudo cambiar esta página. Inténtalo de nuevo."
 
-#: src/Admin/Menu.php:108
+#: src/Admin/Menu.php:91
+msgid ""
+"The admin assets are not built (assets/dist/.vite/manifest.json is missing)."
+" Reinstall the plugin from a fresh download, or run \"npm run build\" in the"
+" plugin directory."
+msgstr ""
+"Los recursos de administración no están compilados (falta "
+"assets/dist/.vite/manifest.json). Reinstala el plugin desde una descarga "
+"nueva o ejecuta «npm run build» en el directorio del plugin."
+
+#: src/Admin/Menu.php:96
+msgid ""
+"The built admin assets are out of date (the manifest has no entry for this "
+"page). Reinstall the plugin from a fresh download."
+msgstr ""
+"Los recursos compilados de administración están desactualizados (el "
+"manifiesto no tiene una entrada para esta página). Reinstala el plugin desde"
+" una descarga nueva."
+
+#. translators: %s: file path inside the plugin, e.g.
+#. assets/dist/assets/dashboard-abc.js
+#: src/Admin/Menu.php:122
+#, php-format
+msgid ""
+"A built file is missing or unreadable: %s. The plugin may have been uploaded"
+" incompletely or its file permissions are wrong. Reinstall it from a fresh "
+"download."
+msgstr ""
+"Falta un archivo compilado o no se puede leer: %s. Puede que el plugin se "
+"subiera de forma incompleta o que los permisos de los archivos sean "
+"incorrectos. Reinstálalo desde una descarga nueva."
+
+#: src/Admin/Menu.php:137
+msgid "ShipStatic admin assets"
+msgstr "Recursos de administración de ShipStatic"
+
+#: src/Admin/Menu.php:159
+msgid "ShipStatic admin assets are present"
+msgstr "Los recursos de administración de ShipStatic están presentes"
+
+#: src/Admin/Menu.php:162
+msgid "The files the ShipStatic dashboard needs are installed and readable."
+msgstr ""
+"Los archivos que necesita el panel de ShipStatic están instalados y se "
+"pueden leer."
+
+#: src/Admin/Menu.php:168
+msgid "ShipStatic admin assets are missing"
+msgstr "Faltan los recursos de administración de ShipStatic"
+
+#: src/Admin/Menu.php:215
 msgid "Dashboard"
 msgstr "Panel"
 
-#: src/Admin/Menu.php:116 src/Admin/Menu.php:117
+#: src/Admin/Menu.php:223 src/Admin/Menu.php:224
 msgid "Documentation"
 msgstr "Documentación"
 
-#: src/Admin/Menu.php:160
-msgid ""
-"ShipStatic: the admin assets are not built. Run \"npm run build\" in the "
-"plugin directory."
-msgstr ""
-"ShipStatic: los recursos del panel no están compilados. Ejecuta \"npm run "
-"build\" en el directorio del complemento."
+#. translators: %s: what is wrong with the built admin files.
+#: src/Admin/Menu.php:270
+#, php-format
+msgid "ShipStatic: %s"
+msgstr "ShipStatic: %s"
+
+#: src/Admin/Menu.php:271
+msgid "the admin assets could not be read."
+msgstr "no se pudieron leer los recursos de administración."
 
 #: src/Bricks/SearchElement.php:41
 msgid "ShipStatic Search"
@@ -428,9 +480,12 @@ msgid "Hide results preview in builder"
 msgstr "Ocultar vista previa de resultados en el constructor"
 
 #: src/Bricks/SearchElement.php:138
-msgid "The builder shows sample results so you can style them."
+msgid ""
+"While this element is selected, the builder shows sample results so you can "
+"style them."
 msgstr ""
-"El constructor muestra resultados de ejemplo para que puedas darles estilo."
+"Mientras este elemento está seleccionado, el constructor muestra resultados "
+"de ejemplo para que puedas darles estilo."
 
 #: src/Bricks/SearchElement.php:143
 msgid "Min height"
@@ -2609,7 +2664,7 @@ msgid "Excluded"
 msgstr "Excluidas"
 
 #: src/Support/I18n.php:394 src/Support/I18n.php:1012
-#: templates/admin/docs.php:23 templates/admin/page.php:23
+#: templates/admin/loading.php:46
 msgid "Loading…"
 msgstr "Cargando…"
 
@@ -5027,6 +5082,100 @@ msgstr "No se pudo crear la carpeta %s."
 #: templates/admin/docs.php:20
 msgid "ShipStatic documentation requires JavaScript."
 msgstr "La documentación de ShipStatic requiere JavaScript."
+
+#: templates/admin/loading.php:36 templates/admin/loading.php:57
+msgid "ShipStatic could not start."
+msgstr "ShipStatic no pudo iniciarse."
+
+#: templates/admin/loading.php:38
+msgid "If this keeps happening, send this message to ShipStatic support:"
+msgstr ""
+"Si esto sigue ocurriendo, envía este mensaje al soporte de ShipStatic:"
+
+#: templates/admin/loading.php:58
+msgid "The dashboard script did not load or stopped with an error. Details:"
+msgstr "El script del panel no se cargó o se detuvo con un error. Detalles:"
+
+#: templates/admin/loading.php:59
+msgid ""
+"This browser does not support JavaScript modules. Please update your "
+"browser."
+msgstr ""
+"Este navegador no admite módulos de JavaScript. Actualiza tu navegador."
+
+#: templates/admin/loading.php:60
+msgid ""
+"The dashboard data was not printed by WordPress (the script was not enqueued"
+" — another plugin or a caching/optimisation layer may be removing it)."
+msgstr ""
+"WordPress no imprimió los datos del panel (el script no se encoló: otro "
+"plugin o una capa de caché/optimización puede estar eliminándolo)."
+
+#: templates/admin/loading.php:61
+msgid "The dashboard script tag is missing from the page."
+msgstr "Falta en la página la etiqueta del script del panel."
+
+#. translators: %s: HTTP status code, e.g. 404.
+#: templates/admin/loading.php:63
+#, php-format
+msgid "The script file returned HTTP %s."
+msgstr "El archivo del script devolvió HTTP %s."
+
+#. translators: %s: the content type the server sent, e.g. text/html.
+#: templates/admin/loading.php:65
+#, php-format
+msgid ""
+"The script file is served as \"%s\" instead of JavaScript — the server or a "
+"security/optimisation plugin is blocking or rewriting it."
+msgstr ""
+"El archivo del script se sirve como «%s» en lugar de JavaScript: el servidor"
+" o un plugin de seguridad/optimización lo está bloqueando o reescribiendo."
+
+#: templates/admin/loading.php:66
+msgid ""
+"The script file could not be fetched (network error or blocked by a "
+"firewall/content-security-policy)."
+msgstr ""
+"No se pudo obtener el archivo del script (error de red o bloqueado por un "
+"firewall o una content-security-policy)."
+
+#: templates/admin/loading.php:67
+msgid "The browser reported an error loading the script file."
+msgstr "El navegador informó de un error al cargar el archivo del script."
+
+#: templates/admin/loading.php:68
+msgid "JavaScript error:"
+msgstr "Error de JavaScript:"
+
+#: templates/admin/loading.php:69
+msgid ""
+"First, try deactivating your other plugins (especially caching, "
+"minification, optimisation and security plugins), then reload this page."
+msgstr ""
+"Primero, prueba a desactivar tus otros plugins (en especial los de caché, "
+"minificación, optimización y seguridad) y luego recarga esta página."
+
+#: templates/admin/loading.php:70
+msgid ""
+"If it still does not load, open your browser console (F12, then the Console "
+"tab), copy everything shown there, and send it to ShipStatic support so we "
+"can diagnose it:"
+msgstr ""
+"Si sigue sin cargar, abre la consola del navegador (F12 y luego la pestaña "
+"Consola), copia todo lo que aparezca y envíalo al soporte de ShipStatic para"
+" que podamos diagnosticarlo:"
+
+#: templates/admin/loading.php:72
+msgid "Version"
+msgstr "Versión"
+
+#: templates/admin/loading.php:73
+msgid "Copy diagnostics"
+msgstr "Copiar diagnóstico"
+
+#: templates/admin/loading.php:74
+msgid "Copied — paste it into your support request."
+msgstr "Copiado: pégalo en tu solicitud de soporte."
 
 #: templates/admin/page.php:20
 msgid "ShipStatic requires JavaScript."

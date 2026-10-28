@@ -59,7 +59,9 @@ wp_print_inline_script_tag(
 		'noModule' => __('This browser does not support JavaScript modules. Please update your browser.', 'shipstatic'),
 		'noData'   => __('The dashboard data was not printed by WordPress (the script was not enqueued — another plugin or a caching/optimisation layer may be removing it).', 'shipstatic'),
 		'noEntry'  => __('The dashboard script tag is missing from the page.', 'shipstatic'),
+		/* translators: %s: HTTP status code, e.g. 404. */
 		'http'     => __('The script file returned HTTP %s.', 'shipstatic'),
+		/* translators: %s: the content type the server sent, e.g. text/html. */
 		'mime'     => __('The script file is served as "%s" instead of JavaScript — the server or a security/optimisation plugin is blocking or rewriting it.', 'shipstatic'),
 		'network'  => __('The script file could not be fetched (network error or blocked by a firewall/content-security-policy).', 'shipstatic'),
 		'loadErr'  => __('The browser reported an error loading the script file.', 'shipstatic'),

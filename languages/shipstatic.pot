@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ShipStatic 2.4.9\n"
+"Project-Id-Version: ShipStatic 2.4.11\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shipstatic\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-28T04:47:39+00:00\n"
+"POT-Creation-Date: 2026-10-28T22:42:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: shipstatic\n"
@@ -18,9 +18,9 @@ msgstr ""
 #: shipstatic.php
 #: src/Abilities/AbilityRegistry.php:104
 #: src/Admin/Editor.php:93
-#: src/Admin/Menu.php:94
-#: src/Admin/Menu.php:95
-#: src/Admin/Menu.php:107
+#: src/Admin/Menu.php:201
+#: src/Admin/Menu.php:202
+#: src/Admin/Menu.php:214
 #: src/Frontend/Search.php:57
 msgid "ShipStatic"
 msgstr ""
@@ -249,17 +249,53 @@ msgstr ""
 msgid "Could not change this page. Please try again."
 msgstr ""
 
-#: src/Admin/Menu.php:108
+#: src/Admin/Menu.php:91
+msgid "The admin assets are not built (assets/dist/.vite/manifest.json is missing). Reinstall the plugin from a fresh download, or run \"npm run build\" in the plugin directory."
+msgstr ""
+
+#: src/Admin/Menu.php:96
+msgid "The built admin assets are out of date (the manifest has no entry for this page). Reinstall the plugin from a fresh download."
+msgstr ""
+
+#. translators: %s: file path inside the plugin, e.g. assets/dist/assets/dashboard-abc.js
+#: src/Admin/Menu.php:122
+#, php-format
+msgid "A built file is missing or unreadable: %s. The plugin may have been uploaded incompletely or its file permissions are wrong. Reinstall it from a fresh download."
+msgstr ""
+
+#: src/Admin/Menu.php:137
+msgid "ShipStatic admin assets"
+msgstr ""
+
+#: src/Admin/Menu.php:159
+msgid "ShipStatic admin assets are present"
+msgstr ""
+
+#: src/Admin/Menu.php:162
+msgid "The files the ShipStatic dashboard needs are installed and readable."
+msgstr ""
+
+#: src/Admin/Menu.php:168
+msgid "ShipStatic admin assets are missing"
+msgstr ""
+
+#: src/Admin/Menu.php:215
 msgid "Dashboard"
 msgstr ""
 
-#: src/Admin/Menu.php:116
-#: src/Admin/Menu.php:117
+#: src/Admin/Menu.php:223
+#: src/Admin/Menu.php:224
 msgid "Documentation"
 msgstr ""
 
-#: src/Admin/Menu.php:160
-msgid "ShipStatic: the admin assets are not built. Run \"npm run build\" in the plugin directory."
+#. translators: %s: what is wrong with the built admin files.
+#: src/Admin/Menu.php:270
+#, php-format
+msgid "ShipStatic: %s"
+msgstr ""
+
+#: src/Admin/Menu.php:271
+msgid "the admin assets could not be read."
 msgstr ""
 
 #: src/Bricks/SearchElement.php:41
@@ -357,7 +393,7 @@ msgid "Hide results preview in builder"
 msgstr ""
 
 #: src/Bricks/SearchElement.php:138
-msgid "The builder shows sample results so you can style them."
+msgid "While this element is selected, the builder shows sample results so you can style them."
 msgstr ""
 
 #: src/Bricks/SearchElement.php:143
@@ -2065,8 +2101,7 @@ msgstr ""
 
 #: src/Support/I18n.php:394
 #: src/Support/I18n.php:1012
-#: templates/admin/docs.php:23
-#: templates/admin/page.php:23
+#: templates/admin/loading.php:46
 msgid "Loading…"
 msgstr ""
 
@@ -3872,6 +3907,75 @@ msgstr ""
 
 #: templates/admin/docs.php:20
 msgid "ShipStatic documentation requires JavaScript."
+msgstr ""
+
+#: templates/admin/loading.php:36
+#: templates/admin/loading.php:57
+msgid "ShipStatic could not start."
+msgstr ""
+
+#: templates/admin/loading.php:38
+msgid "If this keeps happening, send this message to ShipStatic support:"
+msgstr ""
+
+#: templates/admin/loading.php:58
+msgid "The dashboard script did not load or stopped with an error. Details:"
+msgstr ""
+
+#: templates/admin/loading.php:59
+msgid "This browser does not support JavaScript modules. Please update your browser."
+msgstr ""
+
+#: templates/admin/loading.php:60
+msgid "The dashboard data was not printed by WordPress (the script was not enqueued — another plugin or a caching/optimisation layer may be removing it)."
+msgstr ""
+
+#: templates/admin/loading.php:61
+msgid "The dashboard script tag is missing from the page."
+msgstr ""
+
+#. translators: %s: HTTP status code, e.g. 404.
+#: templates/admin/loading.php:63
+#, php-format
+msgid "The script file returned HTTP %s."
+msgstr ""
+
+#. translators: %s: the content type the server sent, e.g. text/html.
+#: templates/admin/loading.php:65
+#, php-format
+msgid "The script file is served as \"%s\" instead of JavaScript — the server or a security/optimisation plugin is blocking or rewriting it."
+msgstr ""
+
+#: templates/admin/loading.php:66
+msgid "The script file could not be fetched (network error or blocked by a firewall/content-security-policy)."
+msgstr ""
+
+#: templates/admin/loading.php:67
+msgid "The browser reported an error loading the script file."
+msgstr ""
+
+#: templates/admin/loading.php:68
+msgid "JavaScript error:"
+msgstr ""
+
+#: templates/admin/loading.php:69
+msgid "First, try deactivating your other plugins (especially caching, minification, optimisation and security plugins), then reload this page."
+msgstr ""
+
+#: templates/admin/loading.php:70
+msgid "If it still does not load, open your browser console (F12, then the Console tab), copy everything shown there, and send it to ShipStatic support so we can diagnose it:"
+msgstr ""
+
+#: templates/admin/loading.php:72
+msgid "Version"
+msgstr ""
+
+#: templates/admin/loading.php:73
+msgid "Copy diagnostics"
+msgstr ""
+
+#: templates/admin/loading.php:74
+msgid "Copied — paste it into your support request."
 msgstr ""
 
 #: templates/admin/page.php:20

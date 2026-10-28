@@ -159,13 +159,37 @@
     "msgid": "Could not change this page. Please try again."
   },
   {
+    "msgid": "The admin assets are not built (assets/dist/.vite/manifest.json is missing). Reinstall the plugin from a fresh download, or run \"npm run build\" in the plugin directory."
+  },
+  {
+    "msgid": "The built admin assets are out of date (the manifest has no entry for this page). Reinstall the plugin from a fresh download."
+  },
+  {
+    "msgid": "A built file is missing or unreadable: %s. The plugin may have been uploaded incompletely or its file permissions are wrong. Reinstall it from a fresh download."
+  },
+  {
+    "msgid": "ShipStatic admin assets"
+  },
+  {
+    "msgid": "ShipStatic admin assets are present"
+  },
+  {
+    "msgid": "The files the ShipStatic dashboard needs are installed and readable."
+  },
+  {
+    "msgid": "ShipStatic admin assets are missing"
+  },
+  {
     "msgid": "Dashboard"
   },
   {
     "msgid": "Documentation"
   },
   {
-    "msgid": "ShipStatic: the admin assets are not built. Run \"npm run build\" in the plugin directory."
+    "msgid": "ShipStatic: %s"
+  },
+  {
+    "msgid": "the admin assets could not be read."
   },
   {
     "msgid": "ShipStatic Search"
@@ -231,7 +255,7 @@
     "msgid": "Hide results preview in builder"
   },
   {
-    "msgid": "The builder shows sample results so you can style them."
+    "msgid": "While this element is selected, the builder shows sample results so you can style them."
   },
   {
     "msgid": "Min height"
@@ -2618,6 +2642,54 @@
   },
   {
     "msgid": "ShipStatic documentation requires JavaScript."
+  },
+  {
+    "msgid": "ShipStatic could not start."
+  },
+  {
+    "msgid": "If this keeps happening, send this message to ShipStatic support:"
+  },
+  {
+    "msgid": "The dashboard script did not load or stopped with an error. Details:"
+  },
+  {
+    "msgid": "This browser does not support JavaScript modules. Please update your browser."
+  },
+  {
+    "msgid": "The dashboard data was not printed by WordPress (the script was not enqueued — another plugin or a caching/optimisation layer may be removing it)."
+  },
+  {
+    "msgid": "The dashboard script tag is missing from the page."
+  },
+  {
+    "msgid": "The script file returned HTTP %s."
+  },
+  {
+    "msgid": "The script file is served as \"%s\" instead of JavaScript — the server or a security/optimisation plugin is blocking or rewriting it."
+  },
+  {
+    "msgid": "The script file could not be fetched (network error or blocked by a firewall/content-security-policy)."
+  },
+  {
+    "msgid": "The browser reported an error loading the script file."
+  },
+  {
+    "msgid": "JavaScript error:"
+  },
+  {
+    "msgid": "First, try deactivating your other plugins (especially caching, minification, optimisation and security plugins), then reload this page."
+  },
+  {
+    "msgid": "If it still does not load, open your browser console (F12, then the Console tab), copy everything shown there, and send it to ShipStatic support so we can diagnose it:"
+  },
+  {
+    "msgid": "Version"
+  },
+  {
+    "msgid": "Copy diagnostics"
+  },
+  {
+    "msgid": "Copied — paste it into your support request."
   },
   {
     "msgid": "ShipStatic requires JavaScript."
