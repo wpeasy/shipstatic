@@ -981,7 +981,7 @@
   "In the static export — click to remove": "Nell’esportazione statica — clicca per rimuovere",
   "Not in the static export — click to include": "Non nell’esportazione statica — clicca per includere",
   "Could not change this page. Please try again.": "Impossibile modificare questa pagina. Riprova.",
-  "While this element is selected, the builder shows sample results so you can style them.": "Mentre questo elemento è selezionato, il builder mostra risultati di esempio così puoi personalizzarne lo stile.",
+  "While this element is selected, the builder shows sample results so you can style them.": "Finché questo elemento è selezionato, il builder mostra risultati di esempio così puoi stilizzarli.",
   "The admin assets are not built (assets/dist/.vite/manifest.json is missing). Reinstall the plugin from a fresh download, or run \"npm run build\" in the plugin directory.": "Gli asset dell’amministrazione non sono stati compilati (assets/dist/.vite/manifest.json non è presente). Reinstalla il plugin da un download recente oppure esegui “npm run build” nella cartella del plugin.",
   "The built admin assets are out of date (the manifest has no entry for this page). Reinstall the plugin from a fresh download.": "Gli asset compilati dell’amministrazione sono obsoleti (il manifest non ha una voce per questa pagina). Reinstalla il plugin da un download recente.",
   "A built file is missing or unreadable: %s. The plugin may have been uploaded incompletely or its file permissions are wrong. Reinstall it from a fresh download.": "Un file compilato manca o non è leggibile: %s. Il plugin potrebbe essere stato caricato in modo incompleto oppure i permessi dei file sono errati. Reinstallalo da un download recente.",

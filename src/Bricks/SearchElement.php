@@ -135,7 +135,7 @@ class SearchElement extends \Bricks\Element {
         $this->controls['hidePreview'] = [
             'label'       => esc_html__('Hide results preview in builder', 'shipstatic'),
             'type'        => 'checkbox',
-            'description' => esc_html__('The builder shows sample results so you can style them.', 'shipstatic'),
+            'description' => esc_html__('While this element is selected, the builder shows sample results so you can style them.', 'shipstatic'),
         ];
 
         // ── Field (box around icon, input and button) ─────────────────

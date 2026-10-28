@@ -10,3 +10,6 @@
 
 ### New
 **Missing files are spotted straight away.** If part of the plugin didn’t upload or has the wrong permissions, ShipStatic names the exact file immediately, and a new ShipStatic check appears under Tools → Site Health.
+
+### Fixed
+**Search element in the Bricks builder.** The sample results now show only on the search box you’ve selected, instead of on every search box on the page.

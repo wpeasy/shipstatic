@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **The dashboard and Docs explain why they can't start instead of sitting on "Loading…".** `templates/admin/loading.php` (shared by both pages) holds the placeholder and a startup watchdog (`wp_print_inline_script_tag`, independent of the Svelte bundle). It records script-load errors, runtime errors and unhandled rejections, and if `#bs-loading` is still there 4 s after `load` it replaces it with an error notice listing what it found: missing `shipStaticData`, no module support, the bundle's HTTP status (404/403…), a non-JavaScript MIME type, a blocked fetch, JS errors. Steps for the user (deactivate other plugins, copy the console to WordPress.org support) and a **Copy diagnostics** button (ShipStatic/WordPress/PHP versions, server, active plugin folders, browser, problems).
 - **PHP-side asset pre-check.** `Admin\Menu::assets_problem()` verifies the Vite manifest, the entry script, every imported chunk and every stylesheet exist and are readable; a partial upload, bad extraction or wrong permissions now show the exact file at once (in the placeholder and the admin notice). Also a **Site Health** direct test (`shipstatic_assets`).
 
+### Fixed
+- **Bricks builder: the Search element's sample results show only while the element is selected.** The sample list (`.bs-search--preview`, builder-only) appeared on every search box on the page; `search.css` now hides it unless Bricks marks the element `.is-active-element` (`!important` on purpose, so a display set on the results list can't bring it back). The "Hide results preview in builder" description says so.
+
 ### Changed
 - `dashboard/main.ts` and `docs/main.ts` remove the placeholder only after `mount()` succeeds, so a crash during mount no longer leaves a blank page.
 

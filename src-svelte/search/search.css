@@ -231,3 +231,13 @@
   padding: 8px 10px;
   color: color-mix(in srgb, currentColor 70%, transparent);
 }
+
+/* ── Builder: the sample results show only on the selected element ── */
+/* Bricks marks the element selected in the canvas with .is-active-element.
+   The sample list (.bs-search--preview) exists only in the builder, so this
+   never reaches a published page. !important and real specificity on purpose:
+   a display set on the results list must not bring the sample back on every
+   search box on the page. */
+[class*='brxe-']:not(.is-active-element) > .bs-ss > .bs-search--preview {
+  display: none !important;
+}
