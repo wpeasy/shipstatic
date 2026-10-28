@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.9
+Stable tag: 2.4.10
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,10 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.4.10 =
+* New: in "Manual selection" mode, the Pages and Posts lists have a one-click include icon (grey = not in the export, green = in it), and Quick Edit has an "Include in static export" checkbox.
+* Fixed: page titles with an ampersand or quotes showed HTML codes such as "&#038;" in the processed list and other ShipStatic lists.
 
 = 2.4.9 =
 * New (experimental): Bricks forms, query filters, AJAX pagination, load more and AJAX popups work on the static site. They send their requests to your WordPress site, results link to the static site, and filtered links open filtered. With Lockdown on, these requests still get through.

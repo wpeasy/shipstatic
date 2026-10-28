@@ -353,6 +353,8 @@ Abilities are thin wrappers over the same `Runner`/`UrlCollector`/`Destinations`
 
 ---
 
+**Post titles for the UI go through `Support\Text::title()`**, never raw `get_the_title()`: that returns texturized HTML (`&` → `&#038;`), and the dashboard/REST/WP-CLI show text, so the entity appeared literally (2.4.10).
+
 ## Internationalization (i18n) — PHP dictionary, NOT `@wordpress/i18n`
 
 UI strings are localized with a **PHP-dictionary** pattern, deliberately not `@wordpress/i18n` + `wp_set_script_translations()` (whose md5-of-source-path `.json` matching is brittle with Vite's hashed/code-split bundles — translations silently vanish). This mirrors the sibling `ab-bricks-productivity` plugin.

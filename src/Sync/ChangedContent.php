@@ -12,6 +12,7 @@ namespace WPEasy\ShipStatic\Sync;
 
 use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Search\LiveIndex;
+use WPEasy\ShipStatic\Support\Text;
 use WPEasy\ShipStatic\Support\Url;
 
 defined('ABSPATH') || exit;
@@ -91,7 +92,7 @@ final class ChangedContent {
             if (isset($render[$relative]) || $mode === 'all' || $mode === 'manual') {
                 $urls[] = $link;
             } elseif ($old === [] && $lists === []) {
-                $unlinked[] = wp_strip_all_tags(get_the_title($post));
+                $unlinked[] = Text::title($post);
             }
             $urls = array_merge($urls, $lists);
         }

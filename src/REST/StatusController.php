@@ -13,24 +13,25 @@ namespace WPEasy\ShipStatic\REST;
 use WP_REST_Request;
 use WP_REST_Response;
 use WPEasy\ShipStatic\Abilities\AbilityRegistry;
-use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Bricks\Relay;
+use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\Render\CompatibilityScanner;
 use WPEasy\ShipStatic\Render\UrlRewriter;
+use WPEasy\ShipStatic\Search\IndexBuilder;
+use WPEasy\ShipStatic\Search\LiveIndex;
 use WPEasy\ShipStatic\Settings\Destinations;
-use WPEasy\ShipStatic\Sync\ChangeTracker;
-use WPEasy\ShipStatic\Sync\ChangedContent;
-use WPEasy\ShipStatic\Sync\DeployPool;
 use WPEasy\ShipStatic\Support\Environment;
 use WPEasy\ShipStatic\Support\Paths;
+use WPEasy\ShipStatic\Support\Text;
 use WPEasy\ShipStatic\Support\Url;
+use WPEasy\ShipStatic\Sync\ChangedContent;
+use WPEasy\ShipStatic\Sync\ChangeTracker;
+use WPEasy\ShipStatic\Sync\DeployPool;
 use WPEasy\ShipStatic\Sync\Manifest;
 use WPEasy\ShipStatic\Sync\MethodResolver;
 use WPEasy\ShipStatic\Sync\Runner;
-use WPEasy\ShipStatic\Search\IndexBuilder;
-use WPEasy\ShipStatic\Search\LiveIndex;
 
 defined('ABSPATH') || exit;
 
@@ -172,7 +173,7 @@ final class StatusController {
                 $pid    = (int) $pid;
                 $url    = (string) get_permalink($pid);
                 $rel    = $url !== '' ? Url::to_relative_path($url) : null;
-                $title  = (string) get_the_title($pid);
+                $title  = Text::title($pid);
                 $title  = $title !== '' ? $title : __('(no title)', 'shipstatic');
                 $status = (string) get_post_status($pid);
 

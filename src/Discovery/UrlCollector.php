@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace WPEasy\ShipStatic\Discovery;
 
+use WPEasy\ShipStatic\Support\Text;
 use WPEasy\ShipStatic\Support\Url;
 
 defined('ABSPATH') || exit;
@@ -269,7 +270,7 @@ final class UrlCollector {
             $path  = $rel !== null ? '/' . preg_replace('#/?index\.html$#i', '/', $rel) : (string) wp_parse_url($link, PHP_URL_PATH);
             $out[] = [
                 'label' => $path === '/' ? '/' : rtrim($path, '/') . '/',
-                'title' => wp_strip_all_tags(get_the_title((int) $pid)),
+                'title' => Text::title((int) $pid),
             ];
         }
         usort($out, static fn(array $a, array $b): int => strcasecmp($a['label'], $b['label']));

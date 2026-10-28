@@ -71,9 +71,12 @@ final class Editor {
         add_action('admin_enqueue_scripts', [self::class, 'enqueue']);
         add_filter('script_loader_tag', [self::class, 'script_as_module'], 10, 2);
 
-        // The per-post "Include" metabox is only meaningful in manual mode.
+        // The per-post "Include" switch (metabox, Quick Edit, the column's
+        // check icon) is only meaningful in manual mode.
         if (UrlCollector::mode() === 'manual') {
             add_action('add_meta_boxes', [self::class, 'register_metabox']);
+            add_action('quick_edit_custom_box', [self::class, 'render_quick_edit'], 10, 2);
+            add_action('save_post', [self::class, 'save_quick_edit'], 10, 2);
         }
     }
 
@@ -101,6 +104,48 @@ final class Editor {
      */
     public static function render(): void {
         echo '<div class="bs"><div id="bs-editor-root"></div></div>';
+    }
+
+    /**
+     * Quick Edit: an "Include in static export" checkbox (manual mode). Core
+     * prints one Quick Edit form per table, so the editor bundle ticks it from
+     * the row's cell when Quick Edit opens.
+     *
+     * @param string $column    Column key.
+     * @param string $post_type Post type.
+     */
+    public static function render_quick_edit(string $column, string $post_type): void {
+        if ($column !== 'shipstatic_static' || !current_user_can('manage_options')
+            || !in_array($post_type, UrlCollector::public_post_types(), true)) {
+            return;
+        }
+        echo '<fieldset class="inline-edit-col-right bs-quick-edit"><div class="inline-edit-col"><div class="inline-edit-group wp-clearfix">'
+            . '<input type="hidden" name="shipstatic_quick_edit" value="1">'
+            . '<label class="alignleft"><input type="checkbox" name="shipstatic_include" value="1"> '
+            . '<span class="checkbox-title">' . esc_html__('Include in static export', 'shipstatic') . '</span></label>'
+            . '</div></div></fieldset>';
+    }
+
+    /**
+     * Save the Quick Edit checkbox. Only for core's inline-save request (whose
+     * nonce core has already checked; checked again here), and only when the
+     * form carried our field, so other saves never touch the setting.
+     *
+     * @param int      $post_id Post id.
+     * @param \WP_Post $post    Post.
+     */
+    public static function save_quick_edit(int $post_id, \WP_Post $post): void {
+        if (!wp_doing_ajax() || !isset($_POST['shipstatic_quick_edit'], $_POST['_inline_edit'])) {
+            return;
+        }
+        if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_inline_edit'])), 'inlineeditnonce')) {
+            return;
+        }
+        if (wp_is_post_revision($post_id) || !current_user_can('manage_options') || !current_user_can('edit_post', $post_id)
+            || !in_array($post->post_type, UrlCollector::public_post_types(), true)) {
+            return;
+        }
+        update_post_meta($post_id, UrlCollector::INCLUDE_META, isset($_POST['shipstatic_include']) ? '1' : '0');
     }
 
     /**
@@ -146,6 +191,20 @@ final class Editor {
             return;
         }
 
+        // Manual mode: a check icon includes/excludes the page in one click
+        // (grey = not in the export, green = in it); the status button beside
+        // it shows only while the page is included.
+        $toggle = '';
+        if (UrlCollector::mode() === 'manual') {
+            $in     = $st['state'] === 'included';
+            $toggle = sprintf(
+                '<button type="button" class="bs-static-inc" data-post="%1$d" aria-pressed="%2$s" aria-label="%3$s"><span class="dashicons dashicons-yes-alt" aria-hidden="true"></span></button>',
+                (int) $post_id,
+                $in ? 'true' : 'false',
+                esc_attr($in ? __('In the static export — click to remove', 'shipstatic') : __('Not in the static export — click to include', 'shipstatic'))
+            );
+        }
+
         $labels = [
             'included' => $st['synced']
                 ? __('In sync — open to re-sync', 'shipstatic')
@@ -161,6 +220,9 @@ final class Editor {
                           . '<span class="bs-static-ico" aria-hidden="true">⟳</span>',
         };
 
+        if ($toggle !== '') {
+            echo '<span class="bs-static-wrap">' . $toggle; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built above with esc_attr()/int casts.
+        }
         printf(
             '<button type="button" class="bs-static-cell" data-post="%1$d" data-url="%2$s" data-included="%3$s" data-state="%4$s" data-synced="%5$s" aria-label="%6$s">%7$s</button>',
             (int) $post_id,
@@ -171,6 +233,9 @@ final class Editor {
             esc_attr($labels[$st['state']] ?? ''),
             $inner // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed markup from the match() above; no variable data.
         );
+        if ($toggle !== '') {
+            echo '</span>';
+        }
     }
 
     /**
@@ -352,6 +417,11 @@ final class Editor {
             'fabEnabled'    => get_option('shipstatic_fab_enabled', '1') !== '0',
             'includedCount' => $manual ? UrlCollector::effective_count() : 0,
             'savedCount'    => $manual ? UrlCollector::included_count() : 0,
+            'labels'        => [
+                'included' => __('In the static export — click to remove', 'shipstatic'),
+                'excluded' => __('Not in the static export — click to include', 'shipstatic'),
+                'failed'   => __('Could not change this page. Please try again.', 'shipstatic'),
+            ],
         ]);
     }
 

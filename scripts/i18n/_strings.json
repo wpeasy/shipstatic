@@ -132,7 +132,16 @@
     "msgid": "No destinations are enabled for single-page sync."
   },
   {
+    "msgid": "Include in static export"
+  },
+  {
     "msgid": "Static"
+  },
+  {
+    "msgid": "In the static export — click to remove"
+  },
+  {
+    "msgid": "Not in the static export — click to include"
   },
   {
     "msgid": "In sync — open to re-sync"
@@ -145,6 +154,9 @@
   },
   {
     "msgid": "Run a check or sync to see status"
+  },
+  {
+    "msgid": "Could not change this page. Please try again."
   },
   {
     "msgid": "Dashboard"
@@ -567,6 +579,9 @@
     "msgid": "Couldn’t delete %s."
   },
   {
+    "msgid": "Not available."
+  },
+  {
     "msgid": "Enter and save the Destination URL first — the connector is called at that address."
   },
   {
@@ -699,6 +714,9 @@
     "msgid": "Search results (preview)"
   },
   {
+    "msgid": "Disabled on Multisite"
+  },
+  {
     "msgid": "AI tools (MCP)"
   },
   {
@@ -772,9 +790,6 @@
   },
   {
     "msgid": "Cancel"
-  },
-  {
-    "msgid": "Include in static export"
   },
   {
     "msgid": "When off, this page is left out of the static export."
@@ -993,6 +1008,24 @@
     "msgid": "Blocked visitors see a 403 page (no destination has a Destination URL)."
   },
   {
+    "msgid": "Bricks forms and filters on the static site still reach WordPress (Settings → Bricks forms and filters use WordPress). Other requests from visitors are still turned away."
+  },
+  {
+    "msgid": "Bricks forms and filters on the static site can’t reach WordPress: turn on Settings → Bricks forms and filters use WordPress to let their requests through."
+  },
+  {
+    "msgid": "Letting Bricks forms and filters through Lockdown is experimental and has only had basic testing. Check that your forms and filters work for a visitor who isn’t on the list (a phone on mobile data is an easy test)."
+  },
+  {
+    "msgid": "Lockdown writes server files (.htaccess, .user.ini and a PHP gate) that every site on a multisite network shares, so it can’t be used here."
+  },
+  {
+    "msgid": "“This server”: Disabled on Multisite"
+  },
+  {
+    "msgid": "“This server” and Move WordPress into /wp write folders and server files that every site on a multisite network shares, so they can’t be used here. Connector, FTP/SFTP, Cloudflare and GitHub Pages work as usual."
+  },
+  {
     "msgid": "Email the site admin when the unlock link adds an address"
   },
   {
@@ -1096,6 +1129,18 @@
   },
   {
     "msgid": "The ShipStatic Search element then searches as you type on this WordPress site as well, from the pages in the last Process (press Process to pick up new content). Other search boxes keep normal WordPress search."
+  },
+  {
+    "msgid": "Bricks forms and filters use WordPress"
+  },
+  {
+    "msgid": "Bricks forms, query filters, AJAX pagination, load more and AJAX popups on your static site send their requests to this WordPress site, which answers them as usual: forms run their actions (email, saved submissions, webhooks), and filters return results whose links and images point at your static site. With Lockdown on, these requests still get through. Sync after changing this."
+  },
+  {
+    "msgid": "This is an experimental feature and has only had basic testing: a Bricks form, search and checkbox filters and AJAX pagination, on Apache and nginx. Other filter types, infinite scroll, load more and AJAX popups haven’t been tested yet. Try your own forms and filters on the static site before relying on them, and check again after Bricks updates."
+  },
+  {
+    "msgid": "Experimental"
   },
   {
     "msgid": "Concurrent syncs"
@@ -1635,7 +1680,7 @@
     "msgid": "This server runs nginx, which ignores .htaccess. Its configuration must serve this folder at the domain root and pass the WordPress sub-folder to PHP. Ask your host, or use a folder that another domain points at."
   },
   {
-    "msgid": "A domain or subdomain must point at this folder (in cPanel: Domains, then set its document root). Test checks that it does."
+    "msgid": "A domain or subdomain must serve this folder: on cPanel, set its document root under Domains; on a VPS, a server block or virtual host with this folder as its root. Test checks that it does."
   },
   {
     "msgid": "The folder is empty."
@@ -1683,13 +1728,28 @@
     "msgid": "Close"
   },
   {
-    "msgid": "Or leave WordPress where it is and publish to another domain or subdomain (such as static.example.com) whose folder sits beside WordPress on this server."
+    "msgid": "WordPress is installed at the root of %s. Where should the static site go?"
   },
   {
-    "msgid": "Publish to another domain"
+    "msgid": "At %s, with WordPress moved into /wp"
   },
   {
-    "msgid": "← Move WordPress into /wp instead"
+    "msgid": "One domain: the static site takes the root and WordPress moves to %s. ShipStatic does the move for you, and you can undo it."
+  },
+  {
+    "msgid": "On another domain or subdomain, with WordPress left where it is"
+  },
+  {
+    "msgid": "Such as static.example.com, served from a folder on this server."
+  },
+  {
+    "msgid": "Your host must serve that domain from a folder on this server. On cPanel, add it under Domains and set its document root (usually a folder beside public_html). On a VPS, add a second site (an nginx server block or Apache virtual host) whose root is that folder. If the other domain is hosted elsewhere, use another deploy method instead, such as Connector or FTP."
+  },
+  {
+    "msgid": "Layout"
+  },
+  {
+    "msgid": "Move WordPress"
   },
   {
     "msgid": "WordPress is installed at the root of %1$s, so the static site has nowhere to go there yet. ShipStatic can move WordPress into a /wp folder: WordPress will then be at %2$s, and the static site at the root."

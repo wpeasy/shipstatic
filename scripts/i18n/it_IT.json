@@ -978,5 +978,8 @@
   "Disabled on Multisite": "Disattivato su Multisite",
   "Lockdown writes server files (.htaccess, .user.ini and a PHP gate) that every site on a multisite network shares, so it can’t be used here.": "Lockdown scrive file del server (.htaccess, .user.ini e un controllo PHP) condivisi da tutti i siti di una rete multisito, quindi qui non può essere usato.",
   "“This server”: Disabled on Multisite": "«Questo server»: disattivato su Multisite",
-  "“This server” and Move WordPress into /wp write folders and server files that every site on a multisite network shares, so they can’t be used here. Connector, FTP/SFTP, Cloudflare and GitHub Pages work as usual.": "«Questo server» e Sposta WordPress in /wp scrivono cartelle e file del server condivisi da tutti i siti di una rete multisito, quindi qui non possono essere usati. Connector, FTP/SFTP, Cloudflare e GitHub Pages funzionano come sempre."
+  "“This server” and Move WordPress into /wp write folders and server files that every site on a multisite network shares, so they can’t be used here. Connector, FTP/SFTP, Cloudflare and GitHub Pages work as usual.": "«Questo server» e Sposta WordPress in /wp scrivono cartelle e file del server condivisi da tutti i siti di una rete multisito, quindi qui non possono essere usati. Connector, FTP/SFTP, Cloudflare e GitHub Pages funzionano come sempre.",
+  "In the static export — click to remove": "Nell’esportazione statica — clicca per rimuovere",
+  "Not in the static export — click to include": "Non nell’esportazione statica — clicca per includere",
+  "Could not change this page. Please try again.": "Impossibile modificare questa pagina. Riprova."
 }

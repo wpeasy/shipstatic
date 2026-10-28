@@ -31,12 +31,13 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\Abilities;
 
 use WP_Error;
+use WPEasy\ShipStatic\CLI\Background;
 use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Render\AssetExtractor;
 use WPEasy\ShipStatic\Settings\Destinations;
 use WPEasy\ShipStatic\Support\Environment;
+use WPEasy\ShipStatic\Support\Text;
 use WPEasy\ShipStatic\Support\Url;
-use WPEasy\ShipStatic\CLI\Background;
 use WPEasy\ShipStatic\Sync\LinkGraph;
 use WPEasy\ShipStatic\Sync\Manifest;
 use WPEasy\ShipStatic\Sync\MethodResolver;
@@ -399,7 +400,7 @@ final class AbilityRegistry {
 
             $pages[] = [
                 'postId'    => $pid,
-                'title'     => (string) get_the_title($pid),
+                'title'     => Text::title($pid),
                 'url'       => (string) get_permalink($pid),
                 'type'      => (string) get_post_type($pid),
                 'included'  => $included,
@@ -443,7 +444,7 @@ final class AbilityRegistry {
 
         return [
             'postId'    => $post_id,
-            'title'     => (string) get_the_title($post_id),
+            'title'     => Text::title($post_id),
             'url'       => (string) get_permalink($post_id),
             'published' => $post->post_status === 'publish',
             'included'  => UrlCollector::is_included($post_id),
@@ -485,7 +486,7 @@ final class AbilityRegistry {
                     continue;
                 }
                 $seen[$pid] = true;
-                $outbound[] = ['postId' => $pid, 'title' => (string) get_the_title($pid)];
+                $outbound[] = ['postId' => $pid, 'title' => Text::title($pid)];
             }
         }
 
@@ -501,7 +502,7 @@ final class AbilityRegistry {
                 if ($p === null || $p->post_status !== 'publish') {
                     continue;
                 }
-                $inbound[] = ['postId' => $pid, 'title' => (string) get_the_title($pid)];
+                $inbound[] = ['postId' => $pid, 'title' => Text::title($pid)];
             }
         }
 

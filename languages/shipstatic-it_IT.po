@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shipstatic\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/shipstatic\n"
-"POT-Creation-Date: 2026-10-28T02:37:08+00:00\n"
+"POT-Creation-Date: 2026-10-28T04:47:39+00:00\n"
 "PO-Revision-Date: 2026-06-22 00:00+0000\n"
 "Last-Translator: Claude Code (machine translation)\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "X-Generator: WP-CLI 2.12.0\n"
 
 #. Plugin Name of the plugin
-#: shipstatic.php src/Abilities/AbilityRegistry.php:103
-#: src/Admin/Editor.php:90 src/Admin/Menu.php:94 src/Admin/Menu.php:95
+#: shipstatic.php src/Abilities/AbilityRegistry.php:104
+#: src/Admin/Editor.php:93 src/Admin/Menu.php:94 src/Admin/Menu.php:95
 #: src/Admin/Menu.php:107 src/Frontend/Search.php:57
 msgid "ShipStatic"
 msgstr "ShipStatic"
@@ -43,17 +43,17 @@ msgstr "BRXProd"
 msgid "https://brxprod.com"
 msgstr ""
 
-#: src/Abilities/AbilityRegistry.php:104
+#: src/Abilities/AbilityRegistry.php:105
 msgid "Inspect and drive the ShipStatic export/sync engine."
 msgstr ""
 "Ispeziona e controlla il motore di esportazione/sincronizzazione di "
 "ShipStatic."
 
-#: src/Abilities/AbilityRegistry.php:115
+#: src/Abilities/AbilityRegistry.php:116
 msgid "Get sync status"
 msgstr "Ottieni lo stato di sincronizzazione"
 
-#: src/Abilities/AbilityRegistry.php:116
+#: src/Abilities/AbilityRegistry.php:117
 msgid ""
 "Returns whether a destination is connected, whether anything has been "
 "pushed, and whether the static copy is in sync, plus the resolved sync "
@@ -63,11 +63,11 @@ msgstr ""
 " la copia statica è sincronizzata, oltre al metodo di sincronizzazione e "
 "alla modalità di rilevamento determinati."
 
-#: src/Abilities/AbilityRegistry.php:121
+#: src/Abilities/AbilityRegistry.php:122
 msgid "Get sync method"
 msgstr "Ottieni il metodo di sincronizzazione"
 
-#: src/Abilities/AbilityRegistry.php:122
+#: src/Abilities/AbilityRegistry.php:123
 msgid ""
 "Returns how a sync will run: discovery mode, transport, compression, server "
 "target and link style."
@@ -76,11 +76,11 @@ msgstr ""
 "rilevamento, trasporto, compressione, server di destinazione e stile dei "
 "link."
 
-#: src/Abilities/AbilityRegistry.php:127
+#: src/Abilities/AbilityRegistry.php:128
 msgid "List exportable pages"
 msgstr "Elenca le pagine esportabili"
 
-#: src/Abilities/AbilityRegistry.php:128
+#: src/Abilities/AbilityRegistry.php:129
 msgid ""
 "Lists published, public posts/pages with their static-export state: whether "
 "each is included, whether it will actually export under the current plan, "
@@ -90,11 +90,11 @@ msgstr ""
 "esportazione statica: se ciascuno è incluso, se verrà effettivamente "
 "esportato secondo il piano corrente e se è attualmente sincronizzato."
 
-#: src/Abilities/AbilityRegistry.php:133
+#: src/Abilities/AbilityRegistry.php:134
 msgid "Get page sync status"
 msgstr "Ottieni lo stato di sincronizzazione della pagina"
 
-#: src/Abilities/AbilityRegistry.php:134
+#: src/Abilities/AbilityRegistry.php:135
 msgid ""
 "For one post, returns its include/effective/synced state and per-destination"
 " push state."
@@ -103,11 +103,11 @@ msgstr ""
 "inclusione/effettivo/sincronizzazione e lo stato di invio per ogni "
 "destinazione."
 
-#: src/Abilities/AbilityRegistry.php:140
+#: src/Abilities/AbilityRegistry.php:141
 msgid "Check page link integrity"
 msgstr "Verifica l'integrità dei link della pagina"
 
-#: src/Abilities/AbilityRegistry.php:141
+#: src/Abilities/AbilityRegistry.php:142
 msgid ""
 "For one post, reports internal links that point to pages NOT in the export "
 "(outbound) and currently-included pages that link TO it (inbound) — the data"
@@ -118,11 +118,11 @@ msgstr ""
 "rimandano AD esso (in entrata) — i dati alla base degli avvisi di integrità "
 "dei link in modalità manuale."
 
-#: src/Abilities/AbilityRegistry.php:147
+#: src/Abilities/AbilityRegistry.php:148
 msgid "List destinations"
 msgstr "Elenca le destinazioni"
 
-#: src/Abilities/AbilityRegistry.php:148
+#: src/Abilities/AbilityRegistry.php:149
 msgid ""
 "Lists the configured deploy destinations by name, transport type and enabled"
 " state. Never returns credentials."
@@ -130,11 +130,11 @@ msgstr ""
 "Elenca le destinazioni di deploy configurate per nome, tipo di trasporto e "
 "stato di abilitazione. Non restituisce mai le credenziali."
 
-#: src/Abilities/AbilityRegistry.php:153
+#: src/Abilities/AbilityRegistry.php:154
 msgid "Get sync progress"
 msgstr "Ottieni l'avanzamento della sincronizzazione"
 
-#: src/Abilities/AbilityRegistry.php:154
+#: src/Abilities/AbilityRegistry.php:155
 msgid ""
 "Returns the current sync job snapshot (phase, counts, totals, recent errors)"
 " — useful for polling a run started elsewhere."
@@ -143,25 +143,25 @@ msgstr ""
 "conteggi, totali, errori recenti) — utile per monitorare un'esecuzione "
 "avviata altrove."
 
-#: src/Abilities/AbilityRegistry.php:162
+#: src/Abilities/AbilityRegistry.php:163
 msgid "Set discovery mode"
 msgstr "Imposta la modalità di rilevamento"
 
-#: src/Abilities/AbilityRegistry.php:163
+#: src/Abilities/AbilityRegistry.php:164
 msgid "Sets how pages are discovered for export: \"linked\", \"all\" or \"manual\"."
 msgstr ""
 "Imposta come vengono rilevate le pagine per l'esportazione: \"linked\", "
 "\"all\" o \"manual\"."
 
-#: src/Abilities/AbilityRegistry.php:172
+#: src/Abilities/AbilityRegistry.php:173
 msgid "The discovery mode to set."
 msgstr "La modalità di rilevamento da impostare."
 
-#: src/Abilities/AbilityRegistry.php:180
+#: src/Abilities/AbilityRegistry.php:181
 msgid "Include or exclude a page"
 msgstr "Includi o escludi una pagina"
 
-#: src/Abilities/AbilityRegistry.php:181
+#: src/Abilities/AbilityRegistry.php:182
 msgid ""
 "In manual discovery mode, sets whether a single post is included in the "
 "static export."
@@ -169,19 +169,19 @@ msgstr ""
 "In modalità di rilevamento manuale, stabilisce se un singolo contenuto è "
 "incluso nell'esportazione statica."
 
-#: src/Abilities/AbilityRegistry.php:187 src/Abilities/AbilityRegistry.php:327
+#: src/Abilities/AbilityRegistry.php:188 src/Abilities/AbilityRegistry.php:328
 msgid "The post ID."
 msgstr "L'ID del contenuto."
 
-#: src/Abilities/AbilityRegistry.php:188
+#: src/Abilities/AbilityRegistry.php:189
 msgid "True to include, false to exclude."
 msgstr "True per includere, false per escludere."
 
-#: src/Abilities/AbilityRegistry.php:195
+#: src/Abilities/AbilityRegistry.php:196
 msgid "Include multiple pages"
 msgstr "Includi più pagine"
 
-#: src/Abilities/AbilityRegistry.php:196
+#: src/Abilities/AbilityRegistry.php:197
 msgid ""
 "In manual discovery mode, includes a batch of posts (e.g. the cascade when "
 "enabling a page that links to others)."
@@ -189,15 +189,15 @@ msgstr ""
 "In modalità di rilevamento manuale, include un gruppo di contenuti (ad es. "
 "la cascata quando si abilita una pagina che rimanda ad altre)."
 
-#: src/Abilities/AbilityRegistry.php:205
+#: src/Abilities/AbilityRegistry.php:206
 msgid "The post IDs to include."
 msgstr "Gli ID dei contenuti da includere."
 
-#: src/Abilities/AbilityRegistry.php:217
+#: src/Abilities/AbilityRegistry.php:218
 msgid "Scan (dry run)"
 msgstr "Scansione (simulazione)"
 
-#: src/Abilities/AbilityRegistry.php:218
+#: src/Abilities/AbilityRegistry.php:219
 msgid ""
 "Starts a check run: renders the pages and reports what would change, without"
 " pushing anything to a destination."
@@ -205,12 +205,12 @@ msgstr ""
 "Avvia un'esecuzione di verifica: esegue il rendering delle pagine e segnala "
 "cosa cambierebbe, senza inviare nulla a una destinazione."
 
-#: src/Abilities/AbilityRegistry.php:224 src/Support/I18n.php:277
+#: src/Abilities/AbilityRegistry.php:225 src/Support/I18n.php:277
 #: src/Support/I18n.php:669
 msgid "Sync"
 msgstr "Sincronizza"
 
-#: src/Abilities/AbilityRegistry.php:225
+#: src/Abilities/AbilityRegistry.php:226
 msgid ""
 "Starts a full sync: renders the pages and pushes the static copy to the "
 "destination(s)."
@@ -218,11 +218,11 @@ msgstr ""
 "Avvia una sincronizzazione completa: esegue il rendering delle pagine e "
 "invia la copia statica alla/e destinazione/i."
 
-#: src/Abilities/AbilityRegistry.php:230
+#: src/Abilities/AbilityRegistry.php:231
 msgid "Sync a single page"
 msgstr "Sincronizza una singola pagina"
 
-#: src/Abilities/AbilityRegistry.php:231
+#: src/Abilities/AbilityRegistry.php:232
 msgid ""
 "Renders one page (and any new internal pages it links to) and pushes only "
 "the changed files to destinations opted into single-page sync."
@@ -231,23 +231,23 @@ msgstr ""
 " rimanda) e invia solo i file modificati alle destinazioni che hanno aderito"
 " alla sincronizzazione di pagina singola."
 
-#: src/Abilities/AbilityRegistry.php:237
+#: src/Abilities/AbilityRegistry.php:238
 msgid "The internal page URL to sync."
 msgstr "L'URL della pagina interna da sincronizzare."
 
-#: src/Abilities/AbilityRegistry.php:243
+#: src/Abilities/AbilityRegistry.php:244
 msgid "Cancel sync"
 msgstr "Annulla sincronizzazione"
 
-#: src/Abilities/AbilityRegistry.php:244
+#: src/Abilities/AbilityRegistry.php:245
 msgid "Requests cancellation of the running sync job."
 msgstr "Richiede l'annullamento del job di sincronizzazione in esecuzione."
 
-#: src/Abilities/AbilityRegistry.php:250 src/Support/I18n.php:328
+#: src/Abilities/AbilityRegistry.php:251 src/Support/I18n.php:328
 msgid "Reset sync state"
 msgstr "Ripristina stato di sincronizzazione"
 
-#: src/Abilities/AbilityRegistry.php:251
+#: src/Abilities/AbilityRegistry.php:252
 msgid ""
 "Clears the local record of what has been pushed so the next sync re-uploads "
 "everything. Destructive: does not delete remote files but forces a full re-"
@@ -257,47 +257,63 @@ msgstr ""
 "prossima sincronizzazione ricarichi tutto. Distruttivo: non elimina i file "
 "remoti ma forza un nuovo caricamento completo."
 
-#: src/Abilities/AbilityRegistry.php:427 src/Abilities/AbilityRegistry.php:462
-#: src/Abilities/AbilityRegistry.php:569
+#: src/Abilities/AbilityRegistry.php:428 src/Abilities/AbilityRegistry.php:463
+#: src/Abilities/AbilityRegistry.php:570
 msgid "A valid post ID is required."
 msgstr "È richiesto un ID contenuto valido."
 
-#: src/Abilities/AbilityRegistry.php:513
+#: src/Abilities/AbilityRegistry.php:514
 msgid "Inbound links reflect the most recent scan/sync."
 msgstr "I link in entrata riflettono l'ultima scansione/sincronizzazione."
 
-#: src/Abilities/AbilityRegistry.php:572
+#: src/Abilities/AbilityRegistry.php:573
 msgid "You cannot edit this post."
 msgstr "Non puoi modificare questo contenuto."
 
-#: src/Abilities/AbilityRegistry.php:634
+#: src/Abilities/AbilityRegistry.php:635
 msgid "A valid internal page URL is required."
 msgstr "È richiesto un URL di pagina interna valido."
 
-#: src/Abilities/AbilityRegistry.php:637
+#: src/Abilities/AbilityRegistry.php:638
 msgid "No destinations are enabled for single-page sync."
 msgstr ""
 "Nessuna destinazione è abilitata per la sincronizzazione di pagina singola."
 
-#: src/Admin/Editor.php:126
+#: src/Admin/Editor.php:125 src/Support/I18n.php:124
+msgid "Include in static export"
+msgstr "Includi nell'esportazione statica"
+
+#: src/Admin/Editor.php:171
 msgid "Static"
 msgstr "Statico"
 
-#: src/Admin/Editor.php:151
+#: src/Admin/Editor.php:204 src/Admin/Editor.php:421
+msgid "In the static export — click to remove"
+msgstr "Nell’esportazione statica — clicca per rimuovere"
+
+#: src/Admin/Editor.php:204 src/Admin/Editor.php:422
+msgid "Not in the static export — click to include"
+msgstr "Non nell’esportazione statica — clicca per includere"
+
+#: src/Admin/Editor.php:210
 msgid "In sync — open to re-sync"
 msgstr "Sincronizzato — apri per risincronizzare"
 
-#: src/Admin/Editor.php:152
+#: src/Admin/Editor.php:211
 msgid "Out of date — open to sync"
 msgstr "Non aggiornato — apri per sincronizzare"
 
-#: src/Admin/Editor.php:153
+#: src/Admin/Editor.php:212
 msgid "Not in the static export — open to manage"
 msgstr "Non nell’esportazione statica — apri per gestire"
 
-#: src/Admin/Editor.php:154
+#: src/Admin/Editor.php:213
 msgid "Run a check or sync to see status"
 msgstr "Esegui un controllo o una sincronizzazione per vedere lo stato"
+
+#: src/Admin/Editor.php:423
+msgid "Could not change this page. Please try again."
+msgstr "Impossibile modificare questa pagina. Riprova."
 
 #: src/Admin/Menu.php:108
 msgid "Dashboard"
@@ -1218,17 +1234,17 @@ msgstr ""
 "riscrivere i file già presenti. Altrimenti la prima sincronizzazione li "
 "riscrive (stesso contenuto, non si perde nulla)."
 
-#: src/REST/StatusController.php:176
+#: src/REST/StatusController.php:177
 msgid "(no title)"
 msgstr "(nessun titolo)"
 
-#: src/REST/StatusController.php:225
+#: src/REST/StatusController.php:226
 msgid "Form submit action points to this site (PHP/REST callback won’t work)"
 msgstr ""
 "L'azione di invio del form punta a questo sito (il callback PHP/REST non "
 "funzionerà)"
 
-#: src/REST/StatusController.php:226
+#: src/REST/StatusController.php:227
 msgid ""
 "Search form posts back to this site — turn on Site search in Settings to "
 "make it work statically"
@@ -1236,35 +1252,35 @@ msgstr ""
 "Il modulo di ricerca invia a questo sito — attiva Ricerca nel sito nelle "
 "Impostazioni per farlo funzionare in statico"
 
-#: src/REST/StatusController.php:227
+#: src/REST/StatusController.php:228
 msgid "Links to a PHP script on this site"
 msgstr "Rimanda a uno script PHP su questo sito"
 
-#: src/REST/StatusController.php:254
+#: src/REST/StatusController.php:255
 msgid "Not published"
 msgstr "Non pubblicata"
 
-#: src/REST/StatusController.php:261
+#: src/REST/StatusController.php:262
 msgid "Plain permalinks"
 msgstr "Permalink semplici"
 
 #. translators: %s: the URL it redirects to.
-#: src/REST/StatusController.php:268
+#: src/REST/StatusController.php:269
 #, php-format
 msgid "Redirects to another site (%s) — links to it go straight there"
 msgstr ""
 "Reindirizza a un altro sito (%s) — i link verso di esso portano direttamente"
 " lì"
 
-#: src/REST/StatusController.php:273
+#: src/REST/StatusController.php:274
 msgid "Not included"
 msgstr "Non inclusa"
 
-#: src/REST/StatusController.php:275 src/REST/StatusController.php:281
+#: src/REST/StatusController.php:276 src/REST/StatusController.php:282
 msgid "Not rendered"
 msgstr "Non renderizzata"
 
-#: src/REST/StatusController.php:285
+#: src/REST/StatusController.php:286
 msgid "Not linked"
 msgstr "Non collegata"
 
@@ -1447,10 +1463,6 @@ msgstr "Esportazione pronta"
 #: src/Support/I18n.php:113 src/Support/I18n.php:1013
 msgid "Cancel"
 msgstr "Annulla"
-
-#: src/Support/I18n.php:124
-msgid "Include in static export"
-msgstr "Includi nell'esportazione statica"
 
 #: src/Support/I18n.php:125
 msgid "When off, this page is left out of the static export."

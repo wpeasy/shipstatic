@@ -5,6 +5,15 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.10] - 2026-10-28
+
+### Added
+- **Include icon in the Pages/Posts list (manual mode).** The "Static" column gets a check icon per published row (`.bs-static-inc`, a dashicon: grey = not included, green = included) that toggles `_shipstatic_manual_include` in one click through `POST /editor/include` (new `setInclude()` in `shared/linkCheck.ts`; optimistic, reverts on failure). The status button beside it shows only while the page is included. `ListController` now delegates clicks from `document`, so rows Quick Edit redraws keep working.
+- **Quick Edit "Include in static export" checkbox (manual mode).** `Editor::render_quick_edit()` (`quick_edit_custom_box`, the `shipstatic_static` column) and `save_quick_edit()` (`save_post`; only for core's inline-save with a valid `inlineeditnonce`, `manage_options` + `edit_post`, a public post type, and only when the form carried the `shipstatic_quick_edit` marker). The editor bundle ticks it from the row's cell when Quick Edit opens.
+
+### Fixed
+- **Titles showed HTML entities** ("Facets &#038; Forms") in the processed-pages list, the link prompts, Process changes notes and the AI abilities: `get_the_title()` is texturized HTML, shown as text by Svelte/JSON. New `Support\Text::title()` decodes it to plain text; every `get_the_title()` call goes through it.
+
 ## [2.4.9] - 2026-10-28
 
 ### Added

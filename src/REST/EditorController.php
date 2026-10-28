@@ -19,6 +19,7 @@ use WP_REST_Response;
 use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Render\AssetExtractor;
 use WPEasy\ShipStatic\Render\PageRenderer;
+use WPEasy\ShipStatic\Support\Text;
 use WPEasy\ShipStatic\Support\Url;
 use WPEasy\ShipStatic\Sync\LinkGraph;
 use WPEasy\ShipStatic\Sync\Manifest;
@@ -168,7 +169,7 @@ final class EditorController {
                 continue; // already exporting
             }
             $seen[$pid] = true;
-            $pages[]    = ['postId' => $pid, 'title' => (string) get_the_title($pid)];
+            $pages[]    = ['postId' => $pid, 'title' => Text::title($pid)];
         }
 
         return new WP_REST_Response(['pages' => $pages]);
@@ -204,7 +205,7 @@ final class EditorController {
             if ($post === null || $post->post_status !== 'publish') {
                 continue;
             }
-            $pages[] = ['postId' => $pid, 'title' => (string) get_the_title($pid)];
+            $pages[] = ['postId' => $pid, 'title' => Text::title($pid)];
         }
 
         return new WP_REST_Response(['pages' => $pages]);

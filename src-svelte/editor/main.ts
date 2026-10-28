@@ -27,6 +27,7 @@ interface ListData {
   manualMode?: boolean | string;
   fabEnabled?: boolean | string;
   includedCount?: number;
+  labels?: { included?: string; excluded?: string; failed?: string };
 }
 
 const win = window as unknown as { shipStaticEditorData?: EditorData; shipStaticListData?: ListData };
@@ -44,6 +45,7 @@ if (list && list.restUrl) {
       manualMode: !!list.manualMode,
       fabEnabled: !!list.fabEnabled,
       includedCount: Number(list.includedCount) || 0,
+      labels: list.labels ?? {},
     },
   });
 }
