@@ -196,7 +196,7 @@
           WordPress search runs on the server, so on a plain static copy a search box just reloads the home page. Site search fixes that: every sync adds a small search index for each destination, and the search box searches it right in the visitor’s browser — results appear as you type, with the matching words highlighted.
         </p>
         <ol class="bs-docs__steps">
-          <li>Open <strong>Settings</strong> (the gear, top right) and turn on <strong>Site search</strong>.</li>
+          <li>Open <strong>Settings</strong> (the gear, top right) and turn on <strong>Enable JavaScript site search</strong>.</li>
           <li>Press <strong>Process</strong> (pages get the search script), then <strong>Sync</strong>.</li>
           <li>Any search box on your site now works on the static copy: WordPress’s own, Bricks’ Search element, or the <strong>ShipStatic Search</strong> element.</li>
         </ol>
@@ -206,7 +206,7 @@
         </p>
         <h3>The same search on your WordPress site</h3>
         <p class="bs-docs__muted">
-          Turn on <strong>Use ShipStatic search on the WordPress site too</strong> (under Site search in Settings) and the ShipStatic Search element — or the shortcode — searches as you type on the live WordPress site as well, so both look and behave the same. Pressing Enter opens the highlighted result; with nothing to open, it falls back to the normal WordPress search results page. Other search boxes on the WordPress site are left alone.
+          With <strong>Enable JavaScript site search</strong> on, the ShipStatic Search element — or the shortcode — also searches as you type on the live WordPress site, so both look and behave the same. There is nothing extra to switch on. Pressing Enter opens the highlighted result; with nothing to open, it falls back to the normal WordPress search results page. Other search boxes on the WordPress site are left alone.
         </p>
         <ul class="bs-docs__list">
           <li><strong>As fresh as your last Process.</strong> Live results come from the pages ShipStatic last processed, so press <strong>Process</strong> to pick up new pages and edited text. A page you unpublish, make private or password-protect drops out straight away.</li>
@@ -229,7 +229,7 @@
           <p>This feature, and letting it through Lockdown, is experimental and has only had basic testing: a Bricks form (with Save submission and Redirect), a search filter, a checkbox filter and AJAX pagination, on Apache (cPanel) and nginx, with WordPress in <code>/wp</code>. Other filter types, infinite scroll, load more, AJAX popups, multilingual sites and other hosts haven’t been tested yet. Try your own forms and filters on the static site — as a visitor who isn’t on the Lockdown list — before relying on them, and check again after Bricks updates.</p>
         </Alert>
         <p class="bs-docs__muted">
-          Bricks forms, query filters, AJAX pagination, load more, infinite scroll and AJAX popups all ask WordPress for something while the visitor is on the page. On a plain static copy those requests go to the static site, where there is no WordPress, so nothing happens. With <strong>Bricks forms and filters use WordPress</strong> (in <strong>Settings</strong>, on by default) every sync points them back at your WordPress site, so they work exactly as they do there.
+          Bricks forms, query filters, AJAX pagination, load more, infinite scroll and AJAX popups all ask WordPress for something while the visitor is on the page. On a plain static copy those requests go to the static site, where there is no WordPress, so nothing happens. With <strong>Allow Bricks forms and filters</strong> (in <strong>Settings</strong>, on by default) every sync points them back at your WordPress site, so they work exactly as they do there.
         </p>
         <h3>Forms</h3>
         <ul class="bs-docs__list">

@@ -29,9 +29,6 @@ defined('ABSPATH') || exit;
  */
 final class LiveIndex {
 
-    /** '1' / '0'. Only takes effect while Site search is on. */
-    public const OPTION = 'shipstatic_search_live';
-
     /** Cached records for the current render: {key, records}. */
     private const TRANSIENT = 'shipstatic_live_search_index';
 
@@ -43,26 +40,11 @@ final class LiveIndex {
     public const OBJECTS_OPTION = 'shipstatic_render_objects';
 
     /**
-     * Whether the live site uses ShipStatic search.
+     * Whether the live site uses ShipStatic search: whenever Site search is on
+     * (there is no separate switch — the element/shortcode just work).
      */
     public static function enabled(): bool {
-        return IndexBuilder::enabled() && get_option(self::OPTION, '0') === '1';
-    }
-
-    /**
-     * Turn live-site search on or off (the stored choice, independent of Site search).
-     *
-     * @param bool $on New state.
-     */
-    public static function set_enabled(bool $on): void {
-        update_option(self::OPTION, $on ? '1' : '0', false);
-    }
-
-    /**
-     * The stored choice, ignoring whether Site search is on.
-     */
-    public static function chosen(): bool {
-        return get_option(self::OPTION, '0') === '1';
+        return IndexBuilder::enabled();
     }
 
     /**

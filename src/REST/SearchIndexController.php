@@ -21,7 +21,7 @@ defined('ABSPATH') || exit;
  * GET /shipstatic/v1/search-index — the ONE public route (SECURITY_PATTERNS.md
  * §0): read-only, and returns only the text of published pages already in the
  * export, which any visitor can read on the pages themselves. 404 unless
- * "Use ShipStatic search on the WordPress site too" is on and a render exists.
+ * "Enable JavaScript site search" is on and a render exists.
  */
 final class SearchIndexController {
 

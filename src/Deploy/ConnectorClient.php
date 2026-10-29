@@ -354,7 +354,7 @@ final class ConnectorClient {
                 throw new ConnectorAuthException('The connector is temporarily locked after repeated failed requests. Wait ten minutes and try again.');
             }
             if ($ours && $code === 409 && $error === 'version') {
-                throw new ConnectorVersionException('The connector file on the destination is outdated. Re-pair and upload the new one.');
+                throw new ConnectorVersionException('The connector file on the destination uses an older protocol. Download the updated connector file (the pairing is kept) and upload it over the old one.');
             }
             if ($code === 413) {
                 throw new ConnectorTooLargeException(sprintf(

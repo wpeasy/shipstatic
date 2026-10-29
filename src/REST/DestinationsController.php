@@ -91,6 +91,14 @@ final class DestinationsController {
             'permission_callback' => [self::class, 'can_manage'],
         ]);
 
+        // The current receiver file for the EXISTING pairing (no rotation) — for a
+        // receiver build that is behind (ConnectorScript::REVISION).
+        register_rest_route(self::NS, '/destinations/(?P<id>[A-Za-z0-9]+)/connector/refile', [
+            'methods'             => 'POST',
+            'callback'            => [self::class, 'connector_refile'],
+            'permission_callback' => [self::class, 'can_manage'],
+        ]);
+
         register_rest_route(self::NS, '/destinations/(?P<id>[A-Za-z0-9]+)/connector/rebuild', [
             'methods'             => 'POST',
             'callback'            => [self::class, 'connector_rebuild'],
@@ -153,6 +161,41 @@ final class DestinationsController {
             'filename'      => ConnectorScript::filename($pair['id']),
             'downloadToken' => $token,
             'message'       => __('Paired. Download the connector file and upload it to the folder served at the Destination URL.', 'shipstatic'),
+        ]);
+    }
+
+    /**
+     * POST /destinations/{id}/connector/refile — a download token for the CURRENT
+     * receiver file, built for the destination's existing pairing: same id and
+     * secret, so nothing is re-paired and the old file's hash still matches. Used
+     * when the file on the destination is an older build.
+     *
+     * @param WP_REST_Request $request Request.
+     */
+    public static function connector_refile(WP_REST_Request $request): WP_REST_Response {
+        $id   = (string) $request['id'];
+        $dest = Destinations::get($id);
+        if ($dest === null) {
+            return new WP_REST_Response(['ok' => false, 'message' => 'Unknown destination.'], 404);
+        }
+
+        $connector_id = (string) $dest->get('connectorId');
+        $secret       = (string) $dest->get('connectorSecret');
+        if ($dest->is_from_constant('connectorId') || $dest->is_from_constant('connectorSecret')
+            || !preg_match('/^[0-9a-f]{16}$/', $connector_id) || !preg_match('/^[0-9a-f]{64}$/', $secret)
+        ) {
+            return new WP_REST_Response(['ok' => false, 'message' => __('This destination is not paired through the dashboard, so the file can’t be rebuilt here — pair it again.', 'shipstatic')]);
+        }
+
+        $token = bin2hex(random_bytes(24));
+        set_transient(self::CONNECTOR_DL . $token, ['dest' => $id, 'id' => $connector_id, 'secret' => $secret], 10 * MINUTE_IN_SECONDS);
+
+        return new WP_REST_Response([
+            'ok'            => true,
+            'connectorId'   => $connector_id,
+            'filename'      => ConnectorScript::filename($connector_id),
+            'downloadToken' => $token,
+            'message'       => __('Download the updated connector file and upload it over the old one — no need to pair again.', 'shipstatic'),
         ]);
     }
 
@@ -405,6 +448,7 @@ final class DestinationsController {
 
         $suggested = '';
         $warnings  = [];
+        $outdated  = false;
         $transport = TransportFactory::make($config);
         try {
             $ok = true;
@@ -420,6 +464,8 @@ final class DestinationsController {
                 if ($transport instanceof ConnectorTransport) {
                     /* translators: %s: receiver summary (PHP version, zip support, free space) */
                     $message = sprintf(__('Connector reached — %s.', 'shipstatic'), $transport->describe());
+                    // A receiver from before REVISION existed reports none (0).
+                    $outdated = (int) ($transport->info()['revision'] ?? 0) < ConnectorScript::REVISION;
                 } elseif ($transport instanceof FolderTransport) {
                     /* translators: %s: folder summary (path, free space) */
                     $message = sprintf(__('Folder ready — %s.', 'shipstatic'), $transport->describe());
@@ -443,9 +489,12 @@ final class DestinationsController {
             $transport->disconnect();
         }
 
-        update_option(self::conn_state_option((string) $request['id']), ['ok' => $ok, 'time' => time(), 'message' => $message], false);
+        update_option(self::conn_state_option((string) $request['id']), ['ok' => $ok, 'time' => time(), 'message' => $message, 'connectorOutdated' => $ok && $outdated], false);
 
         $out = ['ok' => $ok, 'message' => $message];
+        if ($ok && $outdated) {
+            $out['connectorOutdated'] = true;
+        }
         if ($suggested !== '') {
             // The dashboard fills an empty Destination URL with this.
             $out['suggestedUrl'] = $suggested;
@@ -480,6 +529,8 @@ final class DestinationsController {
 
             $dest['status'] = [
                 'connected' => is_array($state) && !empty($state['ok']),
+                // The connector file on the destination is an older build (last Test).
+                'connectorOutdated' => is_array($state) && !empty($state['ok']) && !empty($state['connectorOutdated']),
                 'hasPushed' => !empty($pushed),
                 // Signature-based: matches the render + this destination's
                 // replacements, so a replacement destination isn't false-flagged.

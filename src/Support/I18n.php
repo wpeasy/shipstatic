@@ -59,16 +59,16 @@ final class I18n {
     }
 
     /**
-     * AI tools (MCP) panel.
+     * AI abilities panel.
      *
      * @return array<string,string>
      */
     private static function ai(): array {
         return [
-            'aiTitle'        => __('AI tools (MCP)', 'shipstatic'),
+            'aiTitle'        => __('AI abilities', 'shipstatic'),
             'aiIntro'        => __('Expose ShipStatic to AI assistants through the WordPress Abilities API. Read-only abilities (status, page list, link checks) are always available to administrators; the actions below are off by default.', 'shipstatic'),
             'aiUnavailable'  => __('Requires WordPress 6.9 or newer (the Abilities API). Read-only and action abilities are unavailable on this site.', 'shipstatic'),
-            'aiConsumerNote' => __('An MCP client (e.g. the WordPress MCP plugin) is needed to actually reach these abilities.', 'shipstatic'),
+            'aiConsumerNote' => __('An AI client that can use WordPress abilities (for example through an MCP adapter plugin) is needed to actually reach them.', 'shipstatic'),
             'aiAllowChanges' => __('Allow AI to change settings', 'shipstatic'),
             'aiAllowChangesHint' => __('Discovery mode and the per-page Include switch.', 'shipstatic'),
             'aiAllowSync'    => __('Allow AI to run syncs', 'shipstatic'),
@@ -216,8 +216,8 @@ final class I18n {
             /* translators: %s: URL. */
             'ldRedirectTarget'   => __('Blocked visitors go to the same page on %s.', 'shipstatic'),
             'ldRedirect403'      => __('Blocked visitors see a 403 page (no destination has a Destination URL).', 'shipstatic'),
-            'ldRelayOn'          => __('Bricks forms and filters on the static site still reach WordPress (Settings → Bricks forms and filters use WordPress). Other requests from visitors are still turned away.', 'shipstatic'),
-            'ldRelayOff'         => __('Bricks forms and filters on the static site can’t reach WordPress: turn on Settings → Bricks forms and filters use WordPress to let their requests through.', 'shipstatic'),
+            'ldRelayOn'          => __('Bricks forms and filters on the static site still reach WordPress (Settings → Allow Bricks forms and filters). Other requests from visitors are still turned away.', 'shipstatic'),
+            'ldRelayOff'         => __('Bricks forms and filters on the static site can’t reach WordPress: turn on Settings → Allow Bricks forms and filters to let their requests through.', 'shipstatic'),
             'ldRelayExperimental' => __('Letting Bricks forms and filters through Lockdown is experimental and has only had basic testing. Check that your forms and filters work for a visitor who isn’t on the list (a phone on mobile data is an easy test).', 'shipstatic'),
             'multisiteDisabled' => __('Disabled on Multisite', 'shipstatic'),
             'ldMultisite' => __('Lockdown writes server files (.htaccess, .user.ini and a PHP gate) that every site on a multisite network shares, so it can’t be used here.', 'shipstatic'),
@@ -274,12 +274,17 @@ final class I18n {
     private static function globalbar(): array {
         return [
             'enableSyncButton' => __('Enable sync single button', 'shipstatic'),
+            'pagesToIncludeHelp'   => __('Choose which pages go into your static site: only pages linked from your home page, every published page, or just the ones you pick by hand.', 'shipstatic'),
+            'enableSyncButtonHelp' => __('Adds a small ShipStatic button to your site (and the Bricks builder) so you can sync just the page you are looking at in one click, without running a full sync.', 'shipstatic'),
             'syncGroup'        => __('Sync', 'shipstatic'),
-            'siteSearch'       => __('Site search', 'shipstatic'),
-            'siteSearchHelp'   => __('Makes the search boxes on your static site work: each sync adds a search index for that destination, searched in the visitor’s browser. The live WordPress site keeps its own search. Press Process after changing this.', 'shipstatic'),
-            'siteSearchLive'     => __('Use ShipStatic search on the WordPress site too', 'shipstatic'),
-            'siteSearchLiveHelp' => __('The ShipStatic Search element then searches as you type on this WordPress site as well, from the pages in the last Process (press Process to pick up new content). Other search boxes keep normal WordPress search.', 'shipstatic'),
-            'relayEnabled'     => __('Bricks forms and filters use WordPress', 'shipstatic'),
+            'siteSearch'       => __('Enable JavaScript site search', 'shipstatic'),
+            'wizardSearchStep' => __('Site search', 'shipstatic'),
+            'siteSearchHelp'   => __('Makes the search boxes on your static site work: each sync adds a search index for that destination, searched in the visitor’s browser. The ShipStatic Search element (and the shortcode) also searches as you type on this WordPress site; other search boxes here keep normal WordPress search. Press Process after changing this.', 'shipstatic'),
+            'relayEnabled'     => __('Allow Bricks forms and filters', 'shipstatic'),
+            'relayFirewallNote' => __('This opens a small, specific gap in the Lockdown firewall (if you use it) so form submissions and filter requests from your static site can reach WordPress. Nothing else is let through.', 'shipstatic'),
+            'connectorOutdated' => __('The connector file on this destination is an older build. It still works, but a newer one has security improvements: download the updated file and upload it over the old one. You do not need to pair again.', 'shipstatic'),
+            'btnUpdateConnector' => __('Download updated connector', 'shipstatic'),
+            'wizardFormsStep'  => __('Bricks forms & filters', 'shipstatic'),
             'relayEnabledHelp' => __('Bricks forms, query filters, AJAX pagination, load more and AJAX popups on your static site send their requests to this WordPress site, which answers them as usual: forms run their actions (email, saved submissions, webhooks), and filters return results whose links and images point at your static site. With Lockdown on, these requests still get through. Sync after changing this.', 'shipstatic'),
             'relayExperimental' => __('This is an experimental feature and has only had basic testing: a Bricks form, search and checkbox filters and AJAX pagination, on Apache and nginx. Other filter types, infinite scroll, load more and AJAX popups haven’t been tested yet. Try your own forms and filters on the static site before relying on them, and check again after Bricks updates.', 'shipstatic'),
             'experimental'     => __('Experimental', 'shipstatic'),

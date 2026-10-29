@@ -219,7 +219,7 @@
     "msgid": "No results"
   },
   {
-    "msgid": "On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form, unless “Use ShipStatic search on the WordPress site too” is on."
+    "msgid": "On your static site this searches as you type. Turn on “Enable JavaScript site search” in ShipStatic → Settings, then Process and Sync. On the live WordPress site it also searches as you type, from the pages in your last Process."
   },
   {
     "msgid": "Site search is currently off in ShipStatic → Settings."
@@ -618,6 +618,12 @@
     "msgid": "Paired. Download the connector file and upload it to the folder served at the Destination URL."
   },
   {
+    "msgid": "This destination is not paired through the dashboard, so the file can’t be rebuilt here — pair it again."
+  },
+  {
+    "msgid": "Download the updated connector file and upload it over the old one — no need to pair again."
+  },
+  {
     "msgid": "Connector revoked. Delete the file from the destination when convenient."
   },
   {
@@ -690,7 +696,7 @@
     "msgid": "Form submit action points to this site (PHP/REST callback won’t work)"
   },
   {
-    "msgid": "Search form posts back to this site — turn on Site search in Settings to make it work statically"
+    "msgid": "Search form posts back to this site — turn on “Enable JavaScript site search” in Settings to make it work statically"
   },
   {
     "msgid": "Links to a PHP script on this site"
@@ -741,7 +747,7 @@
     "msgid": "Disabled on Multisite"
   },
   {
-    "msgid": "AI tools (MCP)"
+    "msgid": "AI abilities"
   },
   {
     "msgid": "Expose ShipStatic to AI assistants through the WordPress Abilities API. Read-only abilities (status, page list, link checks) are always available to administrators; the actions below are off by default."
@@ -750,7 +756,7 @@
     "msgid": "Requires WordPress 6.9 or newer (the Abilities API). Read-only and action abilities are unavailable on this site."
   },
   {
-    "msgid": "An MCP client (e.g. the WordPress MCP plugin) is needed to actually reach these abilities."
+    "msgid": "An AI client that can use WordPress abilities (for example through an MCP adapter plugin) is needed to actually reach them."
   },
   {
     "msgid": "Allow AI to change settings"
@@ -1032,10 +1038,10 @@
     "msgid": "Blocked visitors see a 403 page (no destination has a Destination URL)."
   },
   {
-    "msgid": "Bricks forms and filters on the static site still reach WordPress (Settings → Bricks forms and filters use WordPress). Other requests from visitors are still turned away."
+    "msgid": "Bricks forms and filters on the static site still reach WordPress (Settings → Allow Bricks forms and filters). Other requests from visitors are still turned away."
   },
   {
-    "msgid": "Bricks forms and filters on the static site can’t reach WordPress: turn on Settings → Bricks forms and filters use WordPress to let their requests through."
+    "msgid": "Bricks forms and filters on the static site can’t reach WordPress: turn on Settings → Allow Bricks forms and filters to let their requests through."
   },
   {
     "msgid": "Letting Bricks forms and filters through Lockdown is experimental and has only had basic testing. Check that your forms and filters work for a visitor who isn’t on the list (a phone on mobile data is an easy test)."
@@ -1143,19 +1149,34 @@
     "msgid": "Enable sync single button"
   },
   {
+    "msgid": "Choose which pages go into your static site: only pages linked from your home page, every published page, or just the ones you pick by hand."
+  },
+  {
+    "msgid": "Adds a small ShipStatic button to your site (and the Bricks builder) so you can sync just the page you are looking at in one click, without running a full sync."
+  },
+  {
+    "msgid": "Enable JavaScript site search"
+  },
+  {
     "msgid": "Site search"
   },
   {
-    "msgid": "Makes the search boxes on your static site work: each sync adds a search index for that destination, searched in the visitor’s browser. The live WordPress site keeps its own search. Press Process after changing this."
+    "msgid": "Makes the search boxes on your static site work: each sync adds a search index for that destination, searched in the visitor’s browser. The ShipStatic Search element (and the shortcode) also searches as you type on this WordPress site; other search boxes here keep normal WordPress search. Press Process after changing this."
   },
   {
-    "msgid": "Use ShipStatic search on the WordPress site too"
+    "msgid": "Allow Bricks forms and filters"
   },
   {
-    "msgid": "The ShipStatic Search element then searches as you type on this WordPress site as well, from the pages in the last Process (press Process to pick up new content). Other search boxes keep normal WordPress search."
+    "msgid": "This opens a small, specific gap in the Lockdown firewall (if you use it) so form submissions and filter requests from your static site can reach WordPress. Nothing else is let through."
   },
   {
-    "msgid": "Bricks forms and filters use WordPress"
+    "msgid": "The connector file on this destination is an older build. It still works, but a newer one has security improvements: download the updated file and upload it over the old one. You do not need to pair again."
+  },
+  {
+    "msgid": "Download updated connector"
+  },
+  {
+    "msgid": "Bricks forms & filters"
   },
   {
     "msgid": "Bricks forms, query filters, AJAX pagination, load more and AJAX popups on your static site send their requests to this WordPress site, which answers them as usual: forms run their actions (email, saved submissions, webhooks), and filters return results whose links and images point at your static site. With Lockdown on, these requests still get through. Sync after changing this."

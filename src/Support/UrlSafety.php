@@ -50,7 +50,19 @@ final class UrlSafety {
             return false;
         }
 
-        $host = trim((string) ($parts['host'] ?? ''), '[]');
+        return self::is_safe_host((string) ($parts['host'] ?? ''));
+    }
+
+    /**
+     * Whether a host (name or IP literal) resolves only to public addresses.
+     * Loopback is allowed by default for local development; pass false to refuse
+     * it too (multisite, see {@see multisite_host_error()}).
+     *
+     * @param string $host           Hostname or IP literal (no scheme or port).
+     * @param bool   $allow_loopback Whether 127.0.0.0/8 and ::1 count as safe.
+     */
+    public static function is_safe_host(string $host, bool $allow_loopback = true): bool {
+        $host = trim($host, '[]');
         if ($host === '') {
             return false;
         }
@@ -61,7 +73,7 @@ final class UrlSafety {
         }
 
         foreach ($ips as $ip) {
-            if (self::is_loopback($ip)) {
+            if ($allow_loopback && self::is_loopback($ip)) {
                 continue; // Allowed for local development.
             }
             if (!self::is_global_ip($ip)) {
@@ -70,6 +82,35 @@ final class UrlSafety {
         }
 
         return true;
+    }
+
+    /**
+     * Why an FTP/SFTP host may not be connected to, or null when it may.
+     *
+     * Those transports open a raw socket to a host and port the administrator
+     * types. On a single site that is the administrator's own business. On a
+     * multisite network a sub-site Administrator is NOT the top privilege, and the
+     * connection test would let them scan the server's loopback and private
+     * network (and cloud metadata) and read the error text. So there the host
+     * must be public; loopback is refused too. Applies in every context (a
+     * scheduled sync has no current user to excuse). A network operator who
+     * really wants an internal FTP host can return true from the
+     * `shipstatic_multisite_allow_private_hosts` filter.
+     *
+     * @param string $host Hostname or IP literal.
+     */
+    public static function multisite_host_error(string $host): ?string {
+        if (!Environment::is_multisite()) {
+            return null;
+        }
+        if (apply_filters('shipstatic_multisite_allow_private_hosts', false, $host)) {
+            return null;
+        }
+        if (self::is_safe_host($host, false)) {
+            return null;
+        }
+
+        return 'On a multisite network, FTP and SFTP destinations must be on a public host (not this server or a private network address).';
     }
 
     /**

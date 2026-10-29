@@ -59,6 +59,52 @@ final class Url {
     ];
 
     /**
+     * A path as plain segments joined by "/": no leading or trailing slash, and
+     * every empty, "." and ".." segment (and NUL byte) dropped, backslashes read
+     * as slashes. ".." does NOT climb, it is simply removed, so the result can
+     * never leave the folder it is joined under. For a destination's sub-path,
+     * which becomes a LOCAL folder name in the deploy copy as well as a remote one.
+     *
+     * @param string $path Any path ("/a/../b/", "a\\b", "").
+     */
+    public static function clean_path(string $path): string {
+        $path = str_replace(['\\', "\0"], ['/', ''], $path);
+        $keep = [];
+        foreach (explode('/', $path) as $segment) {
+            if ($segment !== '' && $segment !== '.' && $segment !== '..') {
+                $keep[] = $segment;
+            }
+        }
+
+        return implode('/', $keep);
+    }
+
+    /**
+     * A URL with its path run through clean_path() — only when the path actually
+     * climbs or hides ({@see has_traversal()}), so every ordinary URL comes back
+     * byte for byte. Anything else about the URL is kept.
+     *
+     * @param string $url An absolute URL (already esc_url_raw()'d).
+     */
+    public static function without_dot_segments(string $url): string {
+        $parts = wp_parse_url($url);
+        if (!is_array($parts) || !isset($parts['path']) || !self::has_traversal(rawurldecode((string) $parts['path']))) {
+            return $url;
+        }
+
+        $path = self::clean_path(rawurldecode((string) $parts['path']));
+        $out  = isset($parts['scheme']) ? $parts['scheme'] . '://' : '//';
+        if (isset($parts['user'])) {
+            $out .= $parts['user'] . (isset($parts['pass']) ? ':' . $parts['pass'] : '') . '@';
+        }
+        $out .= (string) ($parts['host'] ?? '') . (isset($parts['port']) ? ':' . $parts['port'] : '');
+        $out .= $path === '' ? '' : '/' . $path . '/';
+        $out .= isset($parts['query']) ? '?' . $parts['query'] : '';
+
+        return $out . (isset($parts['fragment']) ? '#' . $parts['fragment'] : '');
+    }
+
+    /**
      * Whether a (decoded) path climbs or hides: a "." or ".." segment, a NUL
      * byte or a backslash. Such a path must never become a local or remote
      * file path — page content controls the URLs the crawler follows.

@@ -1559,6 +1559,13 @@ final class Runner {
      * @return array{size:int,hash:string,src:string}|null
      */
     private static function write_deploy_file(string $deploy_dir, string $relative, string $content): ?array {
+        // Defence in depth: a key that climbs would write outside the deploy
+        // folder. Page keys already passed Url::to_relative_path(), and a
+        // destination's sub-path prefix is cleaned (Url::clean_path()).
+        if (Url::has_traversal($relative)) {
+            return null;
+        }
+
         $path = $deploy_dir . '/' . $relative;
         $dir  = dirname($path);
 

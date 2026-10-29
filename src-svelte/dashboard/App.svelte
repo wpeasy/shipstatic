@@ -168,18 +168,6 @@
     }
   }
 
-  async function setSearchLive(enabled: boolean): Promise<void> {
-    if (!status) return;
-    const previous = status.searchLive;
-    status.searchLive = enabled; // optimistic
-    try {
-      status.searchLive = (await api.setSearchLive(enabled)).searchLive;
-    } catch (e) {
-      status.searchLive = previous;
-      loadError = (e as Error).message;
-    }
-  }
-
   async function setRelayEnabled(enabled: boolean): Promise<void> {
     if (!status) return;
     const previous = status.relayEnabled;
@@ -503,7 +491,6 @@
     onProcess={processPages}
     onSetFabEnabled={setFabEnabled}
     onSetSearchEnabled={setSearchEnabled}
-    onSetSearchLive={setSearchLive}
     onSetRelayEnabled={setRelayEnabled}
     onSetAiToggles={setAiToggles}
     onSetConcurrentSyncs={setConcurrentSyncs}
@@ -516,6 +503,9 @@
     {syncing}
     onSetDiscoveryMode={setDiscoveryMode}
     onSetFabEnabled={setFabEnabled}
+    onSetSearchEnabled={setSearchEnabled}
+    onSetRelayEnabled={setRelayEnabled}
+    onSetAiToggles={setAiToggles}
     onFinish={finishWizard}
   />
 

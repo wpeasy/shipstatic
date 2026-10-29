@@ -24,8 +24,8 @@ defined('ABSPATH') || exit;
  * - Into the render (the HTML captured for the static export): the script
  *   upgrades every search form (any form with an `s` field) to search the
  *   destination's search-index.json.
- * - On the live WordPress site, only when "Use ShipStatic search on the
- *   WordPress site too" is on, and only on pages with the ShipStatic Search
+
+ * - On the live WordPress site, whenever Site search is on, and only on pages with the ShipStatic Search
  *   element or shortcode (enqueue_live()): it upgrades just those forms
  *   (`.bs-ss`), searching GET /shipstatic/v1/search-index. Other search forms
  *   keep normal WordPress search.

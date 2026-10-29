@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\Transport;
 
 use WPEasy\ShipStatic\Support\Url;
+use WPEasy\ShipStatic\Support\UrlSafety;
 
 defined('ABSPATH') || exit;
 
@@ -98,6 +99,11 @@ final class FtpTransport implements TransportInterface {
         $host = (string) ($this->config['host'] ?? '');
         if ($host === '') {
             throw new \RuntimeException(sprintf('%s host is required.', $label));
+        }
+
+        $blocked = UrlSafety::multisite_host_error($host);
+        if ($blocked !== null) {
+            throw new \RuntimeException($blocked);
         }
 
         $port = (int) ($this->config['port'] ?? 0) ?: self::DEFAULT_PORT;

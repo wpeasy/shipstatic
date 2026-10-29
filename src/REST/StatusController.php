@@ -128,7 +128,8 @@ final class StatusController {
                 : 0,
             'fabEnabled'    => get_option('shipstatic_fab_enabled', '1') !== '0',
             'searchEnabled' => IndexBuilder::enabled(),
-            'searchLive'    => LiveIndex::chosen(),
+            // Bricks is the active theme (same test as Frontend\Search's element registration).
+            'bricksActive'  => class_exists('\\Bricks\\Elements'),
             // Bricks forms, filters and AJAX loops on the static site use WordPress.
             'relayEnabled'  => Relay::enabled(),
             // Max destinations deployed at once during a multi-destination sync.
@@ -224,7 +225,7 @@ final class StatusController {
 
         $labels = [
             'form'        => __('Form submit action points to this site (PHP/REST callback won’t work)', 'shipstatic'),
-            'search-form' => __('Search form posts back to this site — turn on Site search in Settings to make it work statically', 'shipstatic'),
+            'search-form' => __('Search form posts back to this site — turn on “Enable JavaScript site search” in Settings to make it work statically', 'shipstatic'),
             'php-link'    => __('Links to a PHP script on this site', 'shipstatic'),
         ];
 
@@ -314,11 +315,6 @@ final class StatusController {
             }
         }
 
-        if (array_key_exists('searchLive', $params)) {
-            // Live site only — the export is unchanged, so no re-Process.
-            LiveIndex::set_enabled(!empty($params['searchLive']));
-        }
-
         if (array_key_exists('relayEnabled', $params)) {
             $on = !empty($params['relayEnabled']);
             if ($on !== Relay::enabled()) {
@@ -354,7 +350,6 @@ final class StatusController {
             'discoveryMode'   => UrlCollector::mode(),
             'fabEnabled'      => get_option('shipstatic_fab_enabled', '1') !== '0',
             'searchEnabled'   => IndexBuilder::enabled(),
-            'searchLive'      => LiveIndex::chosen(),
             'relayEnabled'    => Relay::enabled(),
             'aiAllowChanges'  => AbilityRegistry::changes_enabled(),
             'aiAllowSync'     => AbilityRegistry::sync_enabled(),

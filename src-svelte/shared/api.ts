@@ -83,8 +83,6 @@ export const api = {
     request<{ fabEnabled: boolean }>('/settings', 'POST', { fabEnabled: enabled }),
   setSearchEnabled: (enabled: boolean) =>
     request<{ searchEnabled: boolean; renderCurrent?: boolean }>('/settings', 'POST', { searchEnabled: enabled }),
-  setSearchLive: (enabled: boolean) =>
-    request<{ searchLive: boolean }>('/settings', 'POST', { searchLive: enabled }),
   setRelayEnabled: (enabled: boolean) =>
     request<{ relayEnabled: boolean }>('/settings', 'POST', { relayEnabled: enabled }),
   setAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) =>
@@ -110,6 +108,7 @@ export const api = {
   syncReset: () => request<{ ok: boolean }>('/sync/reset', 'POST', {}),
   preflight: () => request<Preflight>('/sync/preflight', 'POST', {}),
   connectorPair: (id: string) => request<ConnectorPairResponse>(`/destinations/${id}/connector/pair`, 'POST'),
+  connectorRefile: (id: string) => request<ConnectorPairResponse>(`/destinations/${id}/connector/refile`, 'POST'),
   connectorRevoke: (id: string) => request<TestResult>(`/destinations/${id}/connector/revoke`, 'POST'),
   moveWordPress: (id: string) => request<{ ok: boolean; message: string; problems?: string[]; redirect?: string }>('/wordpress-move', 'POST', { id, confirm: true }),
   undoWordPressMove: () => request<{ ok: boolean; message: string; redirect?: string }>('/wordpress-move/undo', 'POST', {}),

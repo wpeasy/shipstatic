@@ -94,7 +94,7 @@ A third way to deploy, alongside FTP/SFTP and Export ZIP: **Deploy via → Conne
 
 **Check server** (`GET /sync/server-check?dest=…`, `Sync\ServerProbe`) fetches the destination's home page and one pushed asset through the `UrlSafety` SSRF guard and reports the web server (Apache / LiteSpeed / nginx / CDN-proxied), whether the HTML is gzip-served, and whether the cache policy is actually in effect — the only way to confirm a manual nginx paste (or a working `.htaccess`) took. The last result per destination is stored and returned with `/sync/server-config`.
 
-### AI tools (Abilities API / MCP)
+### AI abilities (Abilities API)
 
 When the host WordPress exposes the **Abilities API** (WP 6.9+), ShipStatic registers abilities so an AI agent / MCP client can operate it. Two opt-in toggles gate what’s allowed:
 

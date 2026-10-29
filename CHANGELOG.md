@@ -5,6 +5,25 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.12] - 2026-10-30
+
+### Added
+- **Setup wizard: Site search, Bricks forms and filters, and AI abilities steps.** The search and forms steps reuse `SiteSearchSettings.svelte` / `BricksFormsSettings.svelte`, shared with the Settings drawer; the forms step (with the firewall note) shows only when Bricks is active (`Status.bricksActive`). More spacing between the step list and the pane, with a faint divider.
+- **Help text** under "Pages to include" and "Enable sync single button".
+- **Connector receiver `REVISION`** (`ConnectorScript::REVISION`, reported by `ping`). `VERSION` stays the strict wire protocol; a hardening change bumps only `REVISION`, which is non-blocking: Test flags an older file (`status.connectorOutdated`, dashboard warning) and `POST /destinations/{id}/connector/refile` hands out the current file for the SAME pairing, so a receiver update no longer forces a re-pair.
+
+### Changed
+- **"AI tools (MCP)" is now "AI abilities"**; the site-search switch is "Enable JavaScript site search" and the forms switch is "Allow Bricks forms and filters".
+- **The live-search setting is removed.** Live-site search is on whenever Site search is on (`LiveIndex::enabled()` follows `IndexBuilder::enabled()`).
+
+### Fixed
+- **Disabled switches/checkboxes/radios showed a stray bar** (WP-admin's input styles beat ab-ui's hidden-input rule); `shared/app.css` overrides it for the disabled state.
+
+### Security
+- **Destination URLs and sub-paths can't contain `.` / `..` segments** (`Url::without_dot_segments()`, `Url::clean_path()`, `Destination::served_base_path()`), and `Runner::write_deploy_file()` refuses a path that leaves the deploy folder.
+- **FTP and SFTP connections run the SSRF host guard** (`UrlSafety::is_safe_host()`), and refuse hosts that multisite forbids (`UrlSafety::multisite_host_error()`).
+- **The Connector receiver validates rewrite flags** (`bs_rewrite_flags_ok()`, double-backslash guard) before writing `.htaccess`.
+
 ## [2.4.11] - 2026-10-29
 
 ### Added

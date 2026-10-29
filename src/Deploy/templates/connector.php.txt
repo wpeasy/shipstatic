@@ -17,6 +17,7 @@ declare(strict_types=1);
 $ID          = '__BS_ID__';
 $SECRET_HASH = '__BS_SECRET_HASH__';
 $VERSION     = __BS_VERSION__;
+$REVISION    = __BS_REVISION__;
 $GZIP        = __BS_GZIP__;   // extensions to pre-compress after extract
 $GZMIN       = __BS_GZMIN__;  // don't gzip files smaller than this (bytes)
 
@@ -245,6 +246,33 @@ function bs_htaccess_lines(string $content): array {
 }
 
 /**
+ * Whether a RewriteRule's argument string is acceptable: no "proxy:" pseudo-scheme
+ * and, when a [flag] block is present, ONLY flags on the allow-list below. The
+ * flags that matter are the ones that change what the server DOES with a request:
+ * P / proxy turns the destination into an open proxy for internal URLs (SSRF),
+ * H / T hand the file to a handler or type, E / CO set environment or cookies.
+ * An allow-list, not a deny-list: a flag nobody thought of is refused too.
+ */
+function bs_rewrite_flags_ok(string $args): bool {
+    if (preg_match('/(^|[\s"])proxy:/i', $args)) {
+        return false;
+    }
+    if (!preg_match('/\[([^\]]*)\]\s*$/', $args, $m)) {
+        return true; // No flag block.
+    }
+    foreach (explode(',', strtolower($m[1])) as $flag) {
+        $flag = trim($flag);
+        if ($flag === '') {
+            continue;
+        }
+        if (!preg_match('/^(l|last|end|nc|nocase|qsa|qsappend|qsd|qsdiscard|ne|noescape|f|forbidden|g|gone|pt|passthrough|ns|nosubreq|c|chain|r(=\d{3}|=permanent|=temp|=seeother)?|s=\d{1,3}|skip=\d{1,3})$/', $flag)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
  * ALLOW-LIST check for .htaccess content. Static output needs only caching,
  * rewrites, redirects and index/error pages, so only those directives are
  * accepted — anything else (handlers, types, filters, PHP settings, CGI/SSI
@@ -268,6 +296,16 @@ function bs_htaccess_allowed(string $content, string $existing): bool {
         'redirect', 'redirectmatch', 'redirectpermanent', 'redirecttemp',
         'options',
     ];
+    // A raw line ending in TWO or more backslashes is where this parser's
+    // continuation join and Apache's (or LiteSpeed's) tokeniser could disagree
+    // about whether the next line is a separate directive, so it is never
+    // accepted as new content — only if the server owner's file already has it.
+    $old_raw = array_flip(explode("\n", str_replace(["\r\n", "\r"], "\n", $existing)));
+    foreach (explode("\n", str_replace(["\r\n", "\r"], "\n", $content)) as $raw) {
+        if (preg_match('/\\\\\\\\$/', $raw) && !isset($old_raw[$raw])) {
+            return false;
+        }
+    }
     $keep = array_flip(bs_htaccess_lines($existing));
     foreach (bs_htaccess_lines($content) as $line) {
         if (isset($keep[$line])) {
@@ -282,7 +320,7 @@ function bs_htaccess_allowed(string $content, string $existing): bool {
         if (!in_array($directive, $allowed, true)) {
             return false;
         }
-        if ($directive === 'rewriterule' && preg_match('/\[[^\]]*\b(h|handler|t|type)\s*=/i', $args)) {
+        if ($directive === 'rewriterule' && !bs_rewrite_flags_ok($args)) {
             return false;
         }
         if ($directive === 'options') {
@@ -387,6 +425,7 @@ switch ($op) {
         bs_out(200, [
             'ok'        => true,
             'version'   => $VERSION,
+            'revision'  => $REVISION,
             'php'       => PHP_VERSION,
             'zip'       => class_exists('ZipArchive'),
             'gzip'      => function_exists('gzencode'),

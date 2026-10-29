@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\Settings;
 
 use WPEasy\ShipStatic\Support\Crypto;
+use WPEasy\ShipStatic\Support\Url;
 
 defined('ABSPATH') || exit;
 
@@ -154,11 +155,15 @@ final class Destination {
     public function served_base_path(): string {
         $url = trim((string) $this->get('destinationUrl'));
         if (!$this->is_from_constant('basePath') && $url !== '' && (string) wp_parse_url($url, PHP_URL_HOST) !== '') {
-            $path = trim((string) wp_parse_url($url, PHP_URL_PATH), '/');
+            // clean_path(): the sub-path becomes a local folder name in the deploy
+            // copy, so it can never climb — whatever the (possibly constant) URL says.
+            $path = Url::clean_path((string) wp_parse_url($url, PHP_URL_PATH));
             return $path === '' ? '/' : '/' . $path . '/';
         }
 
-        return (string) $this->get('basePath');
+        $base = Url::clean_path((string) $this->get('basePath'));
+
+        return $base === '' ? '/' : '/' . $base . '/';
     }
 
     /**

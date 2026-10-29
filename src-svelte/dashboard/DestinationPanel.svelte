@@ -264,6 +264,25 @@
     }
   }
 
+  // The receiver file on the destination is an older build: hand out the current
+  // file for the SAME pairing (no rotation), to upload over the old one.
+  async function refile(): Promise<void> {
+    if (pairing) return;
+    pairing = true;
+    message = '';
+    try {
+      const r = await api.connectorRefile(d.id);
+      message = r.message;
+      messageOk = r.ok;
+      if (r.ok && r.downloadToken) downloadToken = r.downloadToken;
+    } catch (e) {
+      message = (e as Error).message;
+      messageOk = false;
+    } finally {
+      pairing = false;
+    }
+  }
+
   async function revoke(): Promise<void> {
     message = '';
     try {
@@ -475,6 +494,14 @@
                 <span>{@html __f('connectorPaired', `<code>${pairedFile}</code>`)}</span>
               {/snippet}
             </Status>
+            {#if destination.status.connectorOutdated}
+              <Alert tone="warning">
+                <p>{__('connectorOutdated')}</p>
+                <div class="bs-row">
+                  <Button variant="secondary" size="sm" onclick={refile} disabled={busy || pairing}>{__('btnUpdateConnector')}</Button>
+                </div>
+              </Alert>
+            {/if}
             <div class="bs-row bs-row--wrap">
               {#if downloadToken}
                 <a class="ab-button ab-button--primary bs-connector__download" href={connectorDownloadUrl(downloadToken)} onclick={() => setTimeout(() => (downloadToken = ''), 500)}>

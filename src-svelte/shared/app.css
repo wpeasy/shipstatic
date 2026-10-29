@@ -99,3 +99,32 @@
   display: block;
   height: var(--ab-space-2);
 }
+
+/* Small muted description under a setting (Settings drawer + setup wizard). */
+.ab-ui .bs-help {
+  margin: 0;
+  font-size: var(--ab-text-xs);
+  color: var(--ab-color-text-muted);
+  line-height: 1.4;
+}
+
+/* ab-ui hides the native input behind its Switch / Checkbox / Radio with
+   `.ab-ui .ab-*__input { width/height: 0; opacity: 0 }` (0,2,0). WordPress
+   admin's forms.css then restyles a DISABLED one with
+   `input[type=checkbox]:disabled` (0,2,1: opacity .7, grey background, 1px
+   border, min-width 16px), which wins — so a disabled control grew a pale
+   16×2px bar behind its track. Re-assert "invisible" at (0,3,0). Drop this once
+   ab-ui's own rule out-specifies WordPress's. */
+.ab-ui :is(.ab-switch__input, .ab-checkbox__input, .ab-radio__input):disabled {
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.ab-ui :is(.ab-switch__input, .ab-checkbox__input, .ab-radio__input):disabled::before {
+  content: none;
+}

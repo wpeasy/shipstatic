@@ -12,6 +12,7 @@ namespace WPEasy\ShipStatic\Transport;
 
 use phpseclib3\Net\SFTP;
 use WPEasy\ShipStatic\Support\Url;
+use WPEasy\ShipStatic\Support\UrlSafety;
 
 defined('ABSPATH') || exit;
 
@@ -71,6 +72,11 @@ final class SftpTransport implements TransportInterface {
         $host = (string) ($this->config['host'] ?? '');
         if ($host === '') {
             throw new \RuntimeException('SFTP host is required.');
+        }
+
+        $blocked = UrlSafety::multisite_host_error($host);
+        if ($blocked !== null) {
+            throw new \RuntimeException($blocked);
         }
 
         $port = (int) ($this->config['port'] ?? 0) ?: self::DEFAULT_PORT;

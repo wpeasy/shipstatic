@@ -81,7 +81,7 @@ class SearchElement extends \Bricks\Element {
         // ── Behaviour (ungrouped, top) ────────────────────────────────
         $this->controls['info'] = [
             'type'    => 'info',
-            'content' => esc_html__('On your static site this searches as you type. Turn on Site search in ShipStatic → Settings, then Process and Sync. On the live WordPress site it is a normal search form, unless “Use ShipStatic search on the WordPress site too” is on.', 'shipstatic'),
+            'content' => esc_html__('On your static site this searches as you type. Turn on “Enable JavaScript site search” in ShipStatic → Settings, then Process and Sync. On the live WordPress site it also searches as you type, from the pages in your last Process.', 'shipstatic'),
         ];
         if (!IndexBuilder::enabled()) {
             $this->controls['infoOff'] = [

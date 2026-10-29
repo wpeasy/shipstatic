@@ -160,6 +160,8 @@ declare global {
 
 export interface DestinationStatus {
   connected: boolean;
+  /** Connector: the receiver file on the destination is an older build (from the last Test). */
+  connectorOutdated?: boolean;
   hasPushed: boolean;
   inSync: boolean;
 }
@@ -267,19 +269,19 @@ export interface Status {
     sitewide: Array<'menus' | 'templates' | 'bricks' | 'widgets' | 'site' | 'permalinks' | 'theme' | 'many'>;
   };
   fabEnabled: boolean;
-  /** Site search: export a search index + script (Settings → Site search). */
+  /** Site search: export a search index + script (Settings → Enable JavaScript site search). */
   searchEnabled: boolean;
-  /** Live WordPress site: the ShipStatic Search element searches as you type too (needs searchEnabled). */
-  searchLive: boolean;
+  /** Bricks is the active theme (its elements are loaded) — gates the Bricks-only settings. */
+  bricksActive: boolean;
   /** Bricks forms, filters and AJAX loops on the static site use WordPress (Settings). */
   relayEnabled: boolean;
   /** Max destinations deployed at once during a multi-destination sync (1–10). */
   concurrentSyncs: number;
   /** Whether the host WordPress exposes the Abilities API (WP 6.9+). */
   aiAvailable: boolean;
-  /** Opt-in: AI/MCP may change local settings (discovery mode, include). */
+  /** Opt-in: AI abilities may change local settings (discovery mode, include). */
   aiAllowChanges: boolean;
-  /** Opt-in: AI/MCP may run the engine / push to destinations. */
+  /** Opt-in: AI abilities may run the engine / push to destinations. */
   aiAllowSync: boolean;
 }
 
@@ -594,7 +596,7 @@ export interface LockdownSettings {
   cronCommand: string;
   /** The same job over the web, with the unlock key as a bearer token. */
   cronWebCommand: string;
-  /** The static site's Bricks forms and filters get through Lockdown (Settings → Bricks forms and filters use WordPress). */
+  /** The static site's Bricks forms and filters get through Lockdown (Settings → Allow Bricks forms and filters). */
   relay: boolean;
   /** The unlock key as a request header (`Authorization: Bearer <key>`). */
   bearer: string;

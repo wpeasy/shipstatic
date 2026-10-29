@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { Alert, Button, Drawer, Switch, ThemeCustomizer, Segmented, Select, Slider } from '@wpeasy/ab-ui';
+  import { Button, Drawer, Switch, ThemeCustomizer, Segmented, Select, Slider } from '@wpeasy/ab-ui';
   import { Sun, Moon } from '@wpeasy/ab-ui/icons';
   import DiscoveryToggle from './DiscoveryToggle.svelte';
   import AiToolsPanel from './AiToolsPanel.svelte';
+  import SiteSearchSettings from './SiteSearchSettings.svelte';
+  import BricksFormsSettings from './BricksFormsSettings.svelte';
   import { uiPrefs, persistPrefs, type ColorScheme, type Accent } from '../shared/uiPrefs.svelte';
   import type { DiscoveryMode, Status } from '../shared/types';
   import { __ } from '../shared/i18n';
@@ -15,7 +17,6 @@
     onProcess,
     onSetFabEnabled,
     onSetSearchEnabled,
-    onSetSearchLive,
     onSetRelayEnabled,
     onSetAiToggles,
     onSetConcurrentSyncs,
@@ -28,7 +29,6 @@
     onProcess: () => void;
     onSetFabEnabled: (enabled: boolean) => void;
     onSetSearchEnabled: (enabled: boolean) => void;
-    onSetSearchLive: (enabled: boolean) => void;
     onSetRelayEnabled: (enabled: boolean) => void;
     onSetAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) => void;
     onSetConcurrentSyncs: (n: number) => void;
@@ -116,7 +116,7 @@
 
     {#if status}
       <!-- Pages to include (discovery mode only — the actions live on the toolbar) -->
-      <section class="bs-set__group">
+      <section class="bs-set__group bs-stack bs-stack--sm">
         <DiscoveryToggle
           section="mode"
           mode={status.discoveryMode}
@@ -126,44 +126,33 @@
           onChange={onSetDiscoveryMode}
           onProcess={onProcess}
         />
+        <p class="bs-help">{__('pagesToIncludeHelp')}</p>
       </section>
 
       <!-- Enable sync single button (FAB) -->
-      <section class="bs-set__group">
+      <section class="bs-set__group bs-stack bs-stack--sm">
         <Switch
           label={__('enableSyncButton')}
           checked={status.fabEnabled ? 1 : 0}
           onchange={(c) => onSetFabEnabled(c === 1)}
         />
+        <p class="bs-help">{__('enableSyncButtonHelp')}</p>
       </section>
 
       <!-- Site search (index + script in the export) -->
-      <section class="bs-set__group bs-stack bs-stack--sm">
-        <Switch
-          label={__('siteSearch')}
-          checked={status.searchEnabled ? 1 : 0}
-          onchange={(c) => onSetSearchEnabled(c === 1)}
+      <section class="bs-set__group">
+        <SiteSearchSettings
+          searchEnabled={status.searchEnabled}
+          {onSetSearchEnabled}
         />
-        <p class="bs-set__help">{__('siteSearchHelp')}</p>
-        <Switch
-          label={__('siteSearchLive')}
-          checked={status.searchLive ? 1 : 0}
-          disabled={!status.searchEnabled}
-          onchange={(c) => onSetSearchLive(c === 1)}
-        />
-        <p class="bs-set__help">{__('siteSearchLiveHelp')}</p>
       </section>
 
-      <!-- Bricks forms, filters and AJAX loops use WordPress (experimental) -->
-      <section class="bs-set__group bs-stack bs-stack--sm">
-        <Switch
-          label={__('relayEnabled')}
-          checked={status.relayEnabled ? 1 : 0}
-          onchange={(c) => onSetRelayEnabled(c === 1)}
-        />
-        <p class="bs-set__help">{__('relayEnabledHelp')}</p>
-        <Alert tone="warning" title={__('experimental')} description={__('relayExperimental')} />
-      </section>
+      <!-- Bricks forms and filters through to WordPress (experimental; Bricks only) -->
+      {#if status.bricksActive}
+        <section class="bs-set__group">
+          <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} />
+        </section>
+      {/if}
 
       <!-- Sync (concurrent destination uploads) -->
       <section class="bs-set__group bs-stack bs-stack--sm">
@@ -177,10 +166,10 @@
           value={status.concurrentSyncs}
           onchange={(e) => onSetConcurrentSyncs(Number((e.currentTarget as HTMLInputElement).value))}
         />
-        <p class="bs-set__help">{__('concurrentSyncsHelp')}</p>
+        <p class="bs-help">{__('concurrentSyncsHelp')}</p>
       </section>
 
-      <!-- AI tools (MCP) -->
+      <!-- AI abilities -->
       <section class="bs-set__group">
         <AiToolsPanel
           available={status.aiAvailable}
@@ -223,10 +212,4 @@
     max-width: 320px;
   }
 
-  .bs-set__help {
-    margin: 0;
-    font-size: var(--ab-text-xs);
-    color: var(--ab-color-text-muted);
-    line-height: 1.4;
-  }
 </style>

@@ -1,10 +1,20 @@
 <h1>Changelog</h1>
-<h2>v2.4.11 (2026-10-29)</h2>
+<h2>v2.4.12 (2026-10-30)</h2>
 <h3>New</h3>
-<p><strong>A clear message when the dashboard can&#8217;t start.</strong> Instead of staying on &#8220;Loading&#8230;&#8221;, ShipStatic now tells you what went wrong &#8212; a missing or blocked file, a server returning the wrong file type, or a JavaScript error &#8212; and what to try: deactivate other plugins (caching, minification and security plugins are the usual cause), then reload.</p>
+<p><strong>Setup wizard: site search and Bricks forms and filters.</strong> The first-run wizard now has a step for turning on site search, and (on Bricks sites) a step for letting Bricks forms, filters and AJAX loads work on your static site, with a note about firewalls.</p>
 <h3>New</h3>
-<p><strong>Copy diagnostics button.</strong> If it still won&#8217;t load, one click copies the details support needs (versions, server, active plugins and the problems found) so you can paste them into a support request on WordPress.org.</p>
+<p><strong>Setup wizard: AI abilities.</strong> The wizard now covers AI abilities, so you can choose what connected AI assistants may do before you start.</p>
 <h3>New</h3>
-<p><strong>Missing files are spotted straight away.</strong> If part of the plugin didn&#8217;t upload or has the wrong permissions, ShipStatic names the exact file immediately, and a new ShipStatic check appears under Tools &#8594; Site Health.</p>
+<p><strong>Short help under two settings.</strong> “Pages to include” and “Enable sync single button” now have a line of help underneath explaining what they do.</p>
+<h3>New</h3>
+<p><strong>Updating the Connector file no longer means pairing again.</strong> When a newer Connector file is available, the destination shows an “update available” notice and a button that gives you the new file for the same pairing. Upload it over the old one and carry on.</p>
 <h3>Fixed</h3>
-<p><strong>Search element in the Bricks builder.</strong> The sample results now show only on the search box you&#8217;ve selected, instead of on every search box on the page.</p>
+<p><strong>Disabled switches no longer show a stray bar.</strong> Greyed-out switches, checkboxes and radio buttons in the dashboard were showing a leftover bar next to them.</p>
+<h3>Improved</h3>
+<p><strong>Cleaner setup wizard.</strong> More space between the step list and the content, with a faint divider line between them.</p>
+<h3>Improved</h3>
+<p><strong>“AI tools (MCP)” is now “AI abilities”.</strong> The setting and its labels have been renamed. The site search and Bricks forms switches also have clearer names: “Enable JavaScript site search” and “Allow Bricks forms and filters”.</p>
+<h3>Improved</h3>
+<p><strong>Live search follows Site search.</strong> The separate live-search setting is gone. Live search on your WordPress site is simply on whenever Site search is on.</p>
+<h3>Improved</h3>
+<p><strong>Stronger security behind the scenes.</strong> Destination addresses can no longer contain odd path segments, FTP and SFTP connections are checked more strictly, and the Connector file validates its settings more carefully. Nothing changes in how you use them.</p>

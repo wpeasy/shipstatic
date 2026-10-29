@@ -857,7 +857,7 @@ final class SyncCommand {
             }
         }
 
-        \WP_CLI::log('Bricks forms and filters use WordPress: ' . (Relay::enabled() ? 'on' : 'off'));
+        \WP_CLI::log('Allow Bricks forms and filters: ' . (Relay::enabled() ? 'on' : 'off'));
         \WP_CLI::log('Forms (admin-ajax.php): ' . Relay::endpoint());
         \WP_CLI::log('Filters and AJAX loops: ' . (Relay::rest_prefix() !== '' ? rest_url('shipstatic/v1/' . Relay::ROUTE . '/<destination id>/') : 'off (needs pretty permalinks)'));
         \WP_CLI::log('Actions let through Lockdown: ' . implode(', ', Relay::actions()));

@@ -4,6 +4,9 @@
   import { Sun, Moon } from '@wpeasy/ab-ui/icons';
   import Modal from '../lib/Modal.svelte';
   import DiscoveryToggle from './DiscoveryToggle.svelte';
+  import SiteSearchSettings from './SiteSearchSettings.svelte';
+  import BricksFormsSettings from './BricksFormsSettings.svelte';
+  import AiToolsPanel from './AiToolsPanel.svelte';
   import { uiPrefs, persistPrefs, type ColorScheme, type Accent } from '../shared/uiPrefs.svelte';
   import type { DiscoveryMode, Status } from '../shared/types';
   import { __ } from '../shared/i18n';
@@ -14,6 +17,9 @@
     syncing = false,
     onSetDiscoveryMode,
     onSetFabEnabled,
+    onSetSearchEnabled,
+    onSetRelayEnabled,
+    onSetAiToggles,
     onFinish,
   }: {
     open: boolean;
@@ -21,6 +27,9 @@
     syncing?: boolean;
     onSetDiscoveryMode: (mode: DiscoveryMode) => void;
     onSetFabEnabled: (enabled: boolean) => void;
+    onSetSearchEnabled: (enabled: boolean) => void;
+    onSetRelayEnabled: (enabled: boolean) => void;
+    onSetAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) => void;
     /** Closes the wizard; runs Process when `process` is true (parent owns `open`). */
     onFinish: (process: boolean) => void;
   } = $props();
@@ -55,6 +64,18 @@
   // Finish runs a full Process only when the person says so on the last step,
   // which explains what that does (tester report: it ran without warning).
   let processNow = $state(true);
+
+  // The forms/filters step is Bricks-only, so it's left out of the list entirely
+  // (not just hidden) when Bricks isn't active.
+  const steps = $derived([
+    { label: __('styleGroup'), content: themeStep },
+    { label: __('pagesToInclude'), content: pagesStep },
+    { label: __('enableSyncButton'), content: syncStep },
+    { label: __('wizardSearchStep'), content: searchStep },
+    ...(status?.bricksActive ? [{ label: __('wizardFormsStep'), content: formsStep }] : []),
+    { label: __('aiTitle'), content: aiStep },
+    { label: __('wizardProcessStep'), content: processStep },
+  ] as WizardStep[]);
 
   function handleComplete(): void {
     onFinish(processNow);
@@ -106,7 +127,7 @@
 {/snippet}
 
 {#snippet pagesStep()}
-  <div class="bs-wiz-step">
+  <div class="bs-wiz-step bs-stack bs-stack--sm">
     {#if status}
       <DiscoveryToggle
         section="mode"
@@ -117,17 +138,51 @@
         onChange={onSetDiscoveryMode}
         onProcess={() => {}}
       />
+      <p class="bs-help">{__('pagesToIncludeHelp')}</p>
     {/if}
   </div>
 {/snippet}
 
 {#snippet syncStep()}
-  <div class="bs-wiz-step">
+  <div class="bs-wiz-step bs-stack bs-stack--sm">
     {#if status}
       <Switch
         label={__('enableSyncButton')}
         checked={status.fabEnabled ? 1 : 0}
         onchange={(c) => onSetFabEnabled(c === 1)}
+      />
+      <p class="bs-help">{__('enableSyncButtonHelp')}</p>
+    {/if}
+  </div>
+{/snippet}
+
+{#snippet searchStep()}
+  <div class="bs-wiz-step">
+    {#if status}
+      <SiteSearchSettings
+        searchEnabled={status.searchEnabled}
+        {onSetSearchEnabled}
+      />
+    {/if}
+  </div>
+{/snippet}
+
+{#snippet formsStep()}
+  <div class="bs-wiz-step">
+    {#if status}
+      <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} />
+    {/if}
+  </div>
+{/snippet}
+
+{#snippet aiStep()}
+  <div class="bs-wiz-step">
+    {#if status}
+      <AiToolsPanel
+        available={status.aiAvailable}
+        allowChanges={status.aiAllowChanges}
+        allowSync={status.aiAllowSync}
+        onChange={onSetAiToggles}
       />
     {/if}
   </div>
@@ -145,12 +200,7 @@
   <div class="bs-wiz">
     <p class="bs-wiz__intro">{__('wizardIntro')}</p>
     <Wizard
-      steps={[
-        { label: __('styleGroup'), content: themeStep },
-        { label: __('pagesToInclude'), content: pagesStep },
-        { label: __('enableSyncButton'), content: syncStep },
-        { label: __('wizardProcessStep'), content: processStep },
-      ] as WizardStep[]}
+      {steps}
       bind:current={wizardStep}
       orientation="vertical"
       backLabel={__('wizardBack')}
@@ -176,6 +226,20 @@
 
   .bs-wiz-step {
     min-height: 6rem;
+  }
+
+  /* Breathing room between the step list and the pane, with a faint divider
+     down the step list's right edge (the list spans the full wizard height, so
+     the line stays unbroken whatever the pane holds). ab-ui's Wizard has no
+     props for this, so the override is scoped to .bs-wiz. */
+  .bs-wiz :global(.ab-wizard--vertical) {
+    column-gap: var(--ab-space-6);
+  }
+
+  .bs-wiz :global(.ab-wizard--vertical .ab-steps) {
+    gap: var(--ab-space-6);
+    padding-right: var(--ab-space-6);
+    border-right: 1px solid color-mix(in srgb, var(--ab-color-border) 60%, transparent);
   }
 
   /* Constrain the accent Select so it doesn't span the whole modal. */

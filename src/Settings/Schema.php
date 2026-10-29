@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace WPEasy\ShipStatic\Settings;
 
 use WPEasy\ShipStatic\Deploy\GitHubClient;
+use WPEasy\ShipStatic\Support\Url;
 
 defined('ABSPATH') || exit;
 
@@ -107,7 +108,9 @@ final class Schema {
                 return in_array($value, $field['options'] ?? [], true) ? $value : $field['default'];
 
             case 'url':
-                return esc_url_raw(trim((string) $value));
+                // A "../" in the path would become a local folder name in the
+                // deploy copy (Destination::served_base_path()) — drop it here.
+                return Url::without_dot_segments(esc_url_raw(trim((string) $value)));
 
             case 'path':
                 return self::sanitize_path((string) $value);
