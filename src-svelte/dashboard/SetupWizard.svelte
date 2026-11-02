@@ -76,7 +76,8 @@
   ] as WizardStep[]);
 
   function handleComplete(): void {
-    onFinish(processNow, !!status?.bricksActive && openGuideAfter && !status.bricksGuide.seen);
+    // What the checkbox says, whether or not the guide was run before (it only starts out ticked when it hasn't been).
+    onFinish(processNow, !!status?.bricksActive && openGuideAfter);
   }
 
   // Reset to step 0 each time the wizard is (re)opened, so a manual re-run from
@@ -85,7 +86,7 @@
     if (open) {
       wizardStep = 0;
       processNow = true;
-      openGuideAfter = true;
+      openGuideAfter = !status?.bricksGuide.seen;
     }
   });
 </script>
