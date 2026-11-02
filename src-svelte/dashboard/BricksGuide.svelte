@@ -4,7 +4,7 @@
   import type { WizardStep } from '@wpeasy/ab-ui';
   import Modal from '../lib/Modal.svelte';
   import StaticFiltersLoops from './StaticFiltersLoops.svelte';
-  import { recommend, type Answer, type Freshness, type Independence } from './bricksGuide';
+  import { recommend, type Answer, type Mode, type Where } from './bricksGuide';
   import type { Status } from '../shared/types';
   import { __, __f } from '../shared/i18n';
 
@@ -29,14 +29,19 @@
   } = $props();
 
   let step = $state(0);
+  let mode = $state<Mode>('simple');
   let forms = $state<Answer>('unsure');
   let filters = $state<Answer>('unsure');
-  let independence = $state<Independence>('unsure');
-  let freshness = $state<Freshness>('live');
+  let where = $state<Where>('static');
   let processNow = $state(true);
 
   const info = $derived(status?.bricksGuide ?? null);
-  const rec = $derived(info ? recommend({ forms, filters, independence, freshness }, info) : null);
+  // What the last Process learned about each loop: the connection to WordPress stays on while any is unknown or refused.
+  const loops = $derived({
+    known: (status?.staticFilters.loops ?? 0) > 0,
+    fallback: (status?.staticFilters.list ?? []).filter((l) => !l.static).length,
+  });
+  const rec = $derived(info ? recommend({ mode, forms, filters, where }, info, loops) : null);
 
   // Start fresh each time it opens, with the questions answered from what the last Process found. Only `open`
   // triggers this: reading the status inside would reset the answers every time it refreshes.
@@ -44,8 +49,8 @@
     if (!open) return;
     untrack(() => {
       step = 0;
-      independence = 'unsure';
-      freshness = 'live';
+      mode = 'simple';
+      where = 'static';
       const f = info?.found;
       forms = f?.rendered ? (f.formPages > 0 ? 'yes' : 'no') : 'unsure';
       filters = f?.rendered ? (f.filterPages > 0 ? 'yes' : 'no') : 'unsure';
@@ -64,12 +69,17 @@
     { value: 'unsure', label: __('bricksGuideUnsure') },
   ]);
 
-  // The "your site" question only matters when there are filters.
+  // Simple goes straight to Apply; Advanced asks, and the "where" question only matters when there are filters.
   const steps = $derived([
     { label: __('bricksGuideStepFound'), content: foundStep },
-    { label: __('bricksGuideStepForms'), content: formsStep },
-    { label: __('bricksGuideStepFilters'), content: filtersStep },
-    ...(rec?.hasFilters ? [{ label: __('bricksGuideStepWhere'), content: whereStep }] : []),
+    { label: __('bricksGuideStepSetup'), content: setupStep },
+    ...(mode === 'advanced'
+      ? [
+          { label: __('bricksGuideStepForms'), content: formsStep },
+          { label: __('bricksGuideStepFilters'), content: filtersStep },
+          ...(rec?.hasFilters ? [{ label: __('bricksGuideStepWhere'), content: whereStep }] : []),
+        ]
+      : []),
     { label: __('bricksGuideStepApply'), content: applyStep },
   ] as WizardStep[]);
 
@@ -96,6 +106,21 @@
   </div>
 {/snippet}
 
+{#snippet setupStep()}
+  <div class="bs-bg-step bs-stack bs-stack--sm">
+    <h3 class="bs-bg-q">{__('bricksGuideSetupQ')}</h3>
+    <Segmented
+      value={mode}
+      onchange={(v) => (mode = v as Mode)}
+      options={[
+        { value: 'simple', label: __('bricksGuideSimple') },
+        { value: 'advanced', label: __('bricksGuideAdvanced') },
+      ]}
+    />
+    <p class="bs-help">{mode === 'simple' ? __('bricksGuideSimpleHelp') : __('bricksGuideAdvancedHelp')}</p>
+  </div>
+{/snippet}
+
 {#snippet formsStep()}
   <div class="bs-bg-step bs-stack bs-stack--sm">
     <h3 class="bs-bg-q">{__('bricksGuideFormsQ')}</h3>
@@ -116,32 +141,21 @@
   <div class="bs-bg-step bs-stack bs-stack--sm">
     <h3 class="bs-bg-q">{__('bricksGuideWhereQ')}</h3>
     <Segmented
-      value={independence}
-      onchange={(v) => (independence = v as Independence)}
+      value={where}
+      onchange={(v) => (where = v as Where)}
       options={[
-        { value: 'needed', label: __('bricksGuideNeeded') },
-        { value: 'notNeeded', label: __('bricksGuideNotNeeded') },
-        { value: 'unsure', label: __('bricksGuideUnsure') },
-      ]}
-    />
-    <p class="bs-help">{__('bricksGuideWhereHelp')}</p>
-    <h3 class="bs-bg-q">{__('bricksGuideLiveQ')}</h3>
-    <Segmented
-      value={freshness}
-      onchange={(v) => (freshness = v as Freshness)}
-      options={[
-        { value: 'live', label: __('bricksGuideLive') },
-        { value: 'snapshot', label: __('bricksGuideSnapshot') },
+        { value: 'static', label: __('bricksGuideWhereStatic') },
+        { value: 'wordpress', label: __('bricksGuideWhereWp') },
       ]}
     />
     <div class="bs-bg-cols">
       <div>
-        <strong>{__('bricksGuideProsWpTitle')}</strong>
-        <p class="bs-help">{__('bricksGuideProsWp')}</p>
-      </div>
-      <div>
         <strong>{__('bricksGuideProsStaticTitle')}</strong>
         <p class="bs-help">{__('bricksGuideProsStatic')}</p>
+      </div>
+      <div>
+        <strong>{__('bricksGuideProsWpTitle')}</strong>
+        <p class="bs-help">{__('bricksGuideProsWp')}</p>
       </div>
     </div>
   </div>
@@ -150,6 +164,14 @@
 {#snippet applyStep()}
   <div class="bs-bg-step bs-stack bs-stack--sm">
     {#if rec && status}
+      {#if mode === 'simple'}
+        <h3 class="bs-bg-q">{__('bricksGuideAssumeTitle')}</h3>
+        <ul class="bs-bg-list">
+          {#each ['bricksGuideAssume1', 'bricksGuideAssume2', 'bricksGuideAssume3', 'bricksGuideAssume4'] as key (key)}
+            <li class="bs-help">{__(key)}</li>
+          {/each}
+        </ul>
+      {/if}
       <h3 class="bs-bg-q">{__('bricksGuideSummary')}</h3>
       <ul class="bs-bg-set">
         <li><span>{__('relayEnabled')}</span> <strong>{rec.relay ? __('bricksGuideOn') : __('bricksGuideOff')}</strong></li>
@@ -195,6 +217,14 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--ab-space-4);
+  }
+
+  .bs-bg-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .bs-bg-set {

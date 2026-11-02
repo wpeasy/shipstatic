@@ -289,7 +289,7 @@
         </ul>
         <h3>Using it</h3>
         <ul class="bs-docs__list">
-          <li><strong>Not sure which to use?</strong> The <strong>Bricks guide</strong> (the banner on the dashboard, or <strong>Settings → Bricks guide</strong>) asks whether you have forms and filters, whether the filters must work without WordPress, and whether a snapshot is fine, then sets <strong>Allow Bricks forms and filters</strong> and this option for you. It fills in the answers from what the last Process found.</li>
+          <li><strong>Not sure which to use?</strong> The <strong>Bricks guide</strong> (the banner on the dashboard, or <strong>Settings → Bricks guide</strong>) offers a <strong>Simple</strong> setup (assumes a locked-down site: filters run in the browser, forms use WordPress; no questions) or an <strong>Advanced</strong> one that asks whether you have forms and filters and where filters should run. Either way it then sets <strong>Allow Bricks forms and filters</strong> and this option for you, using what the last Process found.</li>
           <li>Turn it on, <strong>Process</strong>, then <strong>Sync</strong>. Settings lists each query loop the last Process found and whether it runs without WordPress or why not.</li>
           <li><code>wp shipstatic static-filters on|off|status</code> does the same from the command line.</li>
           <li>It works beside <strong>Allow Bricks forms and filters</strong>: forms still need that, and a loop that can’t be answered statically uses it.</li>
