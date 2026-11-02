@@ -20,6 +20,7 @@ export default defineConfig({
         docs: 'src-svelte/docs/main.ts',
         editor: 'src-svelte/editor/main.ts',
         search: 'src-svelte/search/main.ts',
+        staticfilters: 'src-svelte/static-filters/main.ts',
         'search-style': 'src-svelte/search/search.css',
       },
     },

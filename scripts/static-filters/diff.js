@@ -1,6 +1,6 @@
 // Differential test: engine vs the real Bricks answers captured by oracle.php.
 import fs from 'node:fs';
-import { prepare, run } from './engine.js';
+import { prepare, run } from '../../src-svelte/static-filters/engine.ts';
 const [ds, combos, oracle] = process.argv.slice(2).map((p) => JSON.parse(fs.readFileSync(p, 'utf8')));
 const idx = prepare(ds);
 let bad = 0, n = 0, tied = 0; const kinds = {};

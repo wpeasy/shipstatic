@@ -2,8 +2,8 @@
 // Usage: TOOLS=<dir with node_modules/linkedom> node dump-diff.js <dataset> <combos> <oracle-out> <combo> <filter-id>
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import { prepare } from './engine.js';
-import { buildReply } from './patch.js';
+import { prepare } from '../../src-svelte/static-filters/engine.ts';
+import { buildReply } from '../../src-svelte/static-filters/patch.ts';
 const { parseHTML } = createRequire(process.env.TOOLS + '/')('linkedom');
 const [dsF, cF, oF, name, fid] = process.argv.slice(2);
 const ds = JSON.parse(fs.readFileSync(dsF)), sel = JSON.parse(fs.readFileSync(cF))[name], want = JSON.parse(fs.readFileSync(oF))[name].raw[fid];

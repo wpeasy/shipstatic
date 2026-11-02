@@ -1,8 +1,8 @@
 // Exact-markup test: rebuild updated_filters from the engine and compare, as DOM, with what Bricks returned.
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import { prepare } from './engine.js';
-import { buildReply } from './patch.js';
+import { prepare } from '../../src-svelte/static-filters/engine.ts';
+import { buildReply } from '../../src-svelte/static-filters/patch.ts';
 const require = createRequire(process.env.TOOLS + '/');
 const { parseHTML } = require('linkedom');
 const [ds, combos, oracle] = process.argv.slice(2).map((p) => JSON.parse(fs.readFileSync(p, 'utf8')));
