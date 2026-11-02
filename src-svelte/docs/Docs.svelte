@@ -242,11 +242,12 @@
         </ul>
         <h3>Filters, pagination and load more</h3>
         <ul class="bs-docs__list">
-          <li>WordPress finds the results, so they are always current — even posts published since your last sync. Their links and images point at your static site, with that destination’s text and link replacements applied.</li>
+          <li>WordPress finds the results, so they follow your current content: edits, unpublished posts and reordering show at once. Their links and images point at your static site, with that destination’s text and link replacements applied.</li>
+          <li><strong>Only posts in the export are listed.</strong> A post published (or included) since your last Process and Sync has no page or image files on the static site yet, so it is left out of the results, and out of the counts and page numbers, until you Process and Sync. The dashboard says when published items are waiting. A post type with no posts in the export at all is not limited.</li>
           <li><strong>Images.</strong> When a page has filters or a loop that loads more, each sync also uploads every size of every published post’s featured image, so results that never appeared on an exported page still have their pictures. Other images in a result (inside the post’s content, say) are only there if an exported page used them.</li>
           <li><strong>Only the first request of a visit is slower.</strong> The security token in an exported page has usually expired, so Bricks fetches a fresh one and sends again. ShipStatic remembers the fresh token in the browser for 11 hours, so later pages and filters don’t repeat that.</li>
           <li><strong>Filtered links work.</strong> Opening a link like <code>/shop/?brx_abc123=red</code> shows the filtered results, as on WordPress.</li>
-          <li><strong>A result whose post isn’t in the export</strong> links to a page your static site doesn’t have. Set <strong>Pages to include</strong> to <strong>All published</strong> (or include those posts) so every result has its page.</li>
+          <li><strong>A post that isn’t in the export</strong> never appears in the results. Set <strong>Pages to include</strong> to <strong>All published</strong> (or include those posts) to have them listed.</li>
           <li><strong>Needs pretty permalinks</strong> (Settings → Permalinks, anything but Plain) — which the export needs anyway.</li>
         </ul>
         <h3>Good to know</h3>

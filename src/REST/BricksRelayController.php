@@ -13,6 +13,7 @@ namespace WPEasy\ShipStatic\REST;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
+use WPEasy\ShipStatic\Bricks\ExportedOnly;
 use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Settings\Destination;
 use WPEasy\ShipStatic\Sync\Runner;
@@ -31,6 +32,7 @@ defined('ABSPATH') || exit;
  *
  * - only the three endpoints in Relay::ENDPOINTS, only POST;
  * - 404 unless the relay is on and the destination exists;
+ * - post queries are limited to the posts in the last render ({@see ExportedOnly});
  * - nothing of its own is read or written: what Bricks returns is what a
  *   visitor of the WordPress site would get, with addresses changed.
  */
@@ -83,7 +85,12 @@ final class BricksRelayController {
             $inner->set_query_params(['lang' => sanitize_key($lang)]);
         }
 
-        $response = rest_do_request($inner);
+        ExportedOnly::begin();
+        try {
+            $response = rest_do_request($inner);
+        } finally {
+            ExportedOnly::end();
+        }
         if ($response->is_error() || $response->get_status() >= 400) {
             return $response; // Bricks' own error (an expired nonce: Bricks then asks for a new one).
         }

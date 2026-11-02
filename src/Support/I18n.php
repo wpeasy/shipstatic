@@ -300,6 +300,8 @@ final class I18n {
             'bricksGuideTitle' => __('Bricks guide', 'shipstatic'),
             'bricksGuideIntro' => __('Bricks pages can have forms, search and filters that normally ask WordPress for answers while a visitor is on the page. A static site has no WordPress, so you choose how each one works. Answer a few questions and this guide sets it up.', 'shipstatic'),
             'bricksGuideNudge' => __('You use Bricks: choose how forms and filters work on your static site.', 'shipstatic'),
+            /* translators: %d: number of published items that are not in the static export. */
+            'filtersNotExported' => __('Filters and lists on your static site show only what is in the export. %d published items are not in it yet, so they will not appear there until you Process and Sync.', 'shipstatic'),
             'bricksGuideStart' => __('Start Bricks guide', 'shipstatic'),
             'bricksGuideNotNow' => __('Not now', 'shipstatic'),
             'bricksGuideStepFound' => __('What you have', 'shipstatic'),

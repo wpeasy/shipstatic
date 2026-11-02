@@ -512,6 +512,10 @@
     </Alert>
   {/if}
 
+  {#if status && status.bricksActive && (status.relayEnabled || status.staticFilters.enabled) && status.bricksGuide.found.filterPages > 0 && status.excludedPublished > 0}
+    <Alert tone="info" description={__f('filtersNotExported', status.excludedPublished)} />
+  {/if}
+
   {#if status?.wpMove}
     <WpMoveBanner move={status.wpMove} onChanged={() => void loadStatus()} />
   {/if}
