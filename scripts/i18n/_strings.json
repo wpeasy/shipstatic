@@ -1188,6 +1188,30 @@
     "msgid": "Experimental"
   },
   {
+    "msgid": "Run Bricks filters without WordPress"
+  },
+  {
+    "msgid": "Filters, sorting, search, page size, pagination and infinite scroll on your static site are answered in the visitor’s browser from data files that Process builds, so they keep working when WordPress is offline, locked down or on another server. Each query loop is checked: one that cannot be answered exactly keeps using WordPress (if the option above is on)."
+  },
+  {
+    "msgid": "Results are a snapshot: change content, then Process and Sync again. Items with the same sort value (for example the same price) can appear in a different order than WordPress shows. Search matches plain words in the title, excerpt and content, without WordPress’s relevance order. Up to 3,000 items per loop. WooCommerce, term and user loops, random order and sorting by other fields are not supported. Experimental."
+  },
+  {
+    "msgid": "Run Process to build the data files, then Sync."
+  },
+  {
+    "msgid": "This version of Bricks has not been checked with static filters, so every loop will keep using WordPress."
+  },
+  {
+    "msgid": "Query loops found by the last Process"
+  },
+  {
+    "msgid": "Without WordPress (%d items)"
+  },
+  {
+    "msgid": "Through WordPress"
+  },
+  {
     "msgid": "Concurrent syncs"
   },
   {

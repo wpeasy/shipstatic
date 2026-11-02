@@ -124,9 +124,11 @@ final class StaticFiltersReplacer implements DeployReplacer {
         if ($ctx['fromUrl']) {
             $tags .= RelayReplacer::filters_from_url_tag($html);
         }
-        $tags .= '<script type="application/json" id="shipstatic-filters">'
-            . wp_json_encode($ctx['pages'][$relative], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP)
-            . '</script><script type="module" src="' . esc_url($ctx['script']) . '"></script>';
+        $tags .= wp_get_inline_script_tag(
+            (string) wp_json_encode($ctx['pages'][$relative], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP),
+            ['type' => 'application/json', 'id' => 'shipstatic-filters']
+        );
+        $tags .= wp_get_script_tag(['src' => $ctx['script'], 'type' => 'module']);
 
         $at = (int) strripos($html, '</body>');
 

@@ -294,6 +294,7 @@ final class I18n {
             'staticFiltersNeedsProcess' => __('Run Process to build the data files, then Sync.', 'shipstatic'),
             'staticFiltersNotVerified' => __('This version of Bricks has not been checked with static filters, so every loop will keep using WordPress.', 'shipstatic'),
             'staticFiltersLoops' => __('Query loops found by the last Process', 'shipstatic'),
+            /* translators: %d: number of items in a query loop. */
             'staticFiltersStatic' => __('Without WordPress (%d items)', 'shipstatic'),
             'staticFiltersRelay' => __('Through WordPress', 'shipstatic'),
             'concurrentSyncs'  => __('Concurrent syncs', 'shipstatic'),

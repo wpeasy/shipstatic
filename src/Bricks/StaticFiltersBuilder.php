@@ -120,9 +120,9 @@ final class StaticFiltersBuilder {
         $elements = [];
         if ($ids) {
             $marks = implode(',', array_fill(0, count($ids), '%s'));
-            // The table name is Bricks' own (prefix + fixed suffix), the values are bound.
-            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-            $rows = $wpdb->get_results($wpdb->prepare("SELECT filter_id, filter_type, filter_action, settings FROM {$table} WHERE filter_id IN ({$marks})", $ids), ARRAY_A);
+            // The table name is Bricks' own (prefix + fixed suffix) and goes in as an identifier; the values are bound.
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT filter_id, filter_type, filter_action, settings FROM %i WHERE filter_id IN ({$marks})", array_merge([$table], $ids)), ARRAY_A);
             foreach ((array) $rows as $row) {
                 $settings                     = json_decode((string) $row['settings'], true);
                 $elements[$row['filter_id']] = ['type' => (string) $row['filter_type'], 'action' => (string) $row['filter_action'], 'settings' => is_array($settings) ? $settings : []];
@@ -177,8 +177,8 @@ final class StaticFiltersBuilder {
             if ($def['action'] !== 'filter' || !in_array($def['element'], ['filter-checkbox', 'filter-radio', 'filter-select'], true)) {
                 continue;
             }
-            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-            $all        = $wpdb->get_results($wpdb->prepare("SELECT object_id, filter_value, filter_value_display, filter_value_id, filter_value_parent FROM {$index} WHERE filter_id = %s", $fid), ARRAY_A);
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            $all        = $wpdb->get_results($wpdb->prepare('SELECT object_id, filter_value, filter_value_display, filter_value_id, filter_value_parent FROM %i WHERE filter_id = %s', $index, $fid), ARRAY_A);
             $rows[$fid] = [];
             foreach ((array) $all as $r) {
                 if (isset($in_loop[(int) $r['object_id']])) {
