@@ -18,6 +18,7 @@
     onSetFabEnabled,
     onSetSearchEnabled,
     onSetRelayEnabled,
+    onSetStaticFiltersEnabled,
     onSetAiToggles,
     onSetConcurrentSyncs,
     onOpenWizard,
@@ -30,6 +31,7 @@
     onSetFabEnabled: (enabled: boolean) => void;
     onSetSearchEnabled: (enabled: boolean) => void;
     onSetRelayEnabled: (enabled: boolean) => void;
+    onSetStaticFiltersEnabled: (enabled: boolean) => void;
     onSetAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) => void;
     onSetConcurrentSyncs: (n: number) => void;
     /** Re-run the first-run setup wizard (closes this drawer). */
@@ -150,7 +152,7 @@
       <!-- Bricks forms and filters through to WordPress (experimental; Bricks only) -->
       {#if status.bricksActive}
         <section class="bs-set__group">
-          <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} />
+          <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} staticFilters={status.staticFilters} {onSetStaticFiltersEnabled} />
         </section>
       {/if}
 

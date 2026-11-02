@@ -14,6 +14,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WPEasy\ShipStatic\Abilities\AbilityRegistry;
 use WPEasy\ShipStatic\Bricks\Relay;
+use WPEasy\ShipStatic\Bricks\StaticFilters;
 use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
@@ -132,6 +133,8 @@ final class StatusController {
             'bricksActive'  => class_exists('\\Bricks\\Elements'),
             // Bricks forms, filters and AJAX loops on the static site use WordPress.
             'relayEnabled'  => Relay::enabled(),
+            // ...or answered from data files in the page (what the last Process found, per loop).
+            'staticFilters' => StaticFilters::report(),
             // Max destinations deployed at once during a multi-destination sync.
             'concurrentSyncs' => DeployPool::concurrency(),
             // AI/MCP opt-ins. `aiAvailable` reflects whether the host WordPress
@@ -327,6 +330,11 @@ final class StatusController {
             }
         }
 
+        if (array_key_exists('staticFiltersEnabled', $params)) {
+            // The data files are built while rendering: turning it on or off needs a new Process (marked dirty).
+            StaticFilters::set_enabled(!empty($params['staticFiltersEnabled']));
+        }
+
         if (array_key_exists('aiAllowChanges', $params)) {
             update_option(AbilityRegistry::OPT_CHANGES, !empty($params['aiAllowChanges']), false);
         }
@@ -351,6 +359,7 @@ final class StatusController {
             'fabEnabled'      => get_option('shipstatic_fab_enabled', '1') !== '0',
             'searchEnabled'   => IndexBuilder::enabled(),
             'relayEnabled'    => Relay::enabled(),
+            'staticFilters'   => StaticFilters::report(),
             'aiAllowChanges'  => AbilityRegistry::changes_enabled(),
             'aiAllowSync'     => AbilityRegistry::sync_enabled(),
             'concurrentSyncs' => DeployPool::concurrency(),

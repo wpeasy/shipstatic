@@ -19,6 +19,7 @@
     onSetFabEnabled,
     onSetSearchEnabled,
     onSetRelayEnabled,
+    onSetStaticFiltersEnabled,
     onSetAiToggles,
     onFinish,
   }: {
@@ -29,6 +30,7 @@
     onSetFabEnabled: (enabled: boolean) => void;
     onSetSearchEnabled: (enabled: boolean) => void;
     onSetRelayEnabled: (enabled: boolean) => void;
+    onSetStaticFiltersEnabled: (enabled: boolean) => void;
     onSetAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) => void;
     /** Closes the wizard; runs Process when `process` is true (parent owns `open`). */
     onFinish: (process: boolean) => void;
@@ -170,7 +172,7 @@
 {#snippet formsStep()}
   <div class="bs-wiz-step">
     {#if status}
-      <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} />
+      <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} staticFilters={status.staticFilters} {onSetStaticFiltersEnabled} />
     {/if}
   </div>
 {/snippet}

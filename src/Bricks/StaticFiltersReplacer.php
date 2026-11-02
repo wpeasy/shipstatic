@@ -149,7 +149,7 @@ final class StaticFiltersReplacer implements DeployReplacer {
      * The built script.
      */
     private static function runtime_file(): ?string {
-        $entry = Assets::entry('staticfilters');
+        $entry = Assets::entry('src-svelte/static-filters/main.ts');
         $path  = $entry !== null ? SHIPSTATIC_PLUGIN_DIR . 'assets/dist/' . (string) $entry['file'] : '';
 
         return $path !== '' && is_file($path) ? $path : null;

@@ -14,6 +14,7 @@ use WPEasy\ShipStatic\Deploy\ConnectorScript;
 use WPEasy\ShipStatic\Deploy\ServerFolder;
 use WPEasy\ShipStatic\Deploy\WordPressMove;
 use WPEasy\ShipStatic\Bricks\Relay;
+use WPEasy\ShipStatic\Bricks\StaticFilters;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
 use WPEasy\ShipStatic\Settings\Destinations;
@@ -863,6 +864,47 @@ final class SyncCommand {
         \WP_CLI::log('Actions let through Lockdown: ' . implode(', ', Relay::actions()));
         if ($action !== 'status') {
             \WP_CLI::success('Sync each destination to update its pages.');
+        }
+    }
+
+    /**
+     * Answer Bricks filters from data files in the page instead of asking WordPress.
+     *
+     * The page's filters, sorting, search, page size, pagination and infinite scroll
+     * work without WordPress; the data files are built by Process (`wp shipstatic
+     * sync --check`). A loop that cannot be answered exactly stays on the relay.
+     * Experimental.
+     *
+     * ## OPTIONS
+     *
+     * [<action>]
+     * : on, off or status (default).
+     *
+     * ## EXAMPLES
+     *
+     *     wp shipstatic static-filters on
+     *     wp shipstatic static-filters status
+     *
+     * @subcommand static-filters
+     * @param array<int,string>    $args       [action].
+     * @param array<string,string> $assoc_args Flags (unused).
+     * @when after_wp_load
+     */
+    public function static_filters(array $args, array $assoc_args): void {
+        $action = (string) ($args[0] ?? 'status');
+        if ($action === 'on' || $action === 'off') {
+            StaticFilters::set_enabled($action === 'on');
+        }
+
+        $report = StaticFilters::report();
+        \WP_CLI::log('Bricks filters without WordPress: ' . ($report['enabled'] ? 'on' : 'off'));
+        \WP_CLI::log('Bricks ' . ($report['bricks'] !== '' ? $report['bricks'] : '(not active)') . ': ' . ($report['verified'] ? 'checked with static filters' : 'NOT checked, so every loop uses WordPress'));
+        \WP_CLI::log(sprintf('Loops found by the last Process: %d (%d without WordPress, %d through WordPress)', $report['loops'], $report['static'], $report['relay']));
+        foreach ($report['list'] as $loop) {
+            \WP_CLI::log(sprintf('  %s  %s  %s', $loop['page'], $loop['query'], $loop['static'] ? sprintf('static (%d items)', $loop['items']) : 'WordPress: ' . $loop['reason']));
+        }
+        if ($action === 'on' || $action === 'off') {
+            \WP_CLI::success('Run a Process (wp shipstatic sync --check) to build the data files, then Sync.');
         }
     }
 

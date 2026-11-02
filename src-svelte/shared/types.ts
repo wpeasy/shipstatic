@@ -275,6 +275,8 @@ export interface Status {
   bricksActive: boolean;
   /** Bricks forms, filters and AJAX loops on the static site use WordPress (Settings). */
   relayEnabled: boolean;
+  /** Bricks filters answered from data files in the page; what the last Process found per loop. */
+  staticFilters: StaticFiltersReport;
   /** Max destinations deployed at once during a multi-destination sync (1–10). */
   concurrentSyncs: number;
   /** Whether the host WordPress exposes the Abilities API (WP 6.9+). */
@@ -607,4 +609,16 @@ export interface LockdownProbe {
   result: 'server' | 'gate' | 'wordpress' | 'allowed' | 'open' | 'error' | 'off';
   address: string;
   message: string;
+}
+
+/** Bricks query loops and whether their filters run without WordPress (GET /status). */
+export interface StaticFiltersReport {
+  enabled: boolean;
+  /** The engine was checked against this Bricks version. */
+  verified: boolean;
+  bricks: string;
+  loops: number;
+  static: number;
+  relay: number;
+  list: { page: string; query: string; static: boolean; reason: string; items: number }[];
 }

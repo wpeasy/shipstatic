@@ -182,6 +182,20 @@
     }
   }
 
+  async function setStaticFiltersEnabled(enabled: boolean): Promise<void> {
+    if (!status) return;
+    const previous = status.staticFilters.enabled;
+    status.staticFilters.enabled = enabled; // optimistic
+    try {
+      status.staticFilters = (await api.setStaticFiltersEnabled(enabled)).staticFilters;
+      // The data files are built while rendering: the render is now out of date.
+      void loadStatus();
+    } catch (e) {
+      status.staticFilters.enabled = previous;
+      loadError = (e as Error).message;
+    }
+  }
+
   async function setFabEnabled(enabled: boolean): Promise<void> {
     if (!status) return;
     const previous = status.fabEnabled;
@@ -492,6 +506,7 @@
     onSetFabEnabled={setFabEnabled}
     onSetSearchEnabled={setSearchEnabled}
     onSetRelayEnabled={setRelayEnabled}
+    onSetStaticFiltersEnabled={setStaticFiltersEnabled}
     onSetAiToggles={setAiToggles}
     onSetConcurrentSyncs={setConcurrentSyncs}
     onOpenWizard={openWizard}
@@ -505,6 +520,7 @@
     onSetFabEnabled={setFabEnabled}
     onSetSearchEnabled={setSearchEnabled}
     onSetRelayEnabled={setRelayEnabled}
+    onSetStaticFiltersEnabled={setStaticFiltersEnabled}
     onSetAiToggles={setAiToggles}
     onFinish={finishWizard}
   />

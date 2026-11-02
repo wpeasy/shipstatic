@@ -194,18 +194,21 @@ final class StaticFiltersBuilder {
             }
         }
 
-        $posts = [];
+        // The text is only there for a search filter to match words in; without one it is not written at all.
+        // (It is the same text WordPress's own search reads, never a password-protected post's.)
+        $searchable = (bool) array_filter($filters, static fn(array $f): bool => $f['element'] === 'filter-search');
+        $posts      = [];
         foreach ($order as $id) {
             $p = get_post($id);
             if (!$p) {
                 continue;
             }
-            $protected = $p->post_password !== '';
+            $text       = $searchable && $p->post_password === '';
             $posts[$id] = [
                 'title'   => (string) $p->post_title,
                 'date'    => (string) $p->post_date,
-                'content' => $protected ? '' : (string) $p->post_content,
-                'excerpt' => $protected ? '' : (string) $p->post_excerpt,
+                'content' => $text ? (string) apply_filters('shipstatic_static_filters_post_text', $p->post_content, $p, 'content') : '',
+                'excerpt' => $text ? (string) apply_filters('shipstatic_static_filters_post_text', $p->post_excerpt, $p, 'excerpt') : '',
                 'author'  => (int) $p->post_author,
             ];
             foreach (array_keys($meta) as $key) {

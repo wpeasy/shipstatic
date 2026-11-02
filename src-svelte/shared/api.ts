@@ -20,6 +20,7 @@ import type {
   VideoItem,
   ServerCheck,
   ServerConfig,
+  StaticFiltersReport,
   Status,
   SyncSnapshot,
   TestResult,
@@ -85,6 +86,8 @@ export const api = {
     request<{ searchEnabled: boolean; renderCurrent?: boolean }>('/settings', 'POST', { searchEnabled: enabled }),
   setRelayEnabled: (enabled: boolean) =>
     request<{ relayEnabled: boolean }>('/settings', 'POST', { relayEnabled: enabled }),
+  setStaticFiltersEnabled: (enabled: boolean) =>
+    request<{ staticFilters: StaticFiltersReport }>('/settings', 'POST', { staticFiltersEnabled: enabled }),
   setAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) =>
     request<{ aiAllowChanges: boolean; aiAllowSync: boolean }>('/settings', 'POST', toggles),
   setConcurrentSyncs: (n: number) =>
