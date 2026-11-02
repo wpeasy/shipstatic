@@ -95,7 +95,9 @@ final class StaticFiltersReplacer implements DeployReplacer {
                     continue;
                 }
                 $files[StaticFilters::DIR . '/' . $name] = $path;
-                $pages[(string) $relative][(string) $qid] = Url::BASE_TOKEN . '/' . StaticFilters::DIR . '/' . $name;
+                // `?v=` = this file's content: a host that caches files for a long time (Cloudflare: a year) must not serve an old
+                // data file next to a page that expects the new one.
+                $pages[(string) $relative][(string) $qid] = Url::BASE_TOKEN . '/' . StaticFilters::DIR . '/' . $name . '?v=' . substr(md5($json), 0, 8);
             }
         }
         if (!$pages) {
@@ -105,7 +107,7 @@ final class StaticFiltersReplacer implements DeployReplacer {
         ksort($files);
 
         return [
-            'ctx'   => ['pages' => $pages, 'script' => Url::BASE_TOKEN . '/' . StaticFilters::DIR . '/runtime.js', 'fromUrl' => !Relay::enabled()],
+            'ctx'   => ['pages' => $pages, 'script' => Url::BASE_TOKEN . '/' . StaticFilters::DIR . '/runtime.js?v=' . substr((string) md5_file($runtime), 0, 8), 'fromUrl' => !Relay::enabled()],
             'files' => $files,
         ];
     }
