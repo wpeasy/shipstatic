@@ -1194,7 +1194,7 @@
     "msgid": "Filters, sorting, search, page size, pagination and infinite scroll on your static site are answered in the visitor’s browser from data files that Process builds, so they keep working when WordPress is offline, locked down or on another server. Each query loop is checked: one that cannot be answered exactly keeps using WordPress (if the option above is on)."
   },
   {
-    "msgid": "Results are a snapshot: change content, then Process and Sync again. Items with the same sort value (for example the same price) can appear in a different order than WordPress shows. Search matches plain words in the title, excerpt and content, without WordPress’s relevance order. Up to 3,000 items per loop. WooCommerce, term and user loops, random order and sorting by other fields are not supported. Experimental."
+    "msgid": "Results are a snapshot: change content, then Process and Sync again. Items with the same sort value (for example the same price) can appear in a different order than WordPress shows. Search matches plain words in the title, excerpt and content, without WordPress’s relevance order. Up to 3,000 items per loop. Term and user loops, random order and sorting by other fields are not supported, and WooCommerce is not supported on a static site at all. Experimental."
   },
   {
     "msgid": "Run Process to build the data files, then Sync."
@@ -1290,7 +1290,7 @@
     "msgid": "A snapshot is fine"
   },
   {
-    "msgid": "Always current, and works for every filter type and for WooCommerce. WordPress must be online and reachable, every change is a round trip to it, and it needs a small gap in the Lockdown firewall."
+    "msgid": "Always current, and works for every Bricks filter type. WordPress must be online and reachable, every change is a round trip to it, and it needs a small gap in the Lockdown firewall."
   },
   {
     "msgid": "In the browser"
@@ -1320,7 +1320,7 @@
     "msgid": "Filters will ask WordPress, so results are always current."
   },
   {
-    "msgid": "WooCommerce loops always use WordPress."
+    "msgid": "WooCommerce is not supported on a static site. Shops, carts, checkout, prices and stock need WordPress at the moment a visitor uses them, so they cannot work here, whichever option you choose. Keep WooCommerce pages out of the export."
   },
   {
     "msgid": "Run Process after applying, to build the data files and check each loop"

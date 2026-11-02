@@ -53,7 +53,6 @@ export function recommend(answers: Answers, info: BricksGuideInfo): Recommendati
   // Filters answered in the browser: wanted without WordPress, fine as a snapshot, or forced by where the site goes.
   const wantStatic = hasFilters && (answers.independence === 'needed' || answers.freshness === 'snapshot' || (answers.independence === 'unsure' && needsStaticFilters(info)));
   if (hasFilters) reasons.push(wantStatic ? 'bricksGuideWhyStatic' : 'bricksGuideWhyWp');
-  if (hasFilters && info.woo) reasons.push('bricksGuideWoo');
 
   // The connection to WordPress stays on for forms, and as the fallback for a loop that can't run statically —
   // unless the person said WordPress will not be reachable, when it could not answer anyway.

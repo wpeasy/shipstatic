@@ -26,6 +26,7 @@ assert.deepEqual(r({ filters: 'yes' }), [true, false]);
 assert.deepEqual(r({ forms: 'unsure', filters: 'unsure' }, { found: { rendered: true, formPages: 2, filterPages: 0 } }), [true, false]);
 assert.deepEqual(r({ forms: 'unsure', filters: 'unsure' }, { found: { rendered: true, formPages: 0, filterPages: 0 } }), [false, false]);
 assert.deepEqual(r({ forms: 'unsure', filters: 'unsure' }, { found: { rendered: false, formPages: 0, filterPages: 0 } }), [false, false]);
-// WooCommerce is mentioned, never decides.
-assert.ok(recommend(ans({ filters: 'yes' }), info({ woo: true })).reasons.includes('bricksGuideWoo'));
+// WooCommerce is not a reason for anything: it never changes the recommendation (the guide warns about it separately).
+assert.deepEqual(recommend(ans({ filters: 'yes' }), info({ woo: true })), recommend(ans({ filters: 'yes' }), info({ woo: false })));
+assert.ok(!recommend(ans({ filters: 'yes' }), info({ woo: true })).reasons.includes('bricksGuideWoo'));
 console.log('guide.test.js: all mappings hold');

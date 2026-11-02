@@ -282,7 +282,8 @@
           <li><strong>Equal sort values</strong> (two items at the same price, say) can appear in a different order than WordPress shows — MySQL doesn’t define that order, so no copy of it can match.</li>
           <li><strong>Search</strong> matches plain words in the title, excerpt and content. WordPress’s relevance order and stop-word handling are not copied.</li>
           <li><strong>Up to 3,000 results per loop.</strong> A bigger loop keeps using WordPress.</li>
-          <li><strong>Not supported</strong> (the loop keeps using WordPress): WooCommerce, term and user loops, random order, sorting by other fields, custom comparison operators, loops that are a page’s main query, loops whose results carry their own CSS or popups, and Bricks versions it hasn’t been checked with.</li>
+          <li><strong>WooCommerce is not supported on a static site, at all.</strong> Shops, carts, checkout, prices and stock need WordPress at the moment a visitor uses them. Keep WooCommerce pages out of the export; neither this option nor Allow Bricks forms and filters makes them work.</li>
+          <li><strong>Not supported</strong> (the loop keeps using WordPress): term and user loops, random order, sorting by other fields, custom comparison operators, loops that are a page’s main query, loops whose results carry their own CSS or popups, and Bricks versions it hasn’t been checked with.</li>
           <li>The <strong>data files</strong> carry the text of published posts for the search (never a password-protected post’s), the same text WordPress’s own search reads.</li>
         </ul>
         <h3>Using it</h3>

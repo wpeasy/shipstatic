@@ -90,6 +90,9 @@
     {:else}
       <Alert tone="info" description={__('bricksGuideNotRendered')} />
     {/if}
+    {#if info?.woo}
+      <Alert tone="warning" description={__('bricksGuideWoo')} />
+    {/if}
   </div>
 {/snippet}
 
