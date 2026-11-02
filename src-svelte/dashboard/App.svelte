@@ -184,6 +184,19 @@
     }
   }
 
+  async function setRelayWpImages(enabled: boolean): Promise<void> {
+    if (!status) return;
+    const previous = status.relayWpImages;
+    status.relayWpImages = enabled; // optimistic
+    try {
+      status.relayWpImages = (await api.setRelayWpImages(enabled)).relayWpImages;
+      void loadStatus(); // deploy-time: destinations read as out of sync
+    } catch (e) {
+      status.relayWpImages = previous;
+      loadError = (e as Error).message;
+    }
+  }
+
   async function setStaticFiltersEnabled(enabled: boolean): Promise<void> {
     if (!status) return;
     const previous = status.staticFilters.enabled;
@@ -548,6 +561,7 @@
     onSetFabEnabled={setFabEnabled}
     onSetSearchEnabled={setSearchEnabled}
     onSetRelayEnabled={setRelayEnabled}
+    onSetRelayWpImages={setRelayWpImages}
     onSetStaticFiltersEnabled={setStaticFiltersEnabled}
     onSetAiToggles={setAiToggles}
     onSetConcurrentSyncs={setConcurrentSyncs}
@@ -570,6 +584,7 @@
     bind:open={guideOpen}
     {status}
     onSetRelayEnabled={setRelayEnabled}
+    onSetRelayWpImages={setRelayWpImages}
     onSetStaticFiltersEnabled={setStaticFiltersEnabled}
     onSeen={() => void markGuideSeen()}
     onFinish={finishGuide}

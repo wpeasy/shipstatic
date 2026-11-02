@@ -4,7 +4,7 @@ import { recommend } from '../../src-svelte/dashboard/bricksGuide.ts';
 
 const info = (over = {}) => ({ seen: false, found: { rendered: true, formPages: 0, filterPages: 0 }, destinations: [{ transport: 'folder', crossDomain: false }], woo: false, ...over });
 const found = (formPages, filterPages, rendered = true) => ({ found: { rendered, formPages, filterPages } });
-const ans = (over = {}) => ({ mode: 'advanced', forms: 'no', filters: 'no', where: 'static', ...over });
+const ans = (over = {}) => ({ mode: 'advanced', forms: 'no', filters: 'no', where: 'static', wpImages: false, ...over });
 const r = (a, i, loops) => { const x = recommend(ans(a), info(i), loops); return [x.relay, x.staticFilters]; };
 const allStatic = { known: true, fallback: 0 };
 
@@ -26,6 +26,14 @@ assert.deepEqual(r({ filters: 'yes', forms: 'yes', where: 'static' }, {}, allSta
 assert.deepEqual(r({ forms: 'unsure', filters: 'unsure' }, found(2, 0)), [true, false]);
 assert.deepEqual(r({ forms: 'unsure', filters: 'unsure' }, found(0, 0)), [false, false]);
 assert.deepEqual(r({ forms: 'unsure', filters: 'unsure' }, found(0, 0, false)), [false, false]);
+
+// Images from WordPress: only Advanced, only with filters through WordPress; never with filters in the browser.
+const wi = (a, mode = 'advanced') => recommend(ans({ mode, filters: 'yes', wpImages: true, ...a }), info(found(0, 1))).wpImages;
+assert.equal(wi({ where: 'wordpress' }), true);
+assert.equal(wi({ where: 'static' }), false);
+assert.equal(wi({ where: 'wordpress' }, 'simple'), false);
+assert.equal(recommend(ans({ filters: 'no', where: 'wordpress', wpImages: true }), info(found(0, 0))).wpImages, false);
+assert.equal(recommend(ans({ filters: 'yes', where: 'wordpress', wpImages: false }), info(found(0, 1))).wpImages, false);
 
 // ---- Simple (ignores the answers; reads the last Process)
 const s = (i, loops) => { const x = recommend(ans({ mode: 'simple', forms: 'no', filters: 'no', where: 'wordpress' }), info(i), loops); return [x.relay, x.staticFilters]; };

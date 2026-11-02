@@ -87,6 +87,8 @@ export const api = {
     request<{ searchEnabled: boolean; renderCurrent?: boolean }>('/settings', 'POST', { searchEnabled: enabled }),
   setRelayEnabled: (enabled: boolean) =>
     request<{ relayEnabled: boolean }>('/settings', 'POST', { relayEnabled: enabled }),
+  setRelayWpImages: (enabled: boolean) =>
+    request<{ relayWpImages: boolean }>('/settings', 'POST', { relayWpImages: enabled }),
   setStaticFiltersEnabled: (enabled: boolean) =>
     request<{ staticFilters: StaticFiltersReport }>('/settings', 'POST', { staticFiltersEnabled: enabled }),
   setBricksGuideSeen: (seen: boolean) =>

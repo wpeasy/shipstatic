@@ -19,6 +19,8 @@ export interface Answers {
   forms: Answer;
   filters: Answer;
   where: Where;
+  /** Advanced, filters through WordPress: show images from WordPress too (not only what is synced). */
+  wpImages: boolean;
 }
 
 /** What the last Process learned about each query loop (the relay is the fallback for one that can't run in the page). */
@@ -34,6 +36,8 @@ export interface Recommendation {
   relay: boolean;
   /** "Run Bricks filters without WordPress". */
   staticFilters: boolean;
+  /** "Serve filter-result images from WordPress". */
+  wpImages: boolean;
   hasForms: boolean;
   hasFilters: boolean;
   reasons: string[];
@@ -58,7 +62,7 @@ export function recommend(answers: Answers, info: BricksGuideInfo, loops: Loops 
 
   if (!hasForms && !hasFilters) {
     reasons.push('bricksGuideWhyNone');
-    return { relay: false, staticFilters: false, hasForms, hasFilters, reasons };
+    return { relay: false, staticFilters: false, wpImages: false, hasForms, hasFilters, reasons };
   }
 
   if (hasForms) reasons.push('bricksGuideWhyForms');
@@ -71,5 +75,9 @@ export function recommend(answers: Answers, info: BricksGuideInfo, loops: Loops 
   // can't run in the page — or while that isn't known yet (no Process with the option on).
   const relay = hasForms || (hasFilters && (!wantStatic || !loops.known || loops.fallback > 0));
 
-  return { relay, staticFilters: wantStatic, hasForms, hasFilters, reasons };
+  // Only Advanced offers it, and only where results come from WordPress (the connection is on then).
+  const wpImages = !simple && hasFilters && !wantStatic && answers.wpImages;
+  if (wpImages) reasons.push('bricksGuideWhyImages');
+
+  return { relay, staticFilters: wantStatic, wpImages, hasForms, hasFilters, reasons };
 }

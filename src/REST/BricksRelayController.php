@@ -32,6 +32,7 @@ defined('ABSPATH') || exit;
  *
  * - only the three endpoints in Relay::ENDPOINTS, only POST;
  * - 404 unless the relay is on and the destination exists;
+ * - with the image pass-through on, uploads keep their WordPress address (Relay::protect_uploads());
  * - post queries are limited to the posts in the last render ({@see ExportedOnly});
  * - nothing of its own is read or written: what Bricks returns is what a
  *   visitor of the WordPress site would get, with addresses changed.
@@ -123,10 +124,26 @@ final class BricksRelayController {
             return $value;
         }
         if (in_array($key, self::CSS_KEYS, true)) {
-            return Runner::transform_for_destination($value, $dest, 'css');
+            return self::transform($value, $dest, 'css');
         }
 
         // Only markup: plain strings (ids, counts) are left as they are.
-        return strpos($value, '<') !== false ? Runner::transform_for_destination($value, $dest, 'html') : $value;
+        return strpos($value, '<') !== false ? self::transform($value, $dest, 'html') : $value;
+    }
+
+    /**
+     * Rewrite for the destination; with the image pass-through on, the uploads
+     * address stays WordPress's (hidden while the rest is rewritten).
+     *
+     * @param string      $value Markup or CSS.
+     * @param Destination $dest  Destination.
+     * @param string      $kind  'html' or 'css'.
+     */
+    private static function transform(string $value, Destination $dest, string $kind): string {
+        if (!Relay::images_from_wordpress()) {
+            return Runner::transform_for_destination($value, $dest, $kind);
+        }
+
+        return Relay::restore_uploads(Runner::transform_for_destination(Relay::protect_uploads($value), $dest, $kind));
     }
 }

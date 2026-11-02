@@ -9,11 +9,15 @@
   let {
     relayEnabled,
     onSetRelayEnabled,
+    relayWpImages,
+    onSetRelayWpImages,
     staticFilters,
     onSetStaticFiltersEnabled,
   }: {
     relayEnabled: boolean;
     onSetRelayEnabled: (enabled: boolean) => void;
+    relayWpImages: boolean;
+    onSetRelayWpImages: (enabled: boolean) => void;
     staticFilters: StaticFiltersReport;
     onSetStaticFiltersEnabled: (enabled: boolean) => void;
   } = $props();
@@ -26,6 +30,10 @@
   <CollapsibleNote tone="warning" title={__('experimental')}>
     <p class="bs-help">{__('relayExperimental')}</p>
   </CollapsibleNote>
+  {#if relayEnabled}
+    <Switch label={__('relayWpImages')} checked={relayWpImages ? 1 : 0} onchange={(c) => onSetRelayWpImages(c === 1)} />
+    <p class="bs-help">{__('relayWpImagesHelp')}</p>
+  {/if}
 </div>
 
 <div class="bs-stack bs-stack--sm bs-sf">

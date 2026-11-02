@@ -134,6 +134,7 @@ final class StatusController {
             'bricksActive'  => class_exists('\\Bricks\\Elements'),
             // Bricks forms, filters and AJAX loops on the static site use WordPress.
             'relayEnabled'  => Relay::enabled(),
+            'relayWpImages' => get_option(Relay::IMAGES_OPTION, '0') === '1',
             // ...or answered from data files in the page (what the last Process found, per loop).
             'staticFilters' => StaticFilters::report(),
             // What the Bricks guide needs to pre-answer its questions.
@@ -333,6 +334,17 @@ final class StatusController {
             }
         }
 
+        if (array_key_exists('relayWpImages', $params)) {
+            $on = !empty($params['relayWpImages']);
+            if ($on !== (get_option(Relay::IMAGES_OPTION, '0') === '1')) {
+                // Deploy-time (the featured-image uploads) and Lockdown (the uploads exemption).
+                Relay::set_images_from_wordpress($on);
+                if (LockdownSettings::enabled()) {
+                    LockdownWriter::apply();
+                }
+            }
+        }
+
         if (array_key_exists('bricksGuideSeen', $params)) {
             update_option(Usage::SEEN_OPTION, empty($params['bricksGuideSeen']) ? '0' : '1', false);
         }
@@ -366,6 +378,7 @@ final class StatusController {
             'fabEnabled'      => get_option('shipstatic_fab_enabled', '1') !== '0',
             'searchEnabled'   => IndexBuilder::enabled(),
             'relayEnabled'    => Relay::enabled(),
+            'relayWpImages'   => get_option(Relay::IMAGES_OPTION, '0') === '1',
             'staticFilters'   => StaticFilters::report(),
             'bricksGuide'     => Usage::status(),
             'aiAllowChanges'  => AbilityRegistry::changes_enabled(),

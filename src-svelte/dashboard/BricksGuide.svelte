@@ -14,6 +14,7 @@
     open = $bindable(false),
     status,
     onSetRelayEnabled,
+    onSetRelayWpImages,
     onSetStaticFiltersEnabled,
     onSeen,
     onFinish,
@@ -21,6 +22,7 @@
     open: boolean;
     status: Status | null;
     onSetRelayEnabled: (enabled: boolean) => void;
+    onSetRelayWpImages: (enabled: boolean) => void;
     onSetStaticFiltersEnabled: (enabled: boolean) => void;
     /** The guide has been completed: stop nudging. */
     onSeen: () => void;
@@ -33,6 +35,7 @@
   let forms = $state<Answer>('unsure');
   let filters = $state<Answer>('unsure');
   let where = $state<Where>('static');
+  let wpImages = $state(false);
   let processNow = $state(true);
 
   const info = $derived(status?.bricksGuide ?? null);
@@ -41,7 +44,7 @@
     known: (status?.staticFilters.loops ?? 0) > 0,
     fallback: (status?.staticFilters.list ?? []).filter((l) => !l.static).length,
   });
-  const rec = $derived(info ? recommend({ mode, forms, filters, where }, info, loops) : null);
+  const rec = $derived(info ? recommend({ mode, forms, filters, where, wpImages }, info, loops) : null);
 
   // Start fresh each time it opens, with the questions answered from what the last Process found. Only `open`
   // triggers this: reading the status inside would reset the answers every time it refreshes.
@@ -51,6 +54,7 @@
       step = 0;
       mode = 'simple';
       where = 'static';
+      wpImages = status?.relayWpImages ?? false;
       const f = info?.found;
       forms = f?.rendered ? (f.formPages > 0 ? 'yes' : 'no') : 'unsure';
       filters = f?.rendered ? (f.filterPages > 0 ? 'yes' : 'no') : 'unsure';
@@ -78,6 +82,7 @@
           { label: __('bricksGuideStepForms'), content: formsStep },
           { label: __('bricksGuideStepFilters'), content: filtersStep },
           ...(rec?.hasFilters ? [{ label: __('bricksGuideStepWhere'), content: whereStep }] : []),
+          ...(rec?.hasFilters && where === 'wordpress' ? [{ label: __('bricksGuideStepImages'), content: imagesStep }] : []),
         ]
       : []),
     { label: __('bricksGuideStepApply'), content: applyStep },
@@ -86,6 +91,7 @@
   function handleComplete(): void {
     if (!status || !rec) return;
     if (rec.relay !== status.relayEnabled) onSetRelayEnabled(rec.relay);
+    if (rec.wpImages !== status.relayWpImages) onSetRelayWpImages(rec.wpImages);
     if (rec.staticFilters !== status.staticFilters.enabled) onSetStaticFiltersEnabled(rec.staticFilters);
     onSeen();
     onFinish(processNow);
@@ -161,6 +167,21 @@
   </div>
 {/snippet}
 
+{#snippet imagesStep()}
+  <div class="bs-bg-step bs-stack bs-stack--sm">
+    <h3 class="bs-bg-q">{__('bricksGuideImagesQ')}</h3>
+    <Segmented
+      value={wpImages ? 'wp' : 'synced'}
+      onchange={(v) => (wpImages = v === 'wp')}
+      options={[
+        { value: 'synced', label: __('bricksGuideImagesSynced') },
+        { value: 'wp', label: __('bricksGuideImagesWp') },
+      ]}
+    />
+    <p class="bs-help">{__('bricksGuideImagesHelp')}</p>
+  </div>
+{/snippet}
+
 {#snippet applyStep()}
   <div class="bs-bg-step bs-stack bs-stack--sm">
     {#if rec && status}
@@ -176,6 +197,9 @@
       <ul class="bs-bg-set">
         <li><span>{__('relayEnabled')}</span> <strong>{rec.relay ? __('bricksGuideOn') : __('bricksGuideOff')}</strong></li>
         <li><span>{__('staticFilters')}</span> <strong>{rec.staticFilters ? __('bricksGuideOn') : __('bricksGuideOff')}</strong></li>
+        {#if mode === 'advanced' && where === 'wordpress'}
+          <li><span>{__('relayWpImages')}</span> <strong>{rec.wpImages ? __('bricksGuideOn') : __('bricksGuideOff')}</strong></li>
+        {/if}
       </ul>
       {#each rec.reasons as reason (reason)}
         <p class="bs-help">{__(reason)}</p>

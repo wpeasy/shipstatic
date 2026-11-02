@@ -81,7 +81,8 @@ final class RelayReplacer implements DeployReplacer {
 
         return [
             'ctx'   => ['swaps' => $swaps, 'rest' => $rest_swap, 'script' => $dynamic],
-            'files' => $dynamic ? self::featured_image_files() : [],
+            // With the image pass-through the results' images stay on WordPress: nothing extra to upload.
+            'files' => $dynamic && !Relay::images_from_wordpress() ? self::featured_image_files() : [],
         ];
     }
 
@@ -128,7 +129,7 @@ final class RelayReplacer implements DeployReplacer {
 
         // Not the featured-image list: this runs on every dashboard status
         // check. A new image is picked up by the next Sync anyway.
-        return [Relay::endpoint(), Relay::rest_base($dest->id()), md5(self::template('filters-from-url.js') . self::template('nonce-cache.js')), self::has_dynamic_loops()];
+        return [Relay::endpoint(), Relay::rest_base($dest->id()), md5(self::template('filters-from-url.js') . self::template('nonce-cache.js')), self::has_dynamic_loops(), Relay::images_from_wordpress()];
     }
 
     /**

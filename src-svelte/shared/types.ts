@@ -275,6 +275,8 @@ export interface Status {
   bricksActive: boolean;
   /** Bricks forms, filters and AJAX loops on the static site use WordPress (Settings). */
   relayEnabled: boolean;
+  /** Filter-result images stay on WordPress (needs the relay; Lockdown lets image files through). */
+  relayWpImages: boolean;
   /** Bricks filters answered from data files in the page; what the last Process found per loop. */
   staticFilters: StaticFiltersReport;
   /** What the Bricks guide needs to pre-answer its questions. */

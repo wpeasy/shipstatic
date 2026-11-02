@@ -18,6 +18,7 @@
     onSetFabEnabled,
     onSetSearchEnabled,
     onSetRelayEnabled,
+    onSetRelayWpImages,
     onSetStaticFiltersEnabled,
     onSetAiToggles,
     onSetConcurrentSyncs,
@@ -32,6 +33,7 @@
     onSetFabEnabled: (enabled: boolean) => void;
     onSetSearchEnabled: (enabled: boolean) => void;
     onSetRelayEnabled: (enabled: boolean) => void;
+    onSetRelayWpImages: (enabled: boolean) => void;
     onSetStaticFiltersEnabled: (enabled: boolean) => void;
     onSetAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) => void;
     onSetConcurrentSyncs: (n: number) => void;
@@ -157,7 +159,7 @@
       <!-- Bricks forms and filters through to WordPress (experimental; Bricks only) -->
       {#if status.bricksActive}
         <section class="bs-set__group">
-          <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} staticFilters={status.staticFilters} {onSetStaticFiltersEnabled} />
+          <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} relayWpImages={status.relayWpImages} {onSetRelayWpImages} staticFilters={status.staticFilters} {onSetStaticFiltersEnabled} />
         </section>
       {/if}
 

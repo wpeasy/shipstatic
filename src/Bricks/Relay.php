@@ -50,6 +50,15 @@ final class Relay {
     /** '1' / '0'; absent = on. */
     public const OPTION = 'shipstatic_bricks_relay';
 
+    /** '1' / '0'; absent = off. Filter results keep their uploads on WordPress instead of the static site. */
+    public const IMAGES_OPTION = 'shipstatic_relay_wp_images';
+
+    /** Stands in for the uploads address while a relay reply is rewritten (see protect_uploads()). */
+    private const UPLOADS_MARK = '__SHIPSTATIC_WPUP__';
+
+    /** Image types the pass-through lets through Lockdown. Never svg (it can carry script) or any executable. */
+    public const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
+
     /** The admin-ajax actions the static pages use. */
     private const ACTIONS = ['bricks_form_submit', 'bricks_regenerate_form_nonce', 'bricks_regenerate_query_nonce'];
 
@@ -85,6 +94,65 @@ final class Relay {
      */
     public static function set_enabled(bool $on): void {
         update_option(self::OPTION, $on ? '1' : '0', false);
+    }
+
+    /**
+     * Whether filter results served through WordPress keep their images (the
+     * uploads folder) on WordPress instead of pointing at the static site: an
+     * image no export has uploaded yet then still shows. Needs the relay, and
+     * Lockdown lets those image files through (Lockdown\Writer).
+     */
+    public static function images_from_wordpress(): bool {
+        return self::enabled() && get_option(self::IMAGES_OPTION, '0') === '1';
+    }
+
+    /**
+     * Turn the image pass-through on or off.
+     *
+     * @param bool $on On.
+     */
+    public static function set_images_from_wordpress(bool $on): void {
+        update_option(self::IMAGES_OPTION, $on ? '1' : '0', false);
+    }
+
+    /**
+     * The uploads folder's address and its path on this site ("/wp-content/uploads"),
+     * or null when the path has characters we would not write into a server rule.
+     *
+     * @return array{url:string,path:string}|null
+     */
+    public static function uploads(): ?array {
+        $dir  = wp_upload_dir(null, false);
+        $url  = untrailingslashit((string) ($dir['baseurl'] ?? ''));
+        $path = (string) wp_parse_url($url, PHP_URL_PATH);
+        if ($url === '' || !preg_match('#^/[A-Za-z0-9._~/-]+$#', $path) || strpos($path, '..') !== false) {
+            return null;
+        }
+
+        return ['url' => $url, 'path' => $path];
+    }
+
+    /**
+     * Hide the uploads address in markup/CSS so rewriting for a destination
+     * leaves it alone: the pass-through keeps images where they are.
+     *
+     * @param string $value Markup or CSS from a relay reply.
+     */
+    public static function protect_uploads(string $value): string {
+        $uploads = self::uploads();
+
+        return $uploads === null ? $value : str_replace($uploads['url'] . '/', self::UPLOADS_MARK . '/', $value);
+    }
+
+    /**
+     * Put the uploads address back (see protect_uploads()).
+     *
+     * @param string $value Rewritten markup or CSS.
+     */
+    public static function restore_uploads(string $value): string {
+        $uploads = self::uploads();
+
+        return $uploads === null ? $value : str_replace(self::UPLOADS_MARK . '/', $uploads['url'] . '/', $value);
     }
 
     /**

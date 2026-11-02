@@ -433,6 +433,15 @@ final class Writer {
                 $lines[] = 'if ($shipstatic_relay = MU) { set $shipstatic_locked 0; }';
             }
         }
+        $media = self::media_path();
+        if ($media !== null) {
+            // The image pass-through: image files of the uploads folder, GET/HEAD only (PHP never runs for them,
+            // and nothing with ".php" in its path is let through).
+            $lines[] = 'set $shipstatic_media "";';
+            $lines[] = 'if ($request_method ~ "^(GET|HEAD)$") { set $shipstatic_media M; }';
+            $lines[] = 'if ($uri ~* "^(?!.*\\.ph(?:p|tml|ar))' . str_replace('.', '\\.', $media) . '/(?:[^/]+/)*[^/]+\\.(?:' . implode('|', Relay::IMAGE_EXTENSIONS) . ')$") { set $shipstatic_media "${shipstatic_media}U"; }';
+            $lines[] = 'if ($shipstatic_media = MU) { set $shipstatic_locked 0; }';
+        }
         if ($home !== '') {
             $lines[] = 'if ($uri !~ "^' . $home_re . '(/|$)") { set $shipstatic_locked 0; }';
         }
@@ -575,6 +584,18 @@ final class Writer {
     }
 
     /**
+     * The uploads folder's path when the image pass-through is on (Relay::images_from_wordpress()), else null.
+     */
+    private static function media_path(): ?string {
+        if (!Relay::images_from_wordpress()) {
+            return null;
+        }
+        $uploads = Relay::uploads();
+
+        return $uploads === null ? null : $uploads['path'];
+    }
+
+    /**
      * The relay route as a regex (no anchors): prefix, destination id, endpoint.
      * Each part starts with a fixed character, so it can't backtrack.
      *
@@ -593,9 +614,14 @@ final class Writer {
      * rewrite or dot segment can change it.
      */
     private static function htaccess_forms(): string {
+        $media_path = self::media_path();
+        $media      = $media_path === null ? '' : "# Image files of the uploads folder, for filter results that keep their images on WordPress (GET/HEAD; no \".php\" anywhere).\n"
+            . 'RewriteCond %{THE_REQUEST} !^(?:GET|HEAD)\s(?!\S*\.ph(?:p|tml|ar))' . str_replace('.', '\\.', $media_path)
+            . '(?:/[A-Za-z0-9_~-][A-Za-z0-9._~-]*)+\.(?:' . implode('|', Relay::IMAGE_EXTENSIONS) . ')(?:\?[A-Za-z0-9=&._~-]*)?\s [NC]';
+
         $forms = self::forms_config();
         if ($forms === null) {
-            return '';
+            return $media;
         }
 
         $lines = "# Form submissions from the static site: the gate allows only its actions.\n"
@@ -605,7 +631,7 @@ final class Writer {
                 . 'RewriteCond %{THE_REQUEST} !^(?:POST|OPTIONS)\s' . self::relay_regex($forms) . '(?:\?lang=[A-Za-z_-]+)?\s';
         }
 
-        return $lines;
+        return $media === '' ? $lines : $lines . "\n" . $media;
     }
 
     /**

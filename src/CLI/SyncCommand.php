@@ -68,7 +68,7 @@ final class SyncCommand {
      *     wp shipstatic sync --dest=ab12cd34ef56  # one destination
      *
      * @param array<int,string>    $args       Positional args (unused).
-     * @param array<string,string> $assoc_args Flags.
+     * @param array<string,string> $assoc_args Flags (unused).
      * @when after_wp_load
      */
     public function sync(array $args, array $assoc_args): void {
@@ -214,7 +214,7 @@ final class SyncCommand {
      *     wp shipstatic cloudflare test ab12cd34ef56
      *
      * @param array<int,string>    $args       [action, dest].
-     * @param array<string,string> $assoc_args Flags.
+     * @param array<string,string> $assoc_args Flags (unused).
      * @when after_wp_load
      */
     public function cloudflare(array $args, array $assoc_args): void {
@@ -333,7 +333,7 @@ final class SyncCommand {
      *     wp shipstatic github test ab12cd34ef56
      *
      * @param array<int,string>    $args       [action, dest].
-     * @param array<string,string> $assoc_args Flags.
+     * @param array<string,string> $assoc_args Flags (unused).
      * @when after_wp_load
      */
     public function github(array $args, array $assoc_args): void {
@@ -441,7 +441,7 @@ final class SyncCommand {
      *
      * @subcommand move-wordpress
      * @param array<int,string>    $args       [action, dest].
-     * @param array<string,string> $assoc_args Flags.
+     * @param array<string,string> $assoc_args Flags (unused).
      * @when after_wp_load
      */
     public function move_wordpress(array $args, array $assoc_args): void {
@@ -514,7 +514,7 @@ final class SyncCommand {
      *     wp shipstatic folder test ab12cd34ef56
      *
      * @param array<int,string>    $args       [action, dest].
-     * @param array<string,string> $assoc_args Flags.
+     * @param array<string,string> $assoc_args Flags (unused).
      * @when after_wp_load
      */
     public function folder(array $args, array $assoc_args): void {
@@ -618,7 +618,7 @@ final class SyncCommand {
      *     wp shipstatic connector revoke ab12cd34ef56
      *
      * @param array<int,string>    $args       [action, dest].
-     * @param array<string,string> $assoc_args Flags.
+     * @param array<string,string> $assoc_args Flags (unused).
      * @when after_wp_load
      */
     public function connector(array $args, array $assoc_args): void {
@@ -735,7 +735,7 @@ final class SyncCommand {
      *     wp shipstatic lockdown off
      *
      * @param array<int,string>    $args       [action, address].
-     * @param array<string,string> $assoc_args Flags.
+     * @param array<string,string> $assoc_args Flags (unused).
      * @when after_wp_load
      */
     public function lockdown(array $args, array $assoc_args): void {
@@ -840,29 +840,38 @@ final class SyncCommand {
      *   - off
      * ---
      *
+     * [--images=<on|off>]
+     * : Keep the images in filter results on WordPress instead of the static site (needs the relay; Lockdown then lets image files from the uploads folder through).
+     *
      * ## EXAMPLES
      *
      *     wp shipstatic relay status
      *     wp shipstatic relay off
+     *     wp shipstatic relay status --images=on
      *
      * @param array<int,string>    $args       [action].
-     * @param array<string,string> $assoc_args Flags (unused).
+     * @param array<string,string> $assoc_args Flags.
      * @when after_wp_load
      */
     public function relay(array $args, array $assoc_args): void {
         $action = (string) ($args[0] ?? 'status');
         if ($action === 'on' || $action === 'off') {
             Relay::set_enabled($action === 'on');
-            if (LockdownSettings::enabled()) {
-                $this->lockdown_apply();
-            }
+        }
+        $images = (string) ($assoc_args['images'] ?? '');
+        if (in_array($images, ['on', 'off'], true)) {
+            Relay::set_images_from_wordpress($images === 'on');
+        }
+        if (($action === 'on' || $action === 'off' || $images !== '') && LockdownSettings::enabled()) {
+            $this->lockdown_apply();
         }
 
         \WP_CLI::log('Allow Bricks forms and filters: ' . (Relay::enabled() ? 'on' : 'off'));
         \WP_CLI::log('Forms (admin-ajax.php): ' . Relay::endpoint());
         \WP_CLI::log('Filters and AJAX loops: ' . (Relay::rest_prefix() !== '' ? rest_url('shipstatic/v1/' . Relay::ROUTE . '/<destination id>/') : 'off (needs pretty permalinks)'));
         \WP_CLI::log('Actions let through Lockdown: ' . implode(', ', Relay::actions()));
-        if ($action !== 'status') {
+        \WP_CLI::log('Images in filter results from WordPress: ' . (Relay::images_from_wordpress() ? 'on (image files of the uploads folder let through Lockdown)' : 'off'));
+        if ($action !== 'status' || $images !== '') {
             \WP_CLI::success('Sync each destination to update its pages.');
         }
     }
