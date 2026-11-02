@@ -15,18 +15,18 @@ function patchCheckbox(el, f, sel, opts) {
 		cls(li, 'brx-option-active', on); cls(li.querySelector('label'), 'brx-option-active', on); cls(li.querySelector('.brx-option-text'), 'brx-option-active', on);
 		cls(li.querySelector('label'), 'brx-option-disabled', off);
 		if (on) input.setAttribute('checked', 'checked'); else input.removeAttribute('checked');
-		if (off) input.setAttribute('disabled', 'disabled'); else input.removeAttribute('disabled');
+		if (off && !on) input.setAttribute('disabled', 'disabled'); else input.removeAttribute('disabled');
 		const c = li.querySelector('.brx-option-count'); if (c && n !== undefined) c.textContent = `(${n})`;
 	});
 }
 
 function patchRange(el, f, sel, range) {
-	const [min, max, lo0] = range; const [lo, hi] = sel || [lo0, max];
+	const [min, max, lo0] = range; const [lo, hi] = sel ? [Math.max(sel[0], min), Math.min(sel[1], max)] : [lo0, max];
 	el.querySelectorAll('input.min, input.max').forEach((i) => { i.setAttribute('min', phpFloat(min)); i.setAttribute('max', phpFloat(max)); });
 	el.querySelectorAll('input.min').forEach((i) => i.setAttribute('value', phpFloat(lo)));
 	el.querySelectorAll('input.max').forEach((i) => i.setAttribute('value', phpFloat(hi)));
 	const span = max - min || 1; const track = el.querySelector('.slider-track');
-	if (track) track.setAttribute('style', `width:${phpFloat(((hi - lo) / span) * 100)}%; left:${phpFloat(((lo - min) / span) * 100)}%;`);
+	if (track) track.setAttribute('style', `width:${phpFloat(((hi - lo) / span) * 100)}%; left:${phpFloat(((lo - min) / span) * 100)}%;${hi <= lo ? ' visibility: hidden;' : ''}`);
 	const lower = el.querySelector('.value-wrap .lower .value'), upper = el.querySelector('.value-wrap .upper .value');
 	if (lower) lower.textContent = phpFloat(lo); if (upper) upper.textContent = phpFloat(hi);
 }
