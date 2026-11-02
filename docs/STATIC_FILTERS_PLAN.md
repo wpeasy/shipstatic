@@ -35,22 +35,27 @@ All read from the Bricks source and confirmed by the oracle:
 
 **Feasible and accurate for the filter types and options tested.** It is not "all of Bricks' filters". It is a reimplementation of Bricks' filtering logic, so every filter type, source and option has to be covered and tested one by one. The differential test (§6) is what makes that safe.
 
-### Support matrix (proposed)
+### Support matrix
 
 | Feature | Status |
 |---|---|
 | Checkbox, taxonomy source, hierarchical, OR/AND | **Verified** |
+| Radio, select (taxonomy source), "All"/placeholder option | **Verified** |
+| Checkbox on a custom field; checkbox on a WordPress field (post author) | **Verified** |
 | Range on a numeric custom field | **Verified** |
+| Date picker on `post_date` (single before/after/is, and range) | **Verified**; custom-field dates and time-of-day not tested |
 | Search (title, excerpt, content; terms ANDed, case/accent-insensitive) | **Verified** for plain words; WordPress's stop-words, quotes and relevance order not matched |
-| Sort: title, date, numeric meta | **Verified**, ties excepted |
+| Sort (select or radio): title, date, numeric meta | **Verified**, equal-key order excepted |
+| Results per page (select) | **Verified** (an unknown size is ignored, as in Bricks) |
 | AJAX pagination, active-filters bar | **Verified** |
-| Radio, select (single value) | Same logic, markup not yet built — *expected simple* |
-| Checkbox / radio / select on custom field or post field | Index supports it — *expected simple*, untested |
-| Date picker | Not tested |
-| Load more, infinite scroll (`infinitePage`) | Not tested — *expected simple* (same items, appended) |
-| Several filtered loops on one page / filters shared across pages | Not tested; dataset is per (page, query) |
+| Infinite scroll (`infinitePage`) | **Verified** (data in both environments; scrolling in Chrome) |
+| Several filtered loops on one page | **Verified** (two loops, separate datasets by query id) |
+| Load more *button* | Same request as infinite scroll — expected to work, not separately run |
 | Random order, relevance search, `menu_order` ties | **Cannot match** (non-deterministic or WordPress-specific) |
-| Term and user queries, WooCommerce, ACF repeaters, queries depending on the current page/user/time, multilingual | Not supported at first; detect and fall back |
+| Term queries (filters on a list of terms) | **Not verified** — the test loop needs more Bricks set-up than I got right; treat as phase 3 |
+| User queries | **Do not support**: would publish user data in a static file |
+| WooCommerce | **Excluded** (live cart, stock and prices) |
+| ACF repeaters, queries depending on the current page/user/time, multilingual | Not supported at first; detect and fall back |
 
 ## 4. Caveats and possible deal-breakers (show these to the user)
 
@@ -102,7 +107,18 @@ All read from the Bricks source and confirmed by the oracle:
 Second test page (`spike-filters-2`), two loops: **A** (6 per page, AJAX pagination) with radio and select on taxonomies, checkbox on a custom field, checkbox on a WordPress field (post author), a single-date picker, a date-range picker, a per-page select, a radio sort, search, active filters; **B** (infinite scroll, sorted by title) with its own checkbox.
 
 - Same method (real Bricks as oracle, random combinations, different seeds). Rules found beyond §2: a WordPress-field date filter is a `date_query`, which Bricks' count code ignores (an active filter's counts become 0 when that is the only other active filter); a selected radio or select option with a 0 count is disabled, a selected checkbox is not; an unknown per-page value is ignored and gets no chip; date semantics are WordPress's `date_query` (single "before"/"after" exclude the whole day, a range includes both end days).
-- Results: see the table in the spike summary (kept current in the commit messages on the branch).
+- **Results (all with fresh random seeds; "data" = same posts, order, totals, page count and per-page; "markup" = every filter element and the active-filters bar and pagination, compared as DOM):**
+
+| Run | Data | Markup |
+|---|---|---|
+| Local, loop A, 300 combos (tuning seed) | 300/300 | 275/300 |
+| Local, loop A, 300 combos (held-out seed) | 300/300 | 269/300 |
+| cPanel, loop A, 300 combos (held-out seed) | 300/300 | 269/300 |
+| Local, loop B (infinite scroll), 120 combos | 120/120 | 120/120 |
+| cPanel, loop B (infinite scroll), 120 combos | 120/120 | 120/120 |
+| cPanel, page 1 filters, 300 combos (new seed) | 300/300 | 279/300 |
+
+  Every markup miss is a sort-tie page (equal sort keys), not a logic difference. In Chrome: radio, select, per-page, sort, rating checkbox and chips update locally in 2–21 ms; infinite scroll appended 6 → 30 items from the static data.
 
 ## 10. Open questions for the owner
 
