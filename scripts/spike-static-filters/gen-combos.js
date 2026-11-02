@@ -1,21 +1,24 @@
-// Random filter combinations for the differential test (seeded, reproducible).
+// Random filter combinations from a small spec (seeded, reproducible).
+// Usage: node gen-combos.js <spec.json> <count> <seed> <out.json>
+// Spec: { "<filterId>": { "type": "multi|single|range|date|daterange|text|int|page|infinite", "values": [...], "p": 0.4 } }
 import fs from 'node:fs';
-let s = +process.argv[3] || 7; const rnd = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
+const [specFile, count, seed, outFile] = process.argv.slice(2);
+const spec = JSON.parse(fs.readFileSync(specFile, 'utf8'));
+let s = +seed || 7; const rnd = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
 const pick = (a) => a[Math.floor(rnd() * a.length)];
-const many = (a, max) => { const n = 1 + Math.floor(rnd() * max); return [...new Set(Array.from({ length: n }, () => pick(a)))]; };
-const cats = ['brunch', 'coffee', 'espresso', 'filter', 'pastry', 'savoury', 'sweet'];
-const tags = ['vegan', 'gluten-free', 'new', 'seasonal', 'popular'];
-const words = ['latte', 'tart', 'morning', 'golden', 'flat white', 'Croissant', 'zzzz', 'smoked honey', 'cold brew', 'brioche 3'];
-const sorts = ['post_date_DESC', 'title_ASC', 'price_ASC', 'price_DESC'];
+const many = (a, max) => [...new Set(Array.from({ length: 1 + Math.floor(rnd() * max) }, () => pick(a)))];
+const date = () => new Date(Date.UTC(2026, 0, 1) + Math.floor(rnd() * 270) * 864e5).toISOString().slice(0, 10);
 const out = {};
-for (let i = 0; i < +process.argv[2]; i++) {
+for (let i = 0; i < +count; i++) {
 	const c = {};
-	if (rnd() < 0.5) c.fcat01 = many(cats, 3);
-	if (rnd() < 0.4) c.ftag01 = many(tags, 3);
-	if (rnd() < 0.35) { const a = 3 + Math.floor(rnd() * 30); c.fprc01 = [a, a + Math.floor(rnd() * 25)]; }
-	if (rnd() < 0.25) c.fsrch1 = pick(words);
-	if (rnd() < 0.4) c.fsort1 = pick(sorts);
-	if (rnd() < 0.3) c.pag001 = 1 + Math.floor(rnd() * 4);
+	for (const [id, d] of Object.entries(spec)) {
+		if (rnd() >= (d.p ?? 0.4)) continue;
+		const v = { multi: () => many(d.values, d.max || 3), single: () => pick(d.values), text: () => pick(d.values), int: () => pick(d.values),
+			range: () => { const a = d.min + Math.floor(rnd() * (d.max - d.min)); return [a, a + Math.floor(rnd() * (d.max - d.min))]; },
+			date: () => date(), daterange: () => { const a = date(), b = date(); return (a < b ? [a, b] : [b, a]).join(','); },
+			page: () => 1 + Math.floor(rnd() * (d.max || 4)), infinite: () => 1 + Math.floor(rnd() * (d.max || 4)) }[d.type]();
+		if (d.type === 'infinite') c._infinite = v; else c[id] = v;
+	}
 	out['c' + i] = c;
 }
-fs.writeFileSync(process.argv[4] || '/tmp/spike/combos.json', JSON.stringify(out));
+fs.writeFileSync(outFile, JSON.stringify(out));

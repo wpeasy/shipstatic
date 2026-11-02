@@ -91,7 +91,20 @@ All read from the Bricks source and confirmed by the oracle:
 2. Radio, select, custom-field sources, load more, infinite scroll, several loops per page.
 3. Date picker; decide on term/user queries (probably never).
 
-## 8. Open questions for the owner
+## 8. Decisions (owner)
+
+- **Item cap: 3,000 per loop** — above that the option is refused for that loop and the relay is used.
+- **Equal-sort-key order may differ** — acceptable; it goes in the warning text.
+- **Scope: everything except WooCommerce** (it needs live cart/stock and cannot be static). Radio, select, date picker, custom-field and WordPress-field sources, per-page, infinite scroll / load more and several loops per page are now in scope; results in §9.
+
+## 9. Spike round 2 — the other filters
+
+Second test page (`spike-filters-2`), two loops: **A** (6 per page, AJAX pagination) with radio and select on taxonomies, checkbox on a custom field, checkbox on a WordPress field (post author), a single-date picker, a date-range picker, a per-page select, a radio sort, search, active filters; **B** (infinite scroll, sorted by title) with its own checkbox.
+
+- Same method (real Bricks as oracle, random combinations, different seeds). Rules found beyond §2: a WordPress-field date filter is a `date_query`, which Bricks' count code ignores (an active filter's counts become 0 when that is the only other active filter); a selected radio or select option with a 0 count is disabled, a selected checkbox is not; an unknown per-page value is ignored and gets no chip; date semantics are WordPress's `date_query` (single "before"/"after" exclude the whole day, a range includes both end days).
+- Results: see the table in the spike summary (kept current in the commit messages on the branch).
+
+## 10. Open questions for the owner
 
 - Ship phase 1 as an experimental option (relay stays default), or wait for radio/select/load-more?
 - Item cap (3,000?) and whether to offer sharding later.
