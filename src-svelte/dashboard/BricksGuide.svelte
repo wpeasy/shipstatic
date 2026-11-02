@@ -123,7 +123,19 @@
         { value: 'advanced', label: __('bricksGuideAdvanced') },
       ]}
     />
-    <p class="bs-help">{mode === 'simple' ? __('bricksGuideSimpleHelp') : __('bricksGuideAdvancedHelp')}</p>
+    {#if mode === 'simple'}
+      <div class="bs-stack bs-stack--sm">
+        <strong>{__('bricksGuideSimpleFor')}</strong>
+        <ul class="bs-bg-list">
+          {#each ['bricksGuideSimpleFor1', 'bricksGuideSimpleFor2', 'bricksGuideSimpleFor3'] as key (key)}
+            <li>{__(key)}</li>
+          {/each}
+        </ul>
+        <Alert tone="info" description={__('bricksGuideSimpleNote')} />
+      </div>
+    {:else}
+      <p class="bs-help">{__('bricksGuideAdvancedHelp')}</p>
+    {/if}
   </div>
 {/snippet}
 
