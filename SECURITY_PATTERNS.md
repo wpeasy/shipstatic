@@ -306,6 +306,16 @@ Lockdown turns settings into `.htaccess` rules, a `.user.ini` line, a generated 
 
 ---
 
+## 11b. Static Bricks filters publish data files and make loopback requests (`Bricks\StaticFilters*`, docs/STATIC_FILTERS_PLAN.md)
+
+This feature adds **no REST route and no public endpoint**: the static page answers Bricks' `query_result` itself, from files in the export. What it does touch:
+
+- **What goes in the data files is only what a logged-out visitor can already read**: the posts come from the loop's own query forced to `post_status = publish`; item and filter markup comes from Bricks' own reply to a loopback request made with no user; a password-protected post's text is never written; post text (`post_content`, `post_excerpt`) is written **only when the loop has a search filter** (the same text WordPress's own search reads) and is filterable (`shipstatic_static_filters_post_text`). User queries are refused outright (they would publish user data). If you add a field to the data file, ask the same question.
+- **The loopback request** (`StaticFiltersBuilder::query()`): to `rest_url('bricks/v1/query_result')` on this site only, with `PageRenderer::request_args()` (render token, TLS rule §2), no cookies, a nonce made for user 0 (the visitor the request is). Nothing in it comes from a visitor: the query vars and ids were read from our own render of a page.
+- **`StaticFilters::mark_item()`** adds `data-ss-id` to a loop's item only in a **trusted render request** (`PageRenderer::is_trusted_render_request()`) that sends the `X-ShipStatic-Export` header, and only for the loop that header names — so no visitor's page ever carries it.
+- **Data file names** are `md5(page|query)[0..12]`; `StaticFiltersReplacer` checks `^[a-f0-9]{12}$` before reading one, and writes only inside `cache/filters-out/<destination>/` and the export's `shipstatic-filters/`. Media added to the upload list goes through `Paths::source_file()` (§10: static extensions only, `realpath`-contained).
+- **Injected markup**: the loop list is `wp_json_encode(..., JSON_HEX_TAG | JSON_HEX_AMP)` in a `type="application/json"` script; the script `src` is a constant path through `esc_url()`. The runtime builds the HTML it shows from the data file via `innerHTML`/`outerHTML` of **markup Bricks itself produced** (and Bricks escapes it); it never puts a URL parameter or user input into markup (the chip text comes from the option labels in the file or, for search, is `esc`-aped).
+
 ## 12. Lessons from the 2.3.0 security review
 
 - **An escaped value is not safe as a regex replacement string.** `esc_attr()` leaves `$` and `\` alone, so a value containing `$0` given to `preg_replace()` expands to the matched text and breaks out of the attribute (found: stored XSS on exported pages through a YouTube embed's `hl=`). Insert values with `preg_replace_callback()` — `Render\TagAttr` does this for every replacer; use it, don't reintroduce private `set_attr()` copies. Attribute patterns start with `(?<![\w-])` so `src` never matches `data-src`.

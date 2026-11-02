@@ -1,6 +1,6 @@
 # Fully static Bricks filters — spike results and plan
 
-Status: **spike done, not implemented.** Code and test harness: `scripts/spike-static-filters/` (branch `spike/static-filters`).
+Status: **phase 1 implemented** (branch `spike/static-filters`): `src/Bricks/StaticFilters*.php`, `src-svelte/static-filters/`, harness in `scripts/static-filters/`. Not released. The rest of this file is the spike's evidence and the plan it followed; CLAUDE.md has the as-built notes.
 
 Today the filters work on a static site through the WordPress **relay** (`Bricks\Relay`, `BricksRelayController`): every filter change POSTs to WordPress. This plan is an *optional* second mode that needs no WordPress at all at visit time: the build exports the data, a small script answers Bricks' own `query_result` request in the browser.
 

@@ -11,6 +11,7 @@
     { id: 'process-changes', label: 'Process changes' },
     { id: 'search', label: 'Site search' },
     { id: 'forms', label: 'Forms & filters' },
+    { id: 'static-filters', label: 'Filters without WordPress' },
     { id: 'schedule', label: 'Scheduled sync' },
     { id: 'lockdown', label: 'Lockdown' },
     { id: 'server-folder', label: 'Publish on this server' },
@@ -254,6 +255,41 @@
           <li><strong>With Lockdown on</strong>, these requests still get through, and nothing else does: POSTs to WordPress’s <code>admin-ajax.php</code> for Bricks’ form and fresh-token actions only, and ShipStatic’s relay address for filter results (<code>/wp-json/shipstatic/v1/bricks/…</code>), which hands the request to Bricks and changes only the addresses in the answer.</li>
           <li><strong>A static site on another domain</strong> works too: WordPress lets that destination read the replies. Its Destination URL must be set.</li>
           <li><strong>WordPress must be reachable</strong> by your visitors. A WordPress site on your own computer (a local development site) can’t answer them.</li>
+        </ul>
+      </section>
+
+      <!-- Filters without WordPress -->
+      <section id="static-filters" class="bs-docs__section bs-stack bs-stack--sm">
+        <h2>Bricks filters without WordPress</h2>
+        <Alert tone="warning" title="Experimental">
+          <p>New, and only checked against Bricks 2.4. Every query loop is tested on its own as the data files are built, and one that can’t be answered exactly keeps using WordPress (see <a href="#forms">Forms &amp; filters</a>). Try your own filters on the static site before relying on them, and check again after Bricks updates.</p>
+        </Alert>
+        <p class="bs-docs__muted">
+          With <strong>Run Bricks filters without WordPress</strong> (in <strong>Settings</strong>, off by default) the filters, sorting, search, results-per-page, date pickers, pagination and infinite scroll of a Bricks query loop run <em>in the visitor’s browser</em>. <strong>Process</strong> reads the loop from Bricks and writes one data file for it — the posts, Bricks’ own filter index, and the markup of every result — and a small script in the page answers Bricks’ requests from that file. Nothing is asked of WordPress, so it keeps working when WordPress is offline, locked down with Lockdown, or on another server, and it needs nothing on the destination but the files.
+        </p>
+        <h3>What works</h3>
+        <ul class="bs-docs__list">
+          <li><strong>Filters:</strong> checkboxes, radio buttons and selects on a taxonomy, a custom field or the post author; number ranges; date pickers on the post date (one day, before, after, or a range); search; and the active-filters bar.</li>
+          <li><strong>Sorting</strong> by title, date or a number field, <strong>results per page</strong>, <strong>AJAX pagination</strong> and <strong>infinite scroll</strong>.</li>
+          <li><strong>Several loops on one page</strong>, each with its own filters.</li>
+          <li><strong>Counts, disabled options and the range slider’s limits</strong> change exactly as they do on WordPress. A link such as <code>/menu/?cat=coffee&amp;sort=price_ASC</code> opens already filtered.</li>
+          <li><strong>Images.</strong> Every picture any result can show is uploaded, including those of results that are not on the first page.</li>
+        </ul>
+        <h3>What it is not</h3>
+        <ul class="bs-docs__list">
+          <li><strong>Media and Video replacements</strong> (Replacements tab) are not applied to the results; Text and Link replacements are.</li>
+          <li><strong>A snapshot.</strong> Results are what existed at the last Process. After changing content, Process and Sync again.</li>
+          <li><strong>Equal sort values</strong> (two items at the same price, say) can appear in a different order than WordPress shows — MySQL doesn’t define that order, so no copy of it can match.</li>
+          <li><strong>Search</strong> matches plain words in the title, excerpt and content. WordPress’s relevance order and stop-word handling are not copied.</li>
+          <li><strong>Up to 3,000 results per loop.</strong> A bigger loop keeps using WordPress.</li>
+          <li><strong>Not supported</strong> (the loop keeps using WordPress): WooCommerce, term and user loops, random order, sorting by other fields, custom comparison operators, loops that are a page’s main query, loops whose results carry their own CSS or popups, and Bricks versions it hasn’t been checked with.</li>
+          <li>The <strong>data files</strong> carry the text of published posts for the search (never a password-protected post’s), the same text WordPress’s own search reads.</li>
+        </ul>
+        <h3>Using it</h3>
+        <ul class="bs-docs__list">
+          <li>Turn it on, <strong>Process</strong>, then <strong>Sync</strong>. Settings lists each query loop the last Process found and whether it runs without WordPress or why not.</li>
+          <li><code>wp shipstatic static-filters on|off|status</code> does the same from the command line.</li>
+          <li>It works beside <strong>Allow Bricks forms and filters</strong>: forms still need that, and a loop that can’t be answered statically uses it.</li>
         </ul>
       </section>
 
