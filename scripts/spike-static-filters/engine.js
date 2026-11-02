@@ -48,7 +48,9 @@ export function matcher(ds, idx, f, value) {
 
 const isActive = (f, v) => v != null && !(Array.isArray(v) && v.length === 0) && v !== '' && f.action !== 'sort';
 
-function group(idx, fid, ids) {
+function group(idx, fid, ids, everything) {
+	// Bricks builds `WHERE object_id IN (...)` only when the id list is non-empty: an empty list counts everything.
+	if (!ids.length && everything) ids = everything;
 	const c = {}; const d = idx.filterRows[fid].direct;
 	for (const id of ids) for (const v of d[id] ?? []) c[v] = (c[v] || 0) + 1;
 	return c;
@@ -58,7 +60,7 @@ function sortIds(ds, ids, sortFilter, sortVal) {
 	const s = sortFilter?.sorts?.[sortVal]; if (!s) return ids;
 	const dir = s.dir === 'DESC' ? -1 : 1; const arr = ids.map((id, i) => [id, i]);
 	const keyOf = (id) => s.src === 'title' ? fold(ds.posts[id].title) : s.src === 'post_date' ? ds.posts[id].date : s.src === 'meta_value_num' ? parseFloat(ds.posts[id].meta?.[s.key]) : fold(ds.posts[id].meta?.[s.key]);
-	arr.sort((a, b) => { const ka = keyOf(a[0]), kb = keyOf(b[0]); return ka < kb ? -dir : ka > kb ? dir : 0; });
+	arr.sort((a, b) => { const ka = keyOf(a[0]), kb = keyOf(b[0]); return ka < kb ? -dir : ka > kb ? dir : (a[0] - b[0]) * dir; });
 	return arr.map((x) => x[0]);
 }
 
@@ -67,12 +69,14 @@ export function run(ds, idx, selected) {
 	const active = fs.filter((f) => isActive(f, selected[f.id])).map((f) => ({ f, m: matcher(ds, idx, f, selected[f.id]) }));
 	const resultsFor = (list) => ds.order.filter((id) => list.every((a) => a.m(id)));
 	const all = resultsFor(active);
+	const wantPage = Math.max(1, parseInt(selected.pag001 || 1, 10));
+	const pastEnd = wantPage > (Math.ceil(all.length / ds.perPage) || 1); // Bricks reports 0 results, but still counts a selected filter's options over the real ones
 	const sortF = fs.find((f) => f.action === 'sort'); const sortV = sortF ? selected[sortF.id] : undefined;
 	const ordered = sortV ? sortIds(ds, all, sortF, sortV) : all;
 	const page = Math.max(1, parseInt(selected.pag001 || 1, 10));
 	const pages = Math.ceil(all.length / ds.perPage) || 0;
-	const slice = ordered.slice((page - 1) * ds.perPage, page * ds.perPage);
-	const out = { ids: slice, count: all.length, pages, start: all.length ? (page - 1) * ds.perPage + 1 : 0, end: Math.min(page * ds.perPage, all.length), opts: {} };
+	const slice = pastEnd ? [] : ordered.slice((page - 1) * ds.perPage, page * ds.perPage);
+	const out = pastEnd ? { ids: [], count: 0, pages: 0, start: 0, end: 0, opts: {} } : { ids: slice, count: all.length, pages, start: all.length ? (page - 1) * ds.perPage + 1 : 0, end: Math.min(page * ds.perPage, all.length), opts: {} };
 	for (const f of fs) {
 		if (f.action === 'sort' || f.element === 'filter-search') continue;
 		const self = active.find((a) => a.f.id === f.id);
@@ -80,7 +84,8 @@ export function run(ds, idx, selected) {
 		if (f.element === 'filter-range') {
 			let pool = resultsFor(active.filter((a) => a.f.id !== f.id)).map((id) => parseFloat(ds.posts[id].meta?.[f.metaKey]));
 			if (!pool.length) pool = ds.order.map((id) => parseFloat(ds.posts[id].meta?.[f.metaKey]));
-			out.opts[f.id + '_range'] = [Math.min(...pool), Math.max(...pool), selected[f.id] ? selected[f.id][0] : Math.min(...pool)];
+			const lo = Math.min(...pool); let hi = Math.max(...pool); if (hi === lo) hi = lo + 1;
+			out.opts[f.id + '_range'] = [lo, hi, selected[f.id] ? Math.max(selected[f.id][0], lo) : lo];
 			continue;
 		}
 		const base = group(idx, f.id, ds.order);
@@ -88,14 +93,14 @@ export function run(ds, idx, selected) {
 		const opts = {};
 		const nonSelfOthers = active.filter((a) => a.f.id !== f.id);
 		let src, notFoundZero = false;
-		if (self && others.length > 0) { src = group(idx, f.id, resultsFor(others)); notFoundZero = true; }
-		else if (!self && others.length > 0) { src = group(idx, f.id, all); notFoundZero = true; }
-		else if (multi) { src = group(idx, f.id, all); notFoundZero = f.logic === 'AND'; }
-		else if (!self) { src = group(idx, f.id, all); }
+		if (self && others.length > 0) { src = group(idx, f.id, resultsFor(others), ds.order); notFoundZero = true; }
+		else if (!self && others.length > 0) { src = group(idx, f.id, all, ds.order); notFoundZero = true; }
+		else if (multi) { src = group(idx, f.id, all, ds.order); notFoundZero = f.logic === 'AND'; }
+		else if (!self) { src = group(idx, f.id, all, ds.order); }
 		for (const v of Object.keys(base)) {
 			let c = base[v];
 			if (src) { if (v in src) c = src[v]; else if (notFoundZero) c = 0; }
-			if (all.length === 0 && !self) c = 0;
+			if ((all.length === 0 || pastEnd) && !self) c = 0;
 			opts[v] = c;
 		}
 		out.opts[f.id] = opts;
