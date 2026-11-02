@@ -277,6 +277,8 @@ export interface Status {
   relayEnabled: boolean;
   /** Bricks filters answered from data files in the page; what the last Process found per loop. */
   staticFilters: StaticFiltersReport;
+  /** What the Bricks guide needs to pre-answer its questions. */
+  bricksGuide: BricksGuideInfo;
   /** Max destinations deployed at once during a multi-destination sync (1–10). */
   concurrentSyncs: number;
   /** Whether the host WordPress exposes the Abilities API (WP 6.9+). */
@@ -621,4 +623,13 @@ export interface StaticFiltersReport {
   static: number;
   relay: number;
   list: { page: string; query: string; static: boolean; reason: string; items: number }[];
+}
+
+/** What the last Process found about the site's Bricks forms and filters, and how its destinations are reached. */
+export interface BricksGuideInfo {
+  /** The guide has been run or dismissed. */
+  seen: boolean;
+  found: { rendered: boolean; formPages: number; filterPages: number };
+  destinations: { transport: string; crossDomain: boolean }[];
+  woo: boolean;
 }

@@ -1,4 +1,5 @@
 import type {
+  BricksGuideInfo,
   CheckPreview,
   ConnectionInput,
   ConnectionResponse,
@@ -88,6 +89,8 @@ export const api = {
     request<{ relayEnabled: boolean }>('/settings', 'POST', { relayEnabled: enabled }),
   setStaticFiltersEnabled: (enabled: boolean) =>
     request<{ staticFilters: StaticFiltersReport }>('/settings', 'POST', { staticFiltersEnabled: enabled }),
+  setBricksGuideSeen: (seen: boolean) =>
+    request<{ bricksGuide: BricksGuideInfo }>('/settings', 'POST', { bricksGuideSeen: seen }),
   setAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) =>
     request<{ aiAllowChanges: boolean; aiAllowSync: boolean }>('/settings', 'POST', toggles),
   setConcurrentSyncs: (n: number) =>

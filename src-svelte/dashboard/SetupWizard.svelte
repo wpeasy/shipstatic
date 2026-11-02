@@ -5,7 +5,6 @@
   import Modal from '../lib/Modal.svelte';
   import DiscoveryToggle from './DiscoveryToggle.svelte';
   import SiteSearchSettings from './SiteSearchSettings.svelte';
-  import BricksFormsSettings from './BricksFormsSettings.svelte';
   import AiToolsPanel from './AiToolsPanel.svelte';
   import { uiPrefs, persistPrefs, type ColorScheme, type Accent } from '../shared/uiPrefs.svelte';
   import type { DiscoveryMode, Status } from '../shared/types';
@@ -18,8 +17,6 @@
     onSetDiscoveryMode,
     onSetFabEnabled,
     onSetSearchEnabled,
-    onSetRelayEnabled,
-    onSetStaticFiltersEnabled,
     onSetAiToggles,
     onFinish,
   }: {
@@ -29,11 +26,9 @@
     onSetDiscoveryMode: (mode: DiscoveryMode) => void;
     onSetFabEnabled: (enabled: boolean) => void;
     onSetSearchEnabled: (enabled: boolean) => void;
-    onSetRelayEnabled: (enabled: boolean) => void;
-    onSetStaticFiltersEnabled: (enabled: boolean) => void;
     onSetAiToggles: (toggles: { aiAllowChanges?: boolean; aiAllowSync?: boolean }) => void;
-    /** Closes the wizard; runs Process when `process` is true (parent owns `open`). */
-    onFinish: (process: boolean) => void;
+    /** Closes the wizard; runs Process when `process` is true and opens the Bricks guide when asked (parent owns `open`). */
+    onFinish: (process: boolean, openBricksGuide: boolean) => void;
   } = $props();
 
   // Same accent list + handlers as the Style section in SettingsDrawer.svelte —
@@ -66,6 +61,7 @@
   // Finish runs a full Process only when the person says so on the last step,
   // which explains what that does (tester report: it ran without warning).
   let processNow = $state(true);
+  let openGuideAfter = $state(true);
 
   // The forms/filters step is Bricks-only, so it's left out of the list entirely
   // (not just hidden) when Bricks isn't active.
@@ -80,7 +76,7 @@
   ] as WizardStep[]);
 
   function handleComplete(): void {
-    onFinish(processNow);
+    onFinish(processNow, !!status?.bricksActive && openGuideAfter && !status.bricksGuide.seen);
   }
 
   // Reset to step 0 each time the wizard is (re)opened, so a manual re-run from
@@ -89,6 +85,7 @@
     if (open) {
       wizardStep = 0;
       processNow = true;
+      openGuideAfter = true;
     }
   });
 </script>
@@ -170,10 +167,9 @@
 {/snippet}
 
 {#snippet formsStep()}
-  <div class="bs-wiz-step">
-    {#if status}
-      <BricksFormsSettings relayEnabled={status.relayEnabled} {onSetRelayEnabled} staticFilters={status.staticFilters} {onSetStaticFiltersEnabled} />
-    {/if}
+  <div class="bs-wiz-step bs-stack bs-stack--sm">
+    <p>{__('bricksGuideWizardNote')}</p>
+    <Checkbox label={__('bricksGuideOpenAfter')} checked={openGuideAfter ? 1 : 0} onchange={(c) => (openGuideAfter = c === 1)} />
   </div>
 {/snippet}
 

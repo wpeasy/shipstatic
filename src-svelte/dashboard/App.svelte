@@ -19,6 +19,7 @@
   import SchedulePanel from './SchedulePanel.svelte';
   import LockdownPanel from './LockdownPanel.svelte';
   import SettingsDrawer from './SettingsDrawer.svelte';
+  import BricksGuide from './BricksGuide.svelte';
   import SetupWizard from './SetupWizard.svelte';
   import { uiPrefs, themeAttr, accentAttr } from '../shared/uiPrefs.svelte';
   import WpMoveBanner from './WpMoveBanner.svelte';
@@ -43,6 +44,7 @@
   let loadError = $state('');
   let settingsOpen = $state(false);
   let wizardOpen = $state(false);
+  let guideOpen = $state(false);
 
   let destinations = $derived(dests?.destinations ?? []);
   let activeDest = $derived(destinations.find((d) => d.id === activeTab) ?? null);
@@ -280,8 +282,32 @@
   // "Process now" is ticked, starts the same Process used elsewhere — its
   // progress shows in the dashboard's progress panel, not behind the modal.
   // Opening it (auto on first run, or manually from Settings) is separate.
-  function finishWizard(process: boolean): void {
+  function finishWizard(process: boolean, openBricksGuide = false): void {
     wizardOpen = false;
+    if (process) void processPages();
+    // Bricks: the wizard's Bricks step offers to carry on into the Bricks guide.
+    if (openBricksGuide) guideOpen = true;
+  }
+
+  // The Bricks guide (forms and filters). Closing it without finishing doesn't mark it done, so the
+  // dashboard keeps nudging; "Not now" and finishing both do.
+  function openGuide(): void {
+    settingsOpen = false;
+    guideOpen = true;
+  }
+
+  async function markGuideSeen(): Promise<void> {
+    if (!status) return;
+    status.bricksGuide.seen = true; // optimistic
+    try {
+      await api.setBricksGuideSeen(true);
+    } catch (e) {
+      loadError = (e as Error).message;
+    }
+  }
+
+  function finishGuide(process: boolean): void {
+    guideOpen = false;
     if (process) void processPages();
   }
 
@@ -474,6 +500,18 @@
     </Alert>
   {/if}
 
+  {#if status?.bricksActive && !status.bricksGuide.seen && !wizardOpen && !guideOpen}
+    <Alert tone="info">
+      <div class="bs-stack bs-stack--sm">
+        <p>{__('bricksGuideNudge')}</p>
+        <div class="bs-row">
+          <Button size="sm" onclick={openGuide}>{__('bricksGuideStart')}</Button>
+          <Button size="sm" variant="ghost" onclick={() => void markGuideSeen()}>{__('bricksGuideNotNow')}</Button>
+        </div>
+      </div>
+    </Alert>
+  {/if}
+
   {#if status?.wpMove}
     <WpMoveBanner move={status.wpMove} onChanged={() => void loadStatus()} />
   {/if}
@@ -510,6 +548,7 @@
     onSetAiToggles={setAiToggles}
     onSetConcurrentSyncs={setConcurrentSyncs}
     onOpenWizard={openWizard}
+    onOpenBricksGuide={openGuide}
   />
 
   <SetupWizard
@@ -519,10 +558,17 @@
     onSetDiscoveryMode={setDiscoveryMode}
     onSetFabEnabled={setFabEnabled}
     onSetSearchEnabled={setSearchEnabled}
-    onSetRelayEnabled={setRelayEnabled}
-    onSetStaticFiltersEnabled={setStaticFiltersEnabled}
     onSetAiToggles={setAiToggles}
     onFinish={finishWizard}
+  />
+
+  <BricksGuide
+    bind:open={guideOpen}
+    {status}
+    onSetRelayEnabled={setRelayEnabled}
+    onSetStaticFiltersEnabled={setStaticFiltersEnabled}
+    onSeen={() => void markGuideSeen()}
+    onFinish={finishGuide}
   />
 
   <!-- Global progress for the current/last sync, above the tabs and labelled

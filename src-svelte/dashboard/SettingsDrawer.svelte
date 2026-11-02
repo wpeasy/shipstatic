@@ -22,6 +22,7 @@
     onSetAiToggles,
     onSetConcurrentSyncs,
     onOpenWizard,
+    onOpenBricksGuide,
   }: {
     open: boolean;
     status: Status | null;
@@ -36,6 +37,7 @@
     onSetConcurrentSyncs: (n: number) => void;
     /** Re-run the first-run setup wizard (closes this drawer). */
     onOpenWizard: () => void;
+    onOpenBricksGuide: () => void;
   } = $props();
 
   function setScheme(v: string): void {
@@ -76,6 +78,9 @@
   <span class="bs-set__titlerow">
     {__('settings')}
     <Button variant="ghost" size="sm" onclick={onOpenWizard}>{__('wizardBtn')}</Button>
+    {#if status?.bricksActive}
+      <Button variant="ghost" size="sm" onclick={onOpenBricksGuide}>{__('bricksGuideTitle')}</Button>
+    {/if}
   </span>
 {/snippet}
 

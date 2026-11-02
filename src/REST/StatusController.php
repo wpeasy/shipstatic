@@ -15,6 +15,7 @@ use WP_REST_Response;
 use WPEasy\ShipStatic\Abilities\AbilityRegistry;
 use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Bricks\StaticFilters;
+use WPEasy\ShipStatic\Bricks\Usage;
 use WPEasy\ShipStatic\Discovery\UrlCollector;
 use WPEasy\ShipStatic\Lockdown\Settings as LockdownSettings;
 use WPEasy\ShipStatic\Lockdown\Writer as LockdownWriter;
@@ -135,6 +136,8 @@ final class StatusController {
             'relayEnabled'  => Relay::enabled(),
             // ...or answered from data files in the page (what the last Process found, per loop).
             'staticFilters' => StaticFilters::report(),
+            // What the Bricks guide needs to pre-answer its questions.
+            'bricksGuide'   => Usage::status(),
             // Max destinations deployed at once during a multi-destination sync.
             'concurrentSyncs' => DeployPool::concurrency(),
             // AI/MCP opt-ins. `aiAvailable` reflects whether the host WordPress
@@ -330,6 +333,10 @@ final class StatusController {
             }
         }
 
+        if (array_key_exists('bricksGuideSeen', $params)) {
+            update_option(Usage::SEEN_OPTION, empty($params['bricksGuideSeen']) ? '0' : '1', false);
+        }
+
         if (array_key_exists('staticFiltersEnabled', $params)) {
             // The data files are built while rendering: turning it on or off needs a new Process (marked dirty).
             StaticFilters::set_enabled(!empty($params['staticFiltersEnabled']));
@@ -360,6 +367,7 @@ final class StatusController {
             'searchEnabled'   => IndexBuilder::enabled(),
             'relayEnabled'    => Relay::enabled(),
             'staticFilters'   => StaticFilters::report(),
+            'bricksGuide'     => Usage::status(),
             'aiAllowChanges'  => AbilityRegistry::changes_enabled(),
             'aiAllowSync'     => AbilityRegistry::sync_enabled(),
             'concurrentSyncs' => DeployPool::concurrency(),
