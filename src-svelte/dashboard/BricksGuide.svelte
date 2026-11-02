@@ -134,7 +134,15 @@
         <Alert tone="info" description={__('bricksGuideSimpleNote')} />
       </div>
     {:else}
-      <p class="bs-help">{__('bricksGuideAdvancedHelp')}</p>
+      <div class="bs-stack bs-stack--sm">
+        <strong>{__('bricksGuideAdvancedFor')}</strong>
+        <ul class="bs-bg-list">
+          {#each ['bricksGuideAdvancedFor1', 'bricksGuideAdvancedFor2', 'bricksGuideAdvancedFor3'] as key (key)}
+            <li>{__(key)}</li>
+          {/each}
+        </ul>
+        <Alert tone="info" description={__('bricksGuideAdvancedNote')} />
+      </div>
     {/if}
   </div>
 {/snippet}
