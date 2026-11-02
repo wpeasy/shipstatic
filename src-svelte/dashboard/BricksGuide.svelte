@@ -230,6 +230,23 @@
 <style>
   .bs-bg-step {
     min-height: 6rem;
+    min-width: 0;
+  }
+
+  /* Long option labels wrap inside their button instead of pushing the dialog wider than the screen. */
+  .bs-bg :global(.ab-segmented) {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .bs-bg :global(.ab-segmented__option) {
+    flex: 1 1 12rem;
+    min-width: 0;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.3;
   }
 
   .bs-bg-q {
