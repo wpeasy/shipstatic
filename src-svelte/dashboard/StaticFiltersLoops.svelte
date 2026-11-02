@@ -1,16 +1,17 @@
 <script lang="ts">
   import { Badge } from '@wpeasy/ab-ui';
+  import CollapsibleNote from '../lib/CollapsibleNote.svelte';
   import { __, __f } from '../shared/i18n';
   import type { StaticFiltersReport } from '../shared/types';
 
   // The query loops the last Process found and whether each runs without WordPress — shared by Settings and the Bricks guide.
-  let { staticFilters }: { staticFilters: StaticFiltersReport } = $props();
+  let { staticFilters, open = false }: { staticFilters: StaticFiltersReport; open?: boolean } = $props();
 </script>
 
 {#if staticFilters.loops === 0}
   <p class="bs-help">{__('staticFiltersNeedsProcess')}</p>
 {:else}
-  <p class="bs-help"><strong>{__('staticFiltersLoops')}</strong></p>
+  <CollapsibleNote title={`${__('staticFiltersLoops')} (${staticFilters.loops})`} {open}>
   <ul class="bs-sfl">
     {#each staticFilters.list as loop (loop.page + loop.query)}
       <li>
@@ -25,6 +26,7 @@
       </li>
     {/each}
   </ul>
+  </CollapsibleNote>
 {/if}
 
 <style>

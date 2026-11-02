@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CollapsibleNote from '../lib/CollapsibleNote.svelte';
   import { Alert, Button, Checkbox, Collapsible, ConfirmButton, CopyButton, Input, Select, Status, Switch, Table, Tag, fadeUp } from '@wpeasy/ab-ui';
   import { api } from '../shared/api';
   import type { DestinationDisplay, LockdownEntry, LockdownProbe, LockdownSettings } from '../shared/types';
@@ -417,7 +418,9 @@
         <p class="bs-ld__help">{ld.redirectTarget ? __f('ldRedirectTarget', ld.redirectTarget) : __('ldRedirect403')}</p>
         <p class="bs-ld__help">{ld.relay ? __('ldRelayOn') : __('ldRelayOff')}</p>
         {#if ld.relay}
-          <Alert tone="warning" title={__('experimental')} description={__('ldRelayExperimental')} />
+          <CollapsibleNote tone="warning" title={__('experimental')}>
+            <p class="bs-ld__help">{__('ldRelayExperimental')}</p>
+          </CollapsibleNote>
         {/if}
       </div>
 

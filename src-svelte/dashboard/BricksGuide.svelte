@@ -182,7 +182,7 @@
       {/each}
       {#if rec.staticFilters}
         <Checkbox label={__('bricksGuideProcessNow')} checked={processNow ? 1 : 0} onchange={(c) => (processNow = c === 1)} />
-        <StaticFiltersLoops staticFilters={status.staticFilters} />
+        <StaticFiltersLoops staticFilters={status.staticFilters} open />
       {/if}
       <p class="bs-help">{__('bricksGuideApplyNote')}</p>
     {/if}

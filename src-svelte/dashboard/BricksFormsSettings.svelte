@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Alert, Switch } from '@wpeasy/ab-ui';
+  import CollapsibleNote from '../lib/CollapsibleNote.svelte';
   import StaticFiltersLoops from './StaticFiltersLoops.svelte';
   import { __ } from '../shared/i18n';
   import type { StaticFiltersReport } from '../shared/types';
@@ -22,14 +23,18 @@
   <Switch label={__('relayEnabled')} checked={relayEnabled ? 1 : 0} onchange={(c) => onSetRelayEnabled(c === 1)} />
   <p class="bs-help">{__('relayEnabledHelp')}</p>
   <Alert tone="info" description={__('relayFirewallNote')} />
-  <Alert tone="warning" title={__('experimental')} description={__('relayExperimental')} />
+  <CollapsibleNote tone="warning" title={__('experimental')}>
+    <p class="bs-help">{__('relayExperimental')}</p>
+  </CollapsibleNote>
 </div>
 
 <div class="bs-stack bs-stack--sm bs-sf">
   <Switch label={__('staticFilters')} checked={staticFilters.enabled ? 1 : 0} onchange={(c) => onSetStaticFiltersEnabled(c === 1)} />
   <p class="bs-help">{__('staticFiltersHelp')}</p>
   {#if staticFilters.enabled}
-    <Alert tone="warning" title={__('experimental')} description={__('staticFiltersCaveats')} />
+    <CollapsibleNote tone="warning" title={__('experimental')}>
+      <p class="bs-help">{__('staticFiltersCaveats')}</p>
+    </CollapsibleNote>
     {#if !staticFilters.verified}
       <Alert tone="danger" description={__('staticFiltersNotVerified')} />
     {/if}
