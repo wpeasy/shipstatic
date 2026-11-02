@@ -15,6 +15,8 @@ use WPEasy\ShipStatic\Admin\Editor;
 use WPEasy\ShipStatic\Admin\Menu;
 use WPEasy\ShipStatic\Export\ExportDownload;
 use WPEasy\ShipStatic\Bricks\RelayReplacer;
+use WPEasy\ShipStatic\Bricks\StaticFilters;
+use WPEasy\ShipStatic\Bricks\StaticFiltersReplacer;
 use WPEasy\ShipStatic\Bricks\Relay;
 use WPEasy\ShipStatic\Frontend\Fab;
 use WPEasy\ShipStatic\Frontend\Search;
@@ -101,6 +103,8 @@ final class Plugin {
         Search::init();
         // Bricks forms, filters and AJAX loops on the static site use WordPress.
         Relay::init();
+        // ...or answer Bricks' filter requests from data files (off by default).
+        StaticFilters::init();
 
         // Watch content edits so the dashboard can flag the render stale.
         \WPEasy\ShipStatic\Sync\ChangeTracker::init();
@@ -145,6 +149,7 @@ final class Plugin {
         Pipeline::register_replacer(new LinkDeployReplacer());
         Pipeline::register_replacer(new VideoDeployReplacer());
         Pipeline::register_replacer(new RelayReplacer());
+        Pipeline::register_replacer(new StaticFiltersReplacer());
 
         Pipeline::register_extra_files(static function (array $page_urls): array {
             if (!apply_filters('shipstatic_generate_sitemaps', true)) {

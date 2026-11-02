@@ -237,6 +237,21 @@ final class RelayReplacer implements DeployReplacer {
     }
 
     /**
+     * The script that applies `?brx_…` filters on page load, as a tag, for a
+     * page that has Bricks filters — for {@see StaticFiltersReplacer}, when the
+     * relay is off and so doesn't add it. '' when the page already has it.
+     *
+     * @param string $html Page HTML.
+     */
+    public static function filters_from_url_tag(string $html): string {
+        if (strpos($html, 'data-brx-filter') === false || strpos($html, 'shipstatic-bricks-filters') !== false) {
+            return '';
+        }
+
+        return wp_get_inline_script_tag(self::template('filters-from-url.js'), ['id' => 'shipstatic-bricks-filters']);
+    }
+
+    /**
      * A script from templates/: `filters-from-url.js` (applies `?brx_…`
      * filters on a static page) or `nonce-cache.js` (keeps Bricks' fresh
      * nonces between pages).

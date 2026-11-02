@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace WPEasy\ShipStatic\Sync;
 
+use WPEasy\ShipStatic\Bricks\StaticFilters;
+use WPEasy\ShipStatic\Bricks\StaticFiltersBuilder;
 use WPEasy\ShipStatic\CLI\Background;
 use WPEasy\ShipStatic\Deploy\PackageDeployer;
 use WPEasy\ShipStatic\Discovery\UrlCollector;
@@ -450,6 +452,9 @@ final class Runner {
             case 'assets':
                 self::tick_assets($job);
                 break;
+            case 'filters':
+                self::tick_filters($job);
+                break;
             case 'finalize':
                 self::tick_finalize($job);
                 break;
@@ -798,6 +803,7 @@ final class Runner {
                 }
 
                 self::cache_file($job, $relative, UrlRewriter::rewrite(HeadCleaner::clean($result['body'])));
+                StaticFilters::scan_page($job, $relative, $url, $result['body']);
                 $job->data['objects'][$relative] = (string) ($result['object'] ?? '');
                 $job->data['counts']['pagesDone']++;
 
@@ -921,10 +927,26 @@ final class Runner {
         $job->data['totals']['assets'] = $job->data['counts']['assetsDone'] + count($job->data['queue']['assets']);
 
         if (empty($job->data['queue']['assets'])) {
+            // Loops with Bricks filters get their data files built first (when that option is on).
+            $job->data['phase']   = empty($job->data['sfQueue']) ? 'finalize' : 'filters';
+            $job->data['message'] = empty($job->data['sfQueue']) ? 'Finalising…' : 'Building filter data…';
+        }
+
+        $job->save();
+    }
+
+    /**
+     * Build the data files for the query loops whose Bricks filters run
+     * without WordPress (one loop at a time; see {@see StaticFilters}).
+     *
+     * @param Job $job Active job.
+     */
+    private static function tick_filters(Job $job): void {
+        $job->data['message'] = 'Building filter data…';
+        if (StaticFiltersBuilder::tick($job)) {
             $job->data['phase']   = 'finalize';
             $job->data['message'] = 'Finalising…';
         }
-
         $job->save();
     }
 
@@ -960,6 +982,7 @@ final class Runner {
         update_option(self::RENDER_REDIRECTS_OPTION, empty($job->data['singlePage']) ? $redirects : array_replace(self::external_redirects(), $redirects), false);
         self::write_manifest_file($job, $manifest);
         LiveIndex::save_objects((array) ($job->data['objects'] ?? []), !empty($job->data['singlePage']), (array) ($job->data['partialRemove'] ?? []));
+        StaticFilters::commit($job);
         if (!empty($job->data['partial'])) {
             ChangeTracker::mark_partial((array) ($job->data['partialIds'] ?? []));
         }
@@ -1794,7 +1817,7 @@ final class Runner {
      * Replacers that only make sense on a whole exported page: Media and
      * Videos are saved per page, and the Bricks relay edits `bricksData`.
      */
-    private const PAGE_ONLY_REPLACERS = ['media', 'video', 'bricksRelay'];
+    private const PAGE_ONLY_REPLACERS = ['media', 'video', 'bricksRelay', 'bricksStaticFilters'];
 
     /**
      * Turn HTML or CSS that WordPress produced just now (a Bricks query
