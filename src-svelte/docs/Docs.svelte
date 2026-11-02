@@ -373,7 +373,7 @@
           <strong>On nginx, that covers pages and PHP files only.</strong> nginx serves uploaded files (images, PDFs), CSS and JavaScript itself, without running PHP, so anyone who has a file’s address can still open it. Most of those are public on your static site anyway, but files uploaded for drafts or private pages are not. To lock those too, paste the snippet from the Lockdown tab (<em>Optional: block in nginx too</em>) into the site’s <code>server {'{'} {'}'}</code> block and reload nginx, and paste it again whenever the list changes.
         </p>
         <p class="bs-docs__muted">
-          The site’s own requests still get through, so Process, Sync, scheduled syncs, WP-Cron and Site Health keep working, and so do certificate renewals (<code>/.well-known/</code>) and <a href="#forms">Bricks forms and filters on the static site</a>. WP-CLI is never affected.
+          The site’s own requests still get through, so Process, Sync, scheduled syncs, WP-Cron and Site Health keep working, and so do certificate renewals (<code>/.well-known/</code>) and <a href="#forms">Bricks forms and filters on the static site</a>, including, only if you turn on <strong>Serve filter-result images from WordPress</strong>, image files (JPG, PNG, GIF, WebP, AVIF) in the uploads folder — in <code>.htaccess</code> and in the nginx snippet (paste it again after changing that setting). WP-CLI is never affected.
         </p>
         <h3 id="lockdown-cron">Server cron jobs</h3>
         <p class="bs-docs__muted">

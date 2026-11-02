@@ -4,7 +4,7 @@ Tags: static site, bricks, performance, static html, deployment
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.4.12
+Stable tag: 2.5.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,13 @@ ShipStatic sends data only to destinations you configure yourself. Nothing is se
 3. The "sync this page" button on the front end.
 
 == Changelog ==
+
+= 2.5.0 =
+* New (experimental): "Run Bricks filters without WordPress". Bricks filters, sorting, search, pagination and infinite scroll are answered in the browser from data files, so a static site's filters need no WordPress. Every Bricks filter type is covered except WooCommerce, which is not supported on a static site. A loop that can't be answered exactly keeps using WordPress.
+* New: a Bricks guide with a Simple path (simple filters, a few hundred posts, content that changes only when you Sync) and an Advanced path, which sets how Bricks forms and filters work on your static site.
+* New (optional): serve filter-result images from WordPress, so a picture your last Sync hasn't uploaded still shows. With Lockdown on it lets image files from the uploads folder through, on Apache, LiteSpeed and nginx.
+* Changed: filter results fetched from WordPress list only posts that are in your last export, so new posts don't appear with broken links until you Process and Sync.
+* Changed: the Experimental notes and the query-loop list in Settings collapse to one line.
 
 = 2.4.10 =
 * New: in "Manual selection" mode, the Pages and Posts lists have a one-click include icon (grey = not in the export, green = in it), and Quick Edit has an "Include in static export" checkbox.

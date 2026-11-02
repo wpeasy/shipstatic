@@ -1,30 +1,24 @@
 # Changelog
 
-## v2.4.12 (2026-10-30)
+## v2.5.0 (2026-11-03)
 
 ### New
-**Setup wizard: site search and Bricks forms and filters.** The first-run wizard now has a step for turning on site search, and (on Bricks sites) a step for letting Bricks forms, filters and AJAX loads work on your static site, with a note about firewalls.
+**Bricks filters that work without WordPress (experimental).** Turn on “Run Bricks filters without WordPress” and your static site’s filters, sorting, search, pagination and infinite scroll are answered right in the visitor’s browser from data files that Process builds. Every Bricks filter type works except WooCommerce, which isn’t supported on a static site at all. A loop that can’t be answered exactly keeps using your WordPress site, and Settings lists which ones. Results are a snapshot, so new or changed posts appear after your next Sync.
 
 ### New
-**Setup wizard: AI abilities.** The wizard now covers AI abilities, so you can choose what connected AI assistants may do before you start.
+**A Bricks guide with Simple and Advanced setups.** Simple needs no questions and suits simple filters (a category filter, say), a few hundred posts and content that changes only when you Sync. Advanced is for complex or facet filters, larger sites and content that changes often: you choose where filters run and where their images come from. Open it from the dashboard banner, Settings, or the setup wizard’s Bricks step.
 
 ### New
-**Short help under two settings.** “Pages to include” and “Enable sync single button” now have a line of help underneath explaining what they do.
+**Optional: serve filter-result images from WordPress.** When filters run through WordPress, you can keep their images on WordPress so a picture your last Sync hasn’t uploaded still shows, and syncs get smaller. With Lockdown on, it lets image files (JPG, PNG, GIF, WebP, AVIF) from the uploads folder through, on Apache, LiteSpeed and nginx. Anyone who knows an image’s address can then open it, including images used only in drafts.
 
 ### New
-**Updating the Connector file no longer means pairing again.** When a newer Connector file is available, the destination shows an “update available” notice and a button that gives you the new file for the same pairing. Upload it over the old one and carry on.
-
-### Fixed
-**Disabled switches no longer show a stray bar.** Greyed-out switches, checkboxes and radio buttons in the dashboard were showing a leftover bar next to them.
+**A dashboard notice when published items are waiting.** If Bricks filters are in use and some published items aren’t in the export yet, the dashboard tells you they won’t appear in filters until you Process and Sync.
 
 ### Improved
-**Cleaner setup wizard.** More space between the step list and the content, with a faint divider line between them.
+**Filter results fetched from WordPress show only posts in your last export.** A post published since your last Process and Sync has no page or image files on the static site yet, so it no longer shows up with a broken link and picture. It appears after the next Process and Sync.
 
 ### Improved
-**“AI tools (MCP)” is now “AI abilities”.** The setting and its labels have been renamed. The site search and Bricks forms switches also have clearer names: “Enable JavaScript site search” and “Allow Bricks forms and filters”.
+**Tidier Settings.** The long “Experimental” notes and the list of query loops now collapse to a single line until you open them.
 
 ### Improved
-**Live search follows Site search.** The separate live-search setting is gone. Live search on your WordPress site is simply on whenever Site search is on.
-
-### Improved
-**Stronger security behind the scenes.** Destination addresses can no longer contain odd path segments, FTP and SFTP connections are checked more strictly, and the Connector file validates its settings more carefully. Nothing changes in how you use them.
+**Clearer WooCommerce wording.** Everywhere it’s mentioned, ShipStatic now says plainly that WooCommerce isn’t supported on a static site.

@@ -1194,7 +1194,7 @@
     "msgid": "Filters, sorting, search, page size, pagination and infinite scroll on your static site are answered in the visitor’s browser from data files that Process builds, so they keep working when WordPress is offline, locked down or on another server. Each query loop is checked: one that cannot be answered exactly keeps using WordPress (if the option above is on)."
   },
   {
-    "msgid": "Results are a snapshot: change content, then Process and Sync again. Items with the same sort value (for example the same price) can appear in a different order than WordPress shows. Search matches plain words in the title, excerpt and content, without WordPress’s relevance order. Up to 3,000 items per loop. Term and user loops, random order and sorting by other fields are not supported, and WooCommerce is not supported on a static site at all. Experimental."
+    "msgid": "Results are a snapshot: change content, then Process and Sync again. Items with the same sort value (for example the same price) can appear in a different order than WordPress shows. Search matches plain words in the title, excerpt and content, without WordPress’s relevance order. If you publish to Cloudflare or GitHub Pages, a visitor’s browser or the host can keep an old copy of a page for a while after a Sync (GitHub Pages about 10 minutes): until it refreshes, an old page can still ask WordPress, and a hard refresh fixes it. Up to 3,000 items per loop. Term and user loops, random order and sorting by other fields are not supported, and WooCommerce is not supported on a static site at all. Experimental."
   },
   {
     "msgid": "Run Process to build the data files, then Sync."
@@ -1221,6 +1221,9 @@
     "msgid": "You use Bricks: choose how forms and filters work on your static site."
   },
   {
+    "msgid": "Filters and lists on your static site show only what is in the export. %d published items are not in it yet, so they will not appear there until you Process and Sync."
+  },
+  {
     "msgid": "Start Bricks guide"
   },
   {
@@ -1242,10 +1245,10 @@
     "msgid": "Apply"
   },
   {
-    "msgid": "Your last Process found %1$d page(s) with a Bricks form and %2$d page(s) with filters, pagination or a loop that loads more. The questions are filled in from that; change any answer that is wrong."
+    "msgid": "Your last Process found %1$d page(s) with a Bricks form and %2$d page(s) with filters, pagination or a loop that loads more. Advanced fills its questions in from that; change any answer that is wrong."
   },
   {
-    "msgid": "Nothing has been processed yet, so the guide can’t see what your pages use. Answer from what you know; after a Process the settings page lists what was found."
+    "msgid": "Nothing has been processed yet, so the guide can’t see what your pages use. Simple assumes both; Advanced asks. After a Process the settings page lists what was found."
   },
   {
     "msgid": "Do your pages have Bricks forms?"
@@ -1272,25 +1275,94 @@
     "msgid": "Must the filters keep working if WordPress is offline or not reachable by visitors?"
   },
   {
-    "msgid": "For example when WordPress is locked down, on another server, or you publish to Cloudflare or GitHub Pages."
+    "msgid": "Serve filter-result images from WordPress"
   },
   {
-    "msgid": "Yes, they must"
+    "msgid": "Filter results that come from WordPress keep their images on WordPress instead of the static site, so a picture the export has not uploaded yet (a changed image, a custom-field image) still shows. New posts are still left out until you Process and Sync. Lockdown then lets image files (JPG, PNG, GIF, WebP, AVIF) from the uploads folder through, so anyone who knows an image address can open it, including images used only in drafts. WordPress must stay reachable for those images."
   },
   {
-    "msgid": "No, WordPress stays online"
+    "msgid": "Images"
   },
   {
-    "msgid": "Should results always be current, or is a snapshot from the last Sync fine?"
+    "msgid": "Where should images in live results come from?"
   },
   {
-    "msgid": "Always current"
+    "msgid": "The static site (only what is synced)"
   },
   {
-    "msgid": "A snapshot is fine"
+    "msgid": "WordPress (also images not synced yet)"
   },
   {
-    "msgid": "Always current, and works for every Bricks filter type. WordPress must be online and reachable, every change is a round trip to it, and it needs a small gap in the Lockdown firewall."
+    "msgid": "From WordPress: a picture the export has not uploaded yet still shows in results. Lockdown lets image files from the uploads folder through, so anyone who knows an image address can open it, including images used only in drafts. New posts are left out of results either way until you Process and Sync."
+  },
+  {
+    "msgid": "Setup"
+  },
+  {
+    "msgid": "How do you want to set it up?"
+  },
+  {
+    "msgid": "Simple (recommended)"
+  },
+  {
+    "msgid": "Advanced"
+  },
+  {
+    "msgid": "Simple is best for:"
+  },
+  {
+    "msgid": "Simple filters, such as a category filter"
+  },
+  {
+    "msgid": "A few hundred posts, not thousands"
+  },
+  {
+    "msgid": "Content that changes only when you Sync"
+  },
+  {
+    "msgid": "Filters run in the browser from a snapshot, so new or changed posts appear only after your next Sync, manual or scheduled."
+  },
+  {
+    "msgid": "Advanced is best for:"
+  },
+  {
+    "msgid": "Complex or facet filters, several used together"
+  },
+  {
+    "msgid": "Thousands of posts"
+  },
+  {
+    "msgid": "Content that changes regularly"
+  },
+  {
+    "msgid": "You choose where filters run: live through WordPress (always current; WordPress must stay reachable) or a snapshot in the browser (updates on Sync)."
+  },
+  {
+    "msgid": "Simple setup assumes"
+  },
+  {
+    "msgid": "WordPress is your private editing site: filters should not depend on it being reachable."
+  },
+  {
+    "msgid": "Results are a snapshot: new or changed posts appear in filters only after your next Sync, manual or scheduled (the dashboard tells you when items are waiting)."
+  },
+  {
+    "msgid": "Your filters are on Bricks 2.4 and use supported types. A loop that cannot run in the browser keeps using WordPress, and the list below shows which."
+  },
+  {
+    "msgid": "Forms always go to WordPress, so it must stay reachable for them. WooCommerce is not supported."
+  },
+  {
+    "msgid": "Where should filters run?"
+  },
+  {
+    "msgid": "In the browser (snapshot)"
+  },
+  {
+    "msgid": "Through WordPress (live)"
+  },
+  {
+    "msgid": "Follows your current content (edits show at once; a post added since your last Sync is left out until you Process and Sync) and works for every Bricks filter type. WordPress must be online and reachable, every change is a round trip to it, and it needs a small gap in the Lockdown firewall."
   },
   {
     "msgid": "In the browser"
@@ -1317,7 +1389,10 @@
     "msgid": "Filters will run in the browser from data files that Process builds. A loop that can’t be answered exactly (the list after Process says which) keeps using WordPress when the connection is on."
   },
   {
-    "msgid": "Filters will ask WordPress, so results are always current."
+    "msgid": "Images in live results will come from WordPress, and Lockdown will let image files from the uploads folder through (also in the nginx snippet)."
+  },
+  {
+    "msgid": "Filters will ask WordPress, so results follow your current content (posts not yet in the export are left out until you Process and Sync)."
   },
   {
     "msgid": "WooCommerce is not supported on a static site. Shops, carts, checkout, prices and stock need WordPress at the moment a visitor uses them, so they cannot work here, whichever option you choose. Keep WooCommerce pages out of the export."
@@ -2335,9 +2410,6 @@
   },
   {
     "msgid": "No videos match the current filter."
-  },
-  {
-    "msgid": "Images"
   },
   {
     "msgid": "Videos"

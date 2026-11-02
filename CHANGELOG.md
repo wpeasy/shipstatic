@@ -5,6 +5,21 @@ All notable changes to **ShipStatic** are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-11-03
+
+### Added
+- **Run Bricks filters without WordPress** (`Bricks\StaticFilters*`, `src-svelte/static-filters/`, option `shipstatic_static_filters`, off by default; Settings, `wp shipstatic static-filters on|off|status`, Docs → Filters without WordPress, `docs/STATIC_FILTERS_PLAN.md`). A page script answers Bricks' `query_result` request (filters, sort, page size, search, pagination, infinite scroll) from a JSON file built by Process, so a static site's filters need no WordPress. Covers every Bricks filter type except WooCommerce, which ShipStatic does not support at all. A loop it can't answer exactly (term/user loops, random order, other sort fields, custom compare operators, item CSS/popups, over 3,000 items, a Bricks version not checked) stays on the relay and is listed in Settings. The engine is held to real Bricks by a differential harness (`scripts/static-filters/`). Data and script addresses carry `?v=<content hash>`, so a host that caches for a year (Cloudflare) can't serve an old file next to a new page; every image any result shows is added to the upload.
+- **Bricks guide** (`BricksGuide.svelte`, `bricksGuide.ts`, `Bricks\Usage`): a Bricks-only wizard with a **Simple** path (no questions: for simple filters, a few hundred posts and content that changes only when you Sync; filters in the browser, forms through WordPress) and an **Advanced** path (forms, filters, where filters run, and where their images come from). It pre-fills from the last Process, then applies the settings. Opened from a dashboard nudge, **Settings → Bricks guide**, or the main wizard's Bricks step.
+- **Serve filter-result images from WordPress** (option `shipstatic_relay_wp_images`, off by default, needs the relay; Settings, the Advanced guide, `wp shipstatic relay --images=on|off`). Results keep their WordPress image addresses, so an image the export hasn't uploaded yet still shows, and syncs stop uploading every featured image. Lockdown lets GET/HEAD of image files (JPG, PNG, GIF, WebP, AVIF; never SVG) in the uploads folder through, in `.htaccess` and in the nginx snippet. Any image address in uploads then opens for anyone who knows it, drafts included (stated beside the switch).
+- **Dashboard notice** when published items aren't in the export yet and Bricks filters are in use.
+
+### Changed
+- **The relay lists only posts in the last export** (`Bricks\ExportedOnly`): a post published since the last Process and Sync has no page or image files on the static site, so it no longer appears in filter results (counts and pagination stay consistent). A post type with no posts in the export isn't limited.
+- **Settings:** the "Experimental" notes and the query-loops list are collapsed to one line until opened (`lib/CollapsibleNote.svelte`).
+
+### Fixed
+- **WooCommerce is stated as not supported** on a static site everywhere (guide, caveats, Docs).
+
 ## [2.4.12] - 2026-10-30
 
 ### Added
